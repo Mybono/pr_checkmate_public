@@ -1,0 +1,212 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PR CheckMate configuration",
+  "description": "Config for pr-checkmate. Unknown keys are reported by the Config Validation check.",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "$schema": { "type": "string" },
+    "sourcePath": {
+      "description": "Directory (or directories) checks are scoped to. Defaults to '.'.",
+      "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }]
+    },
+    "ignoreDirs": {
+      "description": "Directory names excluded from every check.",
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "severity": {
+      "description": "Universal per-check severity override, keyed by the check's display name.",
+      "type": "object",
+      "additionalProperties": { "enum": ["error", "warn", "off"] }
+    },
+    "customRules": {
+      "description": "User-defined regex rules run against the diff.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "pattern"],
+        "properties": {
+          "name": { "type": "string" },
+          "pattern": { "type": "string" },
+          "message": { "type": "string" },
+          "severity": { "enum": ["error", "warn"] },
+          "include": { "type": "array", "items": { "type": "string" } },
+          "exclude": { "type": "array", "items": { "type": "string" } },
+          "flags": { "type": "string" }
+        }
+      }
+    },
+    "bannedImports": {
+      "description": "Dependencies/imports that must not be added.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string" },
+          "message": { "type": "string" },
+          "severity": { "enum": ["error", "warn"] }
+        }
+      }
+    },
+    "prSize": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "maxFiles": { "type": "number" },
+        "maxLines": { "type": "number" }
+      }
+    },
+    "largeFiles": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "severity": { "enum": ["error", "warn"] },
+        "maxSizeKb": { "type": "number" },
+        "allow": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "licenseHeader": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "pattern": { "type": "string" },
+        "lines": { "type": "number" }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "severity": { "enum": ["error", "warn"] },
+        "reportPath": {
+          "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }]
+        }
+      }
+    },
+    "vulnScan": {
+      "type": "object",
+      "properties": { "enabled": { "type": "boolean" } }
+    },
+    "grypeScan": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "minSeverity": {
+          "type": "string",
+          "enum": ["negligible", "low", "medium", "high", "critical"]
+        },
+        "ignore": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "security": {
+      "type": "object",
+      "properties": {
+        "gitleaks": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "version": { "type": "string" }
+          }
+        },
+        "npm-audit": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "auditLevel": {
+              "type": "string",
+              "enum": ["info", "low", "moderate", "high", "critical"]
+            },
+            "ignore": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Package names whose vulnerabilities never block, even when direct and at/above auditLevel. Still reported as warnings."
+            }
+          }
+        }
+      }
+    },
+    "mergeConflict": { "$ref": "#/$defs/toggleSeverity" },
+    "leftoverDebug": { "$ref": "#/$defs/toggleSeverity" },
+    "lockfileDrift": { "$ref": "#/$defs/toggleSeverity" },
+    "missingTests": { "$ref": "#/$defs/toggleSeverity" },
+    "diffSecurity": { "$ref": "#/$defs/toggleIgnore" },
+    "workflowSecurity": { "$ref": "#/$defs/toggleIgnore" },
+    "dockerfileSecurity": { "$ref": "#/$defs/toggleIgnore" },
+    "migrationSafety": { "$ref": "#/$defs/toggleSeverity" },
+    "todoFixme": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "severity": { "enum": ["error", "warn"] },
+        "requireTicket": { "type": "boolean" },
+        "keywords": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "diffSmell": { "$ref": "#/$defs/toggle" },
+    "caseCollision": { "$ref": "#/$defs/toggle" },
+    "sensitiveFileGuard": { "$ref": "#/$defs/toggle" },
+    "configValidation": { "$ref": "#/$defs/toggle" },
+    "yamlLint": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "severity": { "enum": ["error", "warn"] },
+        "ignore": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "typecheck": { "$ref": "#/$defs/toggle" },
+    "prBody": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "minLength": { "type": "number" },
+        "requireTicket": { "type": "boolean" }
+      }
+    },
+    "cpp": { "$ref": "#/$defs/toggle" },
+    "python": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "typecheck": { "type": "boolean" },
+        "typeChecker": { "enum": ["mypy", "pyright"] },
+        "ruff": {
+          "type": "object",
+          "properties": {
+            "lint": { "type": "boolean" },
+            "format": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "swift": { "$ref": "#/$defs/toggle" },
+    "kotlin": { "$ref": "#/$defs/toggle" },
+    "go": { "$ref": "#/$defs/toggle" },
+    "rust": { "$ref": "#/$defs/toggle" },
+    "csharp": { "$ref": "#/$defs/toggle" },
+    "ruby": { "$ref": "#/$defs/toggle" },
+    "php": { "$ref": "#/$defs/toggle" }
+  },
+  "$defs": {
+    "toggle": {
+      "type": "object",
+      "properties": { "enabled": { "type": "boolean" } }
+    },
+    "toggleSeverity": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "severity": { "enum": ["error", "warn"] }
+      }
+    },
+    "toggleIgnore": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "ignore": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

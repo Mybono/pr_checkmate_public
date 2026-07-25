@@ -1,0 +1,68 @@
+PROPRIETARY SOFTWARE LICENSE
+All Rights Reserved
+
+Copyright (c) 2025-2026 Mybono. All Rights Reserved.
+
+================================================================================
+NOTICE
+================================================================================
+
+This software and its source code, documentation, data, models, and all
+associated materials (collectively, the "Software") are the confidential and
+proprietary property of Mybono (the "Owner").
+
+NO LICENSE IS GRANTED. This is NOT open-source software. The Software is
+made available for viewing solely to persons explicitly and individually
+authorized in writing by the Owner. The mere presence of this source code in
+any repository, archive, or medium does NOT constitute permission to use it.
+
+================================================================================
+RESTRICTIONS
+================================================================================
+
+Without the prior express written permission of the Owner, you MAY NOT:
+
+  1. Copy, reproduce, or duplicate the Software, in whole or in part.
+  2. Use or execute the Software for any purpose, commercial or otherwise.
+  3. Modify, adapt, translate, or create derivative works from the Software.
+  4. Distribute, publish, sublicense, sell, rent, lease, or transfer the
+     Software or any portion thereof to any third party.
+  5. Fork, mirror, or re-host the Software in any public or private repository.
+  6. Reverse engineer, decompile, or disassemble the Software.
+  7. Remove, obscure, or alter this notice or any copyright, trademark, or
+     other proprietary notices contained in the Software.
+
+Any use not expressly permitted in writing by the Owner is strictly
+prohibited and constitutes a violation of applicable copyright and
+intellectual property laws.
+
+================================================================================
+PUBLIC MIRROR EXCEPTION
+================================================================================
+
+The restrictions above do not prevent the Owner itself from publishing
+selected non-source materials — this LICENSE, the README, the CONTRIBUTING
+and CODE_OF_CONDUCT files, the documentation/ tree, and the configuration
+template and its JSON schema — to a public repository the Owner controls, for
+the sole purpose of giving consumers of the published npm package a reachable
+repository URL and readable documentation. This exception applies only to
+publication carried out by or on behalf of the Owner; it grants no rights to
+any other party to fork, mirror, re-host, or redistribute the Software, and it
+does not extend to the source code itself.
+
+================================================================================
+NO WARRANTY
+================================================================================
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+OWNER BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN
+ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+================================================================================
+CONTACT
+================================================================================
+
+For licensing inquiries or permission requests, contact the Owner: Mybono.

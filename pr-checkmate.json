@@ -1,0 +1,195 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Mybono/pr_checkmate_public/main/pr-checkmate.schema.json",
+
+  "//": "PR CheckMate configuration template. Place this file at your repository root as 'pr-checkmate.json'. Every value below is the built-in DEFAULT — delete any block you do not want to change, because the file is deep-merged with the defaults. Keys starting with '//' are comments and are ignored. Full per-check reference: https://github.com/Mybono/pr_checkmate_public",
+
+  "//1-scope": "WHERE CHECKS LOOK. 'sourcePath' may be a string or an array. 'ignoreDirs' REPLACES the default ignore list rather than extending it, so copy the defaults you still want.",
+  "sourcePath": ".",
+
+  "//2-severity": "UNIVERSAL ON/OFF SWITCH, keyed by a check's DISPLAY NAME (see //check-names below). 'off' removes the check before it runs; 'error' promotes a warning to a failure; 'warn' demotes a failure to a warning. This works for every check, including those with no 'enabled' flag of their own.",
+  "severity": {},
+
+  "//check-names": [
+    "Banned Imports", "Circular Deps", "Dependencies", "Grype Scan", "License Check",
+    "NPM Audit", "Outdated Deps", "Vuln Scan",
+    "Custom Rules", "Diff Smells", "Large Files", "Leftover Debug", "Lockfile Drift",
+    "Merge Conflict", "Missing Tests", "TODO/FIXME",
+    "ESLint", "TypeScript", "Prettier", "Ruff Lint", "Ruff Format", "Python Types",
+    "C++ Format", "SwiftLint", "ktlint", "Go Vet", "Go Format", "Clippy", "Rustfmt",
+    "C# Format", "RuboCop", "PHP CS Fixer",
+    "Commitlint", "PR Body", "PR Size", "PR Title",
+    "Case Collision", "Config Validation", "Coverage", "Dead Code", "Duplicate Code",
+    "License Header", "Markdown", "Spellcheck", "YAML Lint",
+    "Security Scan", "Diff Security", "Dockerfile Security", "Migration Safety",
+    "Sensitive Files", "Workflow Security"
+  ],
+
+  "//3-security": "Secret scanning and dependency vulnerabilities.",
+  "security": {
+    "gitleaks": { "enabled": true },
+    "npm-audit": {
+      "enabled": true,
+      "//auditLevel": "info | low | moderate | high | critical. Only DIRECT dependencies at or above this level block.",
+      "auditLevel": "moderate",
+      "//ignore": "Package names that never block, but are still reported as warnings.",
+      "ignore": []
+    }
+  },
+  "diffSecurity": { "enabled": true, "ignore": [] },
+  "workflowSecurity": { "enabled": true, "ignore": [] },
+  "dockerfileSecurity": { "enabled": true, "ignore": [] },
+  "sensitiveFileGuard": { "enabled": true },
+  "migrationSafety": {
+    "enabled": true,
+    "severity": "warn",
+    "//paths": "Globs treated as migrations. Setting this REPLACES the defaults listed here.",
+    "paths": ["**/migrations/**", "**/migrate/**", "**/db/migrate/**", "**/versions/**", "**/*.sql"]
+  },
+
+  "//4-dependencies": "Manifest, licence, and vulnerability checks.",
+  "dependency": {
+    "enabled": true,
+    "//ignore": "Dependency names or globs depcheck should ignore. Only sent to depcheck when non-empty, so an empty list leaves your own .depcheckrc in force.",
+    "ignore": []
+  },
+  "outdatedDeps": {
+    "enabled": true,
+    "ignore": [],
+    "//timeoutMs": "Cap on 'npm outdated'. On timeout the check skips rather than fails.",
+    "timeoutMs": 30000
+  },
+  "licenseCheck": {
+    "//": "GPL/LGPL/AGPL in PRODUCTION dependencies fail the run. Both lists below are APPENDED to the defaults.",
+    "allowPackages": [],
+    "allowLicenses": []
+  },
+  "vulnScan": {
+    "//": "osv-scanner, cross-ecosystem. OPT-IN: must be exactly true. Requires osv-scanner on the runner.",
+    "enabled": false
+  },
+  "grypeScan": {
+    "//": "Anchore grype, cross-ecosystem. ON by default but skips when grype is absent from the runner.",
+    "enabled": true,
+    "minSeverity": "medium",
+    "//ignore": "Suppress by CVE/GHSA id or by package name.",
+    "ignore": []
+  },
+  "//bannedImports": "Packages that must not be ADDED. Empty means the check is inert. severity defaults to 'warn'; use 'error' to fail the run.",
+  "bannedImports": [],
+
+  "//5-git-and-pr": "Checks on the diff and on pull-request metadata.",
+  "mergeConflict": { "enabled": true, "severity": "error" },
+  "diffSmell": { "enabled": true },
+  "leftoverDebug": { "enabled": true, "severity": "warn" },
+  "todoFixme": {
+    "enabled": true,
+    "severity": "warn",
+    "//requireTicket": "When true, a TODO must reference a ticket id — '#123' or 'PROJ-456'.",
+    "requireTicket": false,
+    "keywords": ["TODO", "FIXME", "XXX", "HACK"]
+  },
+  "lockfileDrift": { "enabled": true, "severity": "warn" },
+  "largeFiles": {
+    "enabled": true,
+    "severity": "warn",
+    "maxSizeKb": 500,
+    "//allow": "Globs exempted from the size limit. APPENDED to a built-in lockfile allow-list.",
+    "allow": []
+  },
+  "missingTests": {
+    "enabled": true,
+    "severity": "warn",
+    "//ignore": "Globs that never require an accompanying test. Setting this REPLACES the defaults, which cover *.d.ts, index files and *.config.*.",
+    "ignore": ["**/*.d.ts", "**/index.ts", "**/index.tsx", "**/index.js", "**/index.jsx", "**/*.config.*"]
+  },
+  "caseCollision": { "enabled": true },
+  "//customRules": "Your own regex rules run against added diff lines. Each needs 'name' and 'pattern'; optional 'message', 'severity' (error|warn), 'include', 'exclude', 'flags'.",
+  "customRules": [],
+  "prBody": { "enabled": true, "minLength": 20, "requireTicket": true },
+  "prSize": { "enabled": true, "maxFiles": 50, "maxLines": 1000 },
+  "commitlint": {
+    "enabled": true,
+    "types": ["feat", "fix", "docs", "chore", "ci", "refactor", "perf", "style", "revert", "test", "build"],
+    "//ignores": "Regex sources for titles to skip, e.g. release PRs.",
+    "ignores": ["^Release\\b", "^chore\\(release\\):"]
+  },
+
+  "//6-quality": "Cross-language quality gates.",
+  "yamlLint": { "enabled": true, "severity": "error", "ignore": [] },
+  "typecheck": { "enabled": true },
+  "duplicate": {
+    "enabled": true,
+    "minLines": 5,
+    "minTokens": 50,
+    "//ignore": "Test and mock paths are excluded by default because test setup legitimately repeats.",
+    "ignore": [
+      "**/__tests__/**",
+      "**/__mocks__/**",
+      "**/*.test.*",
+      "**/*.spec.*",
+      "**/test/**",
+      "**/tests/**"
+    ]
+  },
+  "deadCode": {
+    "enabled": true,
+    "//ignoreFiles": "REGEX sources (not globs), matched against reported file paths. Setting this REPLACES the defaults.",
+    "ignoreFiles": ["/__tests__/", "/__mocks__/", "/__mock__/", "/tests?/", "\\.test\\.", "\\.spec\\."]
+  },
+  "coverage": {
+    "//": "OPT-IN: must be exactly true. Reads an existing coverage summary; it does not run your tests.",
+    "enabled": false,
+    "severity": "warn",
+    "//reportPath": "Path or array of paths to a coverage summary.",
+    "reportPath": []
+  },
+  "licenseHeader": {
+    "//": "OPT-IN: must be exactly true. Requires a header matching 'pattern' within the first 'lines' lines of each changed source file.",
+    "enabled": false,
+    "pattern": "",
+    "lines": 10
+  },
+  "configValidation": { "enabled": true },
+
+  "//7-linters": "ESLint, Prettier, cspell and markdownlint. 'rules' blocks are MERGED with the defaults; 'ignorePatterns' and 'ignorePaths' are APPENDED.",
+  "eslint": {
+    "rules": {},
+    "ignorePatterns": []
+  },
+  "prettier": {
+    "rules": {}
+  },
+  "cspell": {
+    "//words": "Project vocabulary that should not be reported as misspelled.",
+    "words": [],
+    "ignorePaths": [],
+    "ignoreRegExpList": [],
+    "//dictionaries": "Bundled non-English dictionaries: fr, ru, uk, he, es.",
+    "dictionaries": [],
+    "language": "en"
+  },
+  "markdownlint": {
+    "rules": {},
+    "ignores": []
+  },
+
+  "//8-languages": "Language is auto-detected. A check skips when its language is absent, and runner-dependency tools skip when the binary is missing — so leaving everything enabled is safe. TypeScript and JavaScript have no block of their own: configure them through 'eslint', 'prettier' and 'typecheck' above.",
+  "python": {
+    "enabled": true,
+    "//typeChecker": "mypy | pyright — needs the tool on the runner.",
+    "typecheck": true,
+    "typeChecker": "mypy",
+    "ruff": { "lint": true, "format": true }
+  },
+  "cpp": {
+    "enabled": true,
+    "clangFormat": { "style": "LLVM" }
+  },
+  "swift": { "enabled": true },
+  "kotlin": { "enabled": true },
+  "go": { "enabled": true },
+  "rust": { "enabled": true },
+  "csharp": { "enabled": true },
+  "ruby": { "enabled": true },
+  "php": { "enabled": true }
+}
