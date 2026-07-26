@@ -19,8 +19,8 @@ Matching is a substring test against the reported licence string, so compound ex
 `(MIT OR GPL-3.0)` are caught. Where a package declares several licences they are joined with ` OR `
 before matching.
 
-Only production dependencies are inspected (`license-checker --production`) — `devDependencies` are
-build-time tooling and do not ship, so their licences are out of scope.
+Only production dependencies are inspected (`license-checker-rseidelsohn --production`) —
+`devDependencies` are build-time tooling and do not ship, so their licences are out of scope.
 
 | Property | Value |
 |---|---|
@@ -92,7 +92,7 @@ To keep it visible but non-blocking:
 
 ## Notes
 
-- The bundled `license-checker` binary is resolved and executed with the current Node binary rather
+- The bundled `license-checker-rseidelsohn` binary is resolved and executed with the current Node binary rather
   than through `npx`, which would exit 127 when the tool is not on `PATH`.
 - If `license-checker` is unavailable, or emits output that is not valid JSON, the check returns
   `skip` — a broken tool never fails someone's PR.
