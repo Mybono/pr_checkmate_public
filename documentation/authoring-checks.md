@@ -342,7 +342,9 @@ format-phase checks write their fixes, which a follow-up step commits and pushes
 back to the branch.
 
 Individual commands (`npx pr-checkmate lint`, `npx pr-checkmate diff-security`,
-and so on) run a single check with the `stdout` reporter instead.
+and so on) run with the `stdout` reporter instead. Several can be named in one
+invocation — `npx pr-checkmate lint spellcheck` runs both in a single pass — and an
+unrecognised name aborts the run rather than quietly narrowing it.
 
 ## A correct check skeleton
 

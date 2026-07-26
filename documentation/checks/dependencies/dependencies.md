@@ -6,8 +6,8 @@
 
 ## Overview
 
-Runs [depcheck](https://github.com/depcheck/depcheck) to compare what the code imports against what
-`package.json` declares, and reports the two ways those can disagree:
+Runs [knip](https://knip.dev) to compare what the code imports against what `package.json` declares,
+and reports the two ways those can disagree:
 
 | Finding | Outcome | Why it matters |
 |---|---|---|
@@ -37,11 +37,11 @@ Both conditions must hold:
 | Key | Type | Default | Meaning |
 |---|---|---|---|
 | `dependency.enabled` | boolean | `true` | Set `false` to skip the check |
-| `dependency.ignore` | string[] | `[]` | Dependency names or globs depcheck should not consider |
+| `dependency.ignore` | string[] | `[]` | Dependency names, or globs over the whole name, that knip should not consider |
 
 ### Examples
 
-Silence packages that depcheck cannot see being used — a common case for tooling loaded by
+Silence packages that knip cannot see being used — a common case for tooling loaded by
 configuration rather than by an `import` statement:
 
 ```json
@@ -52,7 +52,10 @@ configuration rather than by an `import` statement:
 }
 ```
 
-Globs are passed straight through to depcheck's `--ignores`.
+The list becomes knip's `ignoreDependencies`, with each entry compiled to a pattern anchored to the
+whole dependency name. That anchoring matters: knip reads a value containing `*` as an unanchored
+regular expression, so a raw `eslint-*` would also silence `eslint` itself. Written as documented
+here, `eslint-plugin-*` covers `eslint-plugin-import` and leaves `eslint` reported.
 
 ## Disabling
 
@@ -68,15 +71,18 @@ Or demote the missing-dependency failure to a warning:
 
 ## Notes
 
-- `dependency.ignore` is forwarded as `--ignores` **only when non-empty**. This is deliberate: the
-  depcheck CLI flag overrides any `.depcheckrc` in the repository, so passing an empty list would
-  silently disable a project's own depcheck configuration. Leave the key unset and your
-  `.depcheckrc` continues to apply.
-- The bundled depcheck binary is executed with the current Node binary rather than through `npx`,
-  which would exit 127 when depcheck is not on `PATH`.
-- depcheck exits non-zero when it finds issues but still writes JSON to stdout, so the check reads
-  the output rather than trusting the exit code. If no JSON can be located at all it returns `skip`;
-  if JSON is present but unparseable it returns `fail`.
+- `dependency.ignore` is written to a temporary `.knip.temp.json` **only when non-empty**, and never
+  when the repository already has a knip config (`knip.json`, `knip.config.ts`, a `knip` key in
+  `package.json`, …). A repo that configures knip itself keeps that file as the single source of
+  truth; pr-checkmate does not layer its own config on top. When both exist the check logs that the
+  `ignore` list was skipped, so a list that has no effect never looks like a broken check.
+- The bundled knip binary is executed with the current Node binary rather than through `npx`, which
+  would exit 127 when knip is not on `PATH`.
+- The check reads knip's JSON report rather than trusting the exit code. If no JSON can be located at
+  all it returns `skip`; if JSON is present but unparseable it returns `fail`.
+- Only knip's `dependencies` and `unlisted` issue types are read. Unused **dev**Dependencies,
+  `binaries` and `unresolved` paths are deliberately ignored: CLI tools and shell commands
+  legitimately have no import to find, so reporting them would be noise.
 - False positives on "unused" are common for packages consumed indirectly (build plugins, type-only
   packages, CLI tools invoked from npm scripts). That is why unused only warns.
 

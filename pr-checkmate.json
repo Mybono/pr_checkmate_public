@@ -88,7 +88,7 @@
   "//4-dependencies": "Manifest, licence, and vulnerability checks.",
   "dependency": {
     "enabled": true,
-    "//ignore": "Dependency names or globs depcheck should ignore. Only sent to depcheck when non-empty, so an empty list leaves your own .depcheckrc in force.",
+    "//ignore": "Dependency names, or globs over the whole name (\"eslint-plugin-*\"), that knip should ignore. Only applied when non-empty, and never when the repo ships its own knip config — that file stays the source of truth.",
     "ignore": []
   },
   "outdatedDeps": {
@@ -111,7 +111,9 @@
     "enabled": true,
     "minSeverity": "medium",
     "//ignore": "Suppress by CVE/GHSA id or by package name.",
-    "ignore": []
+    "ignore": [],
+    "//timeoutMs": "Cap on the grype scan. On timeout the check skips rather than fails. The scan never walks 'ignoreDirs' (node_modules, dist, …), which is what keeps it quick.",
+    "timeoutMs": 120000
   },
   "//bannedImports": "Packages that must not be ADDED. Empty means the check is inert. severity defaults to 'warn'; use 'error' to fail the run.",
   "bannedImports": [],

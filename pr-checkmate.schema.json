@@ -87,7 +87,7 @@
     },
     "vulnScan": {
       "type": "object",
-      "properties": { "enabled": { "type": "boolean" } }
+      "properties": { "enabled": { "type": "boolean" }, "timeoutMs": { "type": "number" } }
     },
     "grypeScan": {
       "type": "object",
@@ -97,7 +97,8 @@
           "type": "string",
           "enum": ["negligible", "low", "medium", "high", "critical"]
         },
-        "ignore": { "type": "array", "items": { "type": "string" } }
+        "ignore": { "type": "array", "items": { "type": "string" } },
+        "timeoutMs": { "type": "number" }
       }
     },
     "security": {

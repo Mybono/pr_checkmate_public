@@ -46,9 +46,10 @@ Install it on a GitHub Actions runner with:
 | Key | Type | Default | Meaning |
 |---|---|---|---|
 | `vulnScan.enabled` | boolean | `false` | Must be `true` for the check to run |
+| `vulnScan.timeoutMs` | number | `120000` | Cap on the scan. On timeout the check skips rather than fails |
 
-That is the entire surface. There is no severity threshold and no ignore list — if you need either,
-use [Grype Scan](grype-scan.md), which offers `minSeverity` and `ignore`.
+There is no severity threshold and no ignore list — if you need either, use
+[Grype Scan](grype-scan.md), which offers `minSeverity` and `ignore`.
 
 ### Example
 
@@ -74,7 +75,9 @@ To make findings fail the run rather than warn:
 
 ## Notes
 
-- Runs `osv-scanner -r .` recursively from the repository root.
+- Runs `osv-scanner -r .` recursively from the repository root, capped by `timeoutMs`. Unlike
+  [Grype Scan](grype-scan.md), the walk is not yet confined to the project's own files, so on a
+  repository with dependencies installed expect the scan to be slow and to lean on that cap.
 - Exit code `0` means no vulnerabilities and the check passes. Any other exit code is treated as
   findings, and the output is filtered to lines mentioning `CVE-`, `GHSA-`, `vulnerab`, or `advisor`.
 - The log lists at most **10** matching lines, then `... and N more`.

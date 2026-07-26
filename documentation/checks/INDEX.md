@@ -177,7 +177,11 @@ npx pr-checkmate                    # every check, posts to the PR when in CI
 npx pr-checkmate all                # same as above
 npx pr-checkmate precommit          # staged changes only, never writes files
 npx pr-checkmate <command>          # a single check — see the tables below
+npx pr-checkmate lint spellcheck    # several checks in one pass
 ```
+
+`all`, `init` and `precommit` take no other arguments — passing any is an error, so a
+run can never look successful for work it skipped.
 
 Five checks have no dedicated CLI command and run only as part of a full run: `Grype Scan`,
 `Merge Conflict`, `ktlint`, `SwiftLint`, and `Dead Code`.

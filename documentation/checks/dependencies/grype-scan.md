@@ -58,6 +58,7 @@ Install it on a GitHub Actions runner with:
 | `grypeScan.enabled` | boolean | `true` | Set `false` to skip the check |
 | `grypeScan.minSeverity` | `negligible` \| `low` \| `medium` \| `high` \| `critical` | `"medium"` | Minimum severity that is reported. Inclusive |
 | `grypeScan.ignore` | string[] | `[]` | Suppress by **CVE/GHSA id** or by **package name**. Case-insensitive |
+| `grypeScan.timeoutMs` | number | `120000` | Cap on the scan. On timeout the check skips rather than fails |
 
 `ignore` accepts either kind of entry in the same array — each value is matched against both the
 vulnerability id and the artifact name.
@@ -103,7 +104,14 @@ To make findings fail the run instead of warning:
 
 ## Notes
 
-- Runs `grype dir:. -o json -q` in the repository root.
+- Runs `grype dir:. -o json -q` in the repository root, with every directory in `ignoreDirs`
+  (`node_modules`, `dist`, `build`, `coverage`, …) passed as `--exclude`. This is not a cosmetic
+  filter: cataloguing an installed `node_modules` took **355s** on this repository versus **0.8s**
+  without it, for the same findings. grype reads dependency versions from lockfiles, so nothing
+  reportable is lost — and every package found *inside* `node_modules` would have been suppressed
+  anyway as third-party (see above).
+- `timeoutMs` backstops the run. An advisory check must never be able to look like a hung commit,
+  which is what an uncapped directory scan does on a repository with dependencies installed.
 - The log lists at most **10** findings, then `... and N more`. The summary count is the full total.
 - Because grype scans the directory rather than a diff, this check is not delta-aware: it reports the
   current state of your dependencies regardless of what the PR changed.
