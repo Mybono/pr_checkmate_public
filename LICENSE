@@ -11,16 +11,21 @@ This software and its source code, documentation, data, models, and all
 associated materials (collectively, the "Software") are the confidential and
 proprietary property of Mybono (the "Owner").
 
-NO LICENSE IS GRANTED. This is NOT open-source software. The Software is
-made available for viewing solely to persons explicitly and individually
-authorized in writing by the Owner. The mere presence of this source code in
-any repository, archive, or medium does NOT constitute permission to use it.
+NO LICENSE TO THE SOURCE CODE IS GRANTED. This is NOT open-source software.
+The source code is made available for viewing solely to persons explicitly
+and individually authorized in writing by the Owner. The mere presence of
+this source code in any repository, archive, or medium does NOT constitute
+permission to use it. A limited license to install and execute the compiled
+package published to the npm registry is granted separately below under
+"EXECUTION LICENSE FOR THE PUBLISHED NPM PACKAGE".
 
 ================================================================================
 RESTRICTIONS
 ================================================================================
 
-Without the prior express written permission of the Owner, you MAY NOT:
+Except as expressly granted below under "EXECUTION LICENSE FOR THE PUBLISHED
+NPM PACKAGE", and without the prior express written permission of the Owner,
+you MAY NOT:
 
   1. Copy, reproduce, or duplicate the Software, in whole or in part.
   2. Use or execute the Software for any purpose, commercial or otherwise.
@@ -32,9 +37,34 @@ Without the prior express written permission of the Owner, you MAY NOT:
   7. Remove, obscure, or alter this notice or any copyright, trademark, or
      other proprietary notices contained in the Software.
 
-Any use not expressly permitted in writing by the Owner is strictly
-prohibited and constitutes a violation of applicable copyright and
-intellectual property laws.
+Any use not expressly permitted in writing by the Owner or under the
+execution license below is strictly prohibited and constitutes a violation
+of applicable copyright and intellectual property laws.
+
+================================================================================
+EXECUTION LICENSE FOR THE PUBLISHED NPM PACKAGE
+================================================================================
+
+The Owner distributes a compiled build of the Software to the public npm
+registry under the package name "pr-checkmate" (the "Distributed Package")
+for the purpose of being installed and run by third parties. Solely with
+respect to the Distributed Package as published, the Owner grants any person
+who obtains it through the npm registry a worldwide, royalty-free,
+non-exclusive, non-transferable license to:
+
+  1. Install the Distributed Package via a package manager (e.g. `npm`,
+     `npx`) or use it as a GitHub Actions step.
+  2. Execute the Distributed Package's documented CLI and GitHub Actions
+     interfaces, including in automated CI/CD pipelines, against the
+     licensee's own code, for the purpose of running its automated checks.
+
+This grant does not include, and RESTRICTIONS 1 and 3 through 7 above
+continue to apply in full to, any right to: copy or redistribute the
+Distributed Package outside of standard package-manager installation; modify,
+decompile, or reverse engineer it; or access, copy, or create derivative
+works from any source code not included in the published npm tarball. This
+grant may be revoked by the Owner for future versions at any time; it does
+not affect versions already installed.
 
 ================================================================================
 PUBLIC MIRROR EXCEPTION
