@@ -106,6 +106,12 @@ the dependency current instead of rolling it back, and is preferable to adding t
 
 - The check reads `npm audit --json` with `reject: false`: npm exits non-zero when it finds
   vulnerabilities but still emits usable JSON on stdout.
+- Two cases are a `skip`, never a pass or a fail. When stdout carries no parseable JSON at all (npm
+  absent from the runner, a proxy answering with HTML, a killed process), the check cannot know
+  anything — and a parse error in a blocking check would have failed the PR for an environment
+  problem. When npm answers with `{"error": {...}}` — most often `ENOLOCK`, no lockfile to audit, or
+  a registry it cannot reach — nothing was audited, so reporting a pass would claim a clean bill of
+  health from a scan that never ran.
 - For ecosystems other than npm, use [Vuln Scan](vuln-scan.md) (osv-scanner) or
   [Grype Scan](grype-scan.md).
 

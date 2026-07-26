@@ -102,6 +102,11 @@ To keep it visible but non-blocking:
 - `--ext` is only ever passed on the legacy (ESLint <9) path — passing it under flat config
   would make ESLint fall back to its default JS parser for explicitly-listed files, silently
   breaking TypeScript linting.
+- Exit code `1` means lint errors and is the only outcome that fails the run. Exit `2` is ESLint's
+  fatal error — a config it cannot load, an unresolvable plugin, a parser it cannot construct — and
+  is reported as `eslint failed to run (exit 2)` at `warn`, noting whether the config in play was
+  the client's or pr-checkmate's. An incompatibility between our bundled config and a client's
+  toolchain is not a defect in their code and must not gate their PR.
 
 ---
 

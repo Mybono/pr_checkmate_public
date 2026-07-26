@@ -68,9 +68,10 @@ Or:
   PR by itself.
 - The failure summary counts `error TS\d+` occurrences in `tsc`'s combined stdout/stderr; the
   full output is logged via `logger.warn` before the count is computed.
-- `tsc` runs with `reject: false` and its exit code alone decides pass/fail — a non-zero exit
-  with no matching `error TS` lines still reports as a failure, just with `0 type error(s)` in
-  the summary.
+- `tsc` runs with `reject: false`. A non-zero exit whose output contains no `error TS` diagnostic is
+  not a type error — `tsc` was killed (an out-of-memory on a large project), crashed, or never
+  started — so it is reported as `tsc failed to run (exit N)` at `warn`, not as a failure. Blocking a
+  PR with `0 type error(s)` named nothing the author could fix.
 
 ---
 

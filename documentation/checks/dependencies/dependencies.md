@@ -78,8 +78,14 @@ Or demote the missing-dependency failure to a warning:
   `ignore` list was skipped, so a list that has no effect never looks like a broken check.
 - The bundled knip binary is executed with the current Node binary rather than through `npx`, which
   would exit 127 when knip is not on `PATH`.
-- The check reads knip's JSON report rather than trusting the exit code. If no JSON can be located at
-  all it returns `skip`; if JSON is present but unparseable it returns `fail`.
+- The check reads knip's JSON report rather than trusting the exit code. knip writes that report as a
+  single line, so the report is found by scanning stdout's lines from the end for the last one that
+  parses and carries `issues`. Anything else on stdout is noise — knip imports the project's own
+  config files while analyzing (a `wdio.conf.ts`, say), so a dotenv banner or a top-level
+  `console.log` in a config module is printed ahead of the report, braces and all.
+- When no report can be found, the check returns `skip`. It never fails on unparseable output: a
+  tool that misbehaved is not a defect in the client's manifest, and blocking a PR for it reports our
+  problem as theirs.
 - Only knip's `dependencies` and `unlisted` issue types are read. Unused **dev**Dependencies,
   `binaries` and `unresolved` paths are deliberately ignored: CLI tools and shell commands
   legitimately have no import to find, so reporting them would be noise.

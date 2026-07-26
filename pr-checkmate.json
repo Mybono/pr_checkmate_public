@@ -91,6 +91,16 @@
     "//ignore": "Dependency names, or globs over the whole name (\"eslint-plugin-*\"), that knip should ignore. Only applied when non-empty, and never when the repo ships its own knip config — that file stays the source of truth.",
     "ignore": []
   },
+  "circularDeps": {
+    "//": "Circular imports (dpdm, bundled — nothing needed on the runner). Uses the project's own dpdm when it has one. When the analyzer cannot run, the check SKIPS rather than passing or failing.",
+    "enabled": true,
+    "//severity": "Advisory by default: most repos carry long-standing cycles through barrel files. Set 'error' to gate merges on them.",
+    "severity": "warn",
+    "//ignore": "Globs over repo-relative paths to keep out of the analysis (generated or vendored code).",
+    "ignore": [],
+    "//timeoutMs": "Cap on the analysis. On timeout the check skips rather than fails.",
+    "timeoutMs": 120000
+  },
   "outdatedDeps": {
     "enabled": true,
     "ignore": [],

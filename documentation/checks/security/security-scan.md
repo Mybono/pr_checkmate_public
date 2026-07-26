@@ -23,7 +23,9 @@ The outcome depends on gitleaks' exit code, and the distinction matters:
 | anything else | Scanner or infrastructure error | `warn` |
 
 A crashing scanner produces a warning rather than a failure, so tooling trouble never blocks an
-unrelated PR — while a real finding always does.
+unrelated PR — while a real finding always does. A scanner that cannot even be located (the bundled
+binary unresolvable under an unusual install layout) is a `skip` for the same reason: the check
+resolves it inside a `try`, so a resolution error can no longer surface as a failed blocking check.
 
 | Property | Value |
 |---|---|

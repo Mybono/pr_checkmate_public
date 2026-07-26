@@ -157,6 +157,15 @@
         "ignore": { "type": "array", "items": { "type": "string" } }
       }
     },
+    "circularDeps": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "severity": { "enum": ["error", "warn"] },
+        "ignore": { "type": "array", "items": { "type": "string" } },
+        "timeoutMs": { "type": "number" }
+      }
+    },
     "typecheck": { "$ref": "#/$defs/toggle" },
     "prBody": {
       "type": "object",

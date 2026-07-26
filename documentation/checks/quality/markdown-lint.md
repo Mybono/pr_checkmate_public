@@ -96,8 +96,12 @@ promoted it):
   `.markdownlint-merged-<pid>.json`, and deleted in a `finally` block regardless of outcome.
 - Runs with `stdio: 'inherit'`, so `markdownlint-cli2`'s own per-violation output appears directly in
   the CI log.
-- Exit code `0` is a pass; any other exit code is reported as `markdown lint issues found`, with no
-  per-rule breakdown in the check's own summary — the detail lives in the inherited log output.
+- Exit code `0` is a pass and `1` is reported as `markdown lint issues found`, with no per-rule
+  breakdown in the check's own summary — the detail lives in the inherited log output.
+- Exit code `2` means `markdownlint-cli2` could not run at all (an unreadable config, a bad glob). It
+  is reported as `markdownlint failed to run (exit 2)` rather than as lint findings, so a tooling
+  problem is never attributed to the client's markdown — which matters when the check is promoted
+  with `severity: { "Markdown": "error" }`.
 
 ---
 

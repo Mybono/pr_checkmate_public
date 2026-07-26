@@ -6,77 +6,99 @@
 
 ## Overview
 
-Detects import cycles in TypeScript and JavaScript using [dpdm](https://github.com/acrazing/dpdm)
-and fails the run when it finds any. A cycle means module `A` imports `B` which (directly or through
-a chain) imports `A` again.
+Detects import cycles in TypeScript and JavaScript using [dpdm](https://github.com/acrazing/dpdm).
+A cycle means module `A` imports `B` which (directly or through a chain) imports `A` again.
 
-Cycles are worth blocking because their symptoms appear far from their cause: a module evaluates
+Cycles are worth knowing about because their symptoms appear far from their cause: a module evaluates
 before its dependency has finished loading, so an import that is a valid function at runtime is
 `undefined` during module evaluation. The resulting `TypeError` points at the consumer, not at the
 cycle.
 
+Findings are **advisory by default** (`severity: "warn"`). Most codebases carry long-standing cycles
+through barrel files, so a repo gets to see its own before anything gates on them — set
+`circularDeps.severity: "error"` to fail the run instead.
+
 | Property | Value |
 |---|---|
 | Display name | `Circular Deps` |
-| Phase | `blocking` |
+| Phase | `blocking` (findings are `warn` by default — see Configuration) |
 | CLI command | `npx pr-checkmate circular` |
-| Config key | none |
+| Config key | `circularDeps` |
 | Source | `src/core/checks/dependencies/circular-deps.ts` |
+
+dpdm ships **bundled with pr-checkmate**, so nothing is required on the runner. When the project
+being checked has its own `dpdm`, that copy is used instead — the same order `ESLint` and
+`TypeScript` follow for eslint and tsc.
 
 ## When it applies
 
-TypeScript **or** JavaScript is among the detected languages. It scans git-tracked `*.ts`, `*.tsx`,
-`*.js`, and `*.jsx` files within `sourcePath`, and passes when no such files exist.
+TypeScript **or** JavaScript is among the detected languages, and `circularDeps.enabled` is not
+`false`. It scans git-tracked `*.ts`, `*.tsx`, `*.js`, and `*.jsx` files within `sourcePath`, and
+passes when no such files exist.
 
 ## Configuration
 
-This check has **no dedicated config key**. Its behaviour is shaped only by the global scoping
-options:
+| Key | Default | Effect |
+|---|---|---|
+| `circularDeps.enabled` | `true` | `false` removes the check from the run |
+| `circularDeps.severity` | `"warn"` | `"error"` fails the run on any cycle |
+| `circularDeps.ignore` | `[]` | Globs over repo-relative paths kept out of the analysis, and dropped from any cycle they appear in |
+| `circularDeps.timeoutMs` | `120000` | Cap on the analysis; on timeout the check skips |
+
+These global scoping options apply as well:
 
 | Key | Effect here |
 |---|---|
 | `sourcePath` | Restricts which directories are scanned |
 | `ignoreDirs` | Directory names excluded from the file list |
-| `severity` | The only way to downgrade or disable it |
+| `severity` | Universal per-check override, including `off` |
 
 ### Example
 
-Analyse only application code, leaving generated clients out of the graph:
+Analyse only application code, tolerate cycles through generated clients and barrel files, and gate
+merges on everything that remains:
 
 ```json
 {
   "sourcePath": "src",
-  "ignoreDirs": ["node_modules", "dist", "generated"]
+  "ignoreDirs": ["node_modules", "dist", "generated"],
+  "circularDeps": {
+    "severity": "error",
+    "ignore": ["**/*.generated.ts", "src/**/index.ts"]
+  }
 }
 ```
 
 ## Disabling
 
-There is no `enabled` flag. Use the universal switch:
+```json
+{ "circularDeps": { "enabled": false } }
+```
+
+Or with the universal switch:
 
 ```json
 { "severity": { "Circular Deps": "off" } }
 ```
 
-To keep the report but stop it blocking merges:
-
-```json
-{ "severity": { "Circular Deps": "warn" } }
-```
+Findings are already advisory by default; to gate merges on them set
+`circularDeps.severity: "error"` or `{ "severity": { "Circular Deps": "error" } }`.
 
 ## Notes
 
-- Runs `npx dpdm --no-warning --no-tree --circular <files>`. The full cycle listing from dpdm is
-  written to the log so each cycle can be traced.
-- dpdm's *success* message also contains the word "circular", so the check does not grep for it
-  loosely. It matches only dpdm's two failure shapes: a `Circular Dependencies:` header, or a
-  numbered entry such as `[1] src/a.ts -> src/b.ts`.
+- Cycles are read from dpdm's JSON report (`-o`), whose `circulars` array is the authoritative list —
+  not from its console output. Every cycle is written to the log as `a.ts -> b.ts` so it can be
+  traced; the first ten are listed, with a count of the rest.
+- When dpdm cannot produce a report — an unresolvable binary, a tsconfig it cannot read, a timeout —
+  the check **skips**. It never passes on a failed analysis (that would hide a check that did not
+  run) and never fails on one (that would block a PR for a tooling problem).
 - Not delta-aware. Cycles are a property of the whole import graph, so a full scan of the tracked
   file set is the only meaningful analysis — a cycle can be created by a one-line change in a file
-  the PR never touched.
+  the PR never touched. On a repo whose file list would overflow the OS argument limit, the scan
+  falls back to `sourcePath` globs, which dpdm expands itself over the same tree.
 - Type-only cycles (`import type`) are erased at compile time and are harmless at runtime, but dpdm
-  analyses the source graph and may still report them. If this is noisy for your codebase, demote the
-  check to `warn`.
+  analyses the source graph and may still report them. Keep the check at its default `warn` if that
+  is noisy for your codebase, or list the files in `circularDeps.ignore`.
 
 ---
 

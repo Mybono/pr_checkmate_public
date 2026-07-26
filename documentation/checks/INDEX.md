@@ -195,7 +195,7 @@ Manifest, lockfile, licence, and vulnerability checks.
 | Check | Phase | CLI command | Config key |
 |---|---|---|---|
 | [Banned Imports](dependencies/banned-imports.md) | informational | `banned-imports` | `bannedImports` |
-| [Circular Deps](dependencies/circular-deps.md) | **blocking** | `circular` | — |
+| [Circular Deps](dependencies/circular-deps.md) | **blocking** | `circular` | `circularDeps` |
 | [Dependencies](dependencies/dependencies.md) | **blocking** | `deps` | `dependency` |
 | [Grype Scan](dependencies/grype-scan.md) | informational | — | `grypeScan` |
 | [License Check](dependencies/license-check.md) | **blocking** | `license` | `licenseCheck` |
