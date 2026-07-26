@@ -10,6 +10,7 @@
 ![jscpd](https://img.shields.io/badge/jscpd-5-blue)
 [![API Docs](https://img.shields.io/badge/API_docs-TypeDoc-9600FF?logo=readthedocs&logoColor=white)](https://pr-checkmate-docs.pages.dev)
 [![Security scan](https://img.shields.io/badge/security-SBOM_%2B_VirusTotal-2ea44f)](https://github.com/Mybono/pr_checkmate_public/releases/latest)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/Mybono/pr_checkmate_public/badge)](https://scorecard.dev/viewer/?uri=github.com/Mybono/pr_checkmate_public)
 
 > PR CheckMate is a universal PR quality checker: one `npm install`, 51 checks across
 > 11 languages, running in CI on every pull request. The bundled languages need no
@@ -19,6 +20,8 @@ Every release is published with a CycloneDX SBOM and an independent
 [VirusTotal scan report](https://github.com/Mybono/pr_checkmate_public/releases/latest)
 of the exact npm tarball, attached to that version's
 [GitHub release notes](https://github.com/Mybono/pr_checkmate_public/releases/latest).
+The public repo also runs an [OpenSSF Scorecard](https://scorecard.dev/viewer/?uri=github.com/Mybono/pr_checkmate_public)
+analysis of its own supply-chain hygiene.
 
 ## Why PR CheckMate
 
