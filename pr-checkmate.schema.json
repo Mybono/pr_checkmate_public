@@ -149,6 +149,18 @@
     "caseCollision": { "$ref": "#/$defs/toggle" },
     "sensitiveFileGuard": { "$ref": "#/$defs/toggle" },
     "configValidation": { "$ref": "#/$defs/toggle" },
+    "cspell": {
+      "description": "Spellcheck control. 'enabled: false' turns the check off. The other fields configure the cspell config pr-checkmate generates, so they apply only when the repository has no cspell.json of its own: 'words', 'ignorePaths', 'ignoreRegExpList' and 'dictionaries' are appended to the bundled defaults, 'language' replaces it. Ignore globs are anchored to the repository root, so '**/dist/**' never matches a directory above the checkout.",
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "language": { "type": "string" },
+        "words": { "type": "array", "items": { "type": "string" } },
+        "dictionaries": { "type": "array", "items": { "type": "string" } },
+        "ignorePaths": { "type": "array", "items": { "type": "string" } },
+        "ignoreRegExpList": { "type": "array", "items": { "type": "string" } }
+      }
+    },
     "yamlLint": {
       "type": "object",
       "properties": {

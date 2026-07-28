@@ -237,13 +237,17 @@
     "rules": {}
   },
   "cspell": {
-    "//words": "Project vocabulary that should not be reported as misspelled.",
+    "//": "Only \"enabled\" always applies. The rest configures the cspell config pr-checkmate generates, so it is ignored when the repository has its own cspell.json — that file wins.",
+    "//enabled": "Set false to turn the Spellcheck check off entirely.",
+    "enabled": true,
+    "//words": "Project vocabulary that should not be reported as misspelled. Appended to the bundled list.",
     "words": [],
+    "//ignorePaths": "Globs to skip (e.g. \"CHANGELOG.md\", \"generated/**\"). Anchored to the repository root, so a pattern never matches a directory ABOVE the checkout.",
     "ignorePaths": [],
     "ignoreRegExpList": [],
-    "//dictionaries": "Bundled non-English dictionaries: fr, ru, uk, he, es.",
+    "//dictionaries": "Extra cspell dictionaries to enable, on top of the bundled fr, ru, uk, he, es. Unknown names are ignored.",
     "dictionaries": [],
-    "language": "en"
+    "//language": "Locales to spellcheck against. Omit it to keep the bundled \"en,ru,uk,he,fr,es\" — a value here REPLACES that list, so \"en\" alone reports every non-English word as a typo."
   },
   "markdownlint": {
     "rules": {},
