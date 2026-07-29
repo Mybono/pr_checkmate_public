@@ -26,14 +26,14 @@ bundled config (`eslint.config.mjs` for ESLint ≥9, `.eslintrc.js` for ESLint <
 config file loads `pr-checkmate.json` itself and merges its own default rule set with the
 `eslint.rules` / `eslint.ignorePatterns` blocks (see [Configuration](#configuration) below).
 
-| Property | Value |
-|---|---|
-| Display name | `ESLint` |
-| Phase | `blocking` |
-| CLI command | `npx pr-checkmate lint` |
-| Config key | `lint` |
-| Toolchain | Bundled |
-| Source | `src/core/checks/languages/lint.ts` |
+| Property     | Value                               |
+| ------------ | ----------------------------------- |
+| Display name | `ESLint`                            |
+| Phase        | `blocking`                          |
+| CLI command  | `npx pr-checkmate lint`             |
+| Config key   | `lint`                              |
+| Toolchain    | Bundled                             |
+| Source       | `src/core/checks/languages/lint.ts` |
 
 ## When it applies
 
@@ -58,10 +58,10 @@ the bundled `eslint.config.mjs`/`.eslintrc.js` load `pr-checkmate.json` directly
 separate process and read `eslint.rules`/`eslint.ignorePatterns`. `npx pr-checkmate init`
 writes exactly this shape, so treat `eslint` as the key that actually takes effect:
 
-| Key | Type | Default | Meaning |
-|---|---|---|---|
-| `eslint.rules` | object | pr-checkmate's built-in rule set (`no-console: warn`, `eqeqeq: error`, `@typescript-eslint/no-floating-promises: error`, `prettier/prettier: error`, … — run `init` to see and edit the full list) | Rule overrides, merged over the defaults one rule at a time |
-| `eslint.ignorePatterns` | string[] | `[]` | Glob patterns appended to the built-in ignores (`node_modules`, `dist`, `.git`, `build`, `coverage`, `.next`) |
+| Key                     | Type     | Default                                                                                                                                                                                                                               | Meaning                                                                                                       |
+| ----------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `eslint.rules`          | object   | `{}` — overrides only. The bundled set it merges over is `eqeqeq: error`, `@typescript-eslint/no-floating-promises: error`, `no-console: warn`, `prettier/prettier: warn`, … (full list in the package's `eslint-default-rules.json`) | Rule overrides, merged over the defaults one rule at a time                                                   |
+| `eslint.ignorePatterns` | string[] | `[]`                                                                                                                                                                                                                                  | Glob patterns appended to the built-in ignores (`node_modules`, `dist`, `.git`, `build`, `coverage`, `.next`) |
 
 Both keys are read only when the repository has none of its own ESLint config files — see
 [Overview](#overview).
@@ -102,6 +102,23 @@ To keep it visible but non-blocking:
 - `--ext` is only ever passed on the legacy (ESLint <9) path — passing it under flat config
   would make ESLint fall back to its default JS parser for explicitly-listed files, silently
   breaking TypeScript linting.
+- **Formatting never gates.** In the bundled rule set `error` is reserved for defects a human has
+  to resolve (`no-debugger`, `eqeqeq`, `prefer-const`, `no-unused-vars`, `no-floating-promises`,
+  `import/no-duplicates`); every purely cosmetic rule — `prettier/prettier`, `semi`, `quotes`,
+  `object-curly-spacing`, `space-infix-ops`, `keyword-spacing`,
+  `padding-line-between-statements`, `max-len` — is `warn`. ESLint exits `1` on errors only, so an
+  `error`-level whitespace rule would turn a `prettier --write` away fix into a red gate, while
+  the dedicated [Prettier](prettier.md) check already reports the same file as advisory. Promote it
+  back with `eslint.rules: { "prettier/prettier": "error" }` if a repo wants formatting to block.
+- A `pr-checkmate.json` written by an **older** `init` contains a verbatim copy of the built-in
+  rule set, severities included — `init` used to write the whole list out so every rule was
+  visible in the config. Client rules win over the defaults, so such a repo keeps
+  `"prettier/prettier": ["error", …]` and still gates on formatting until that entry is edited or
+  the whole `eslint.rules` block is dropped. **Dropping it is the better fix**: an empty block
+  tracks the bundled defaults from then on, whereas a frozen copy never receives another
+  improvement to them. `init` no longer writes the list (it emits `rules: {}`), but it cannot clean
+  up an existing copy either — `eslint.rules` is replaced wholesale on re-run, so the user's block
+  survives untouched by design.
 - Exit code `1` means lint errors and is the only outcome that fails the run. Exit `2` is ESLint's
   fatal error — a config it cannot load, an unresolvable plugin, a parser it cannot construct — and
   is reported as `eslint failed to run (exit 2)` at `warn`, noting whether the config in play was

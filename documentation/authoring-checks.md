@@ -237,7 +237,7 @@ Each check returns its own default severity: `fail()` for a real violation,
 report's outcome is `report.ok = summary.failed === 0` in
 `src/core/run-checks.ts`, so a single `fail()`
 from any check fails the run. `phase` only orders execution and decides how a
-*thrown* error is classified (`fail` in blocking, `warn` elsewhere). A check
+_thrown_ error is classified (`fail` in blocking, `warn` elsewhere). A check
 returning `fail()` from the informational phase blocks exactly as one in the
 blocking phase does.
 
@@ -308,6 +308,14 @@ Diff-content checks have no full-repo equivalent: `diffAddedLines` needs a base
 SHA to compute added lines, and scanning added lines across an entire repo has no
 meaning. That is why these checks gate on `Boolean(ctx.baseSha)` in `applies`
 and skip cleanly outside a PR context.
+
+Which of the two a run gets is decided by `planDiffRange` in `src/core/context.ts`
+— a pure function of the run options and the environment, so its precedence is
+pinned by tests rather than inferred from a git repository. `--full` (and the
+absence of any CI marker) resolves to no range at all, which is how "review
+everything" is expressed: there is one fallback path instead of a second scanning
+mode. A new check therefore needs no scope handling of its own beyond the
+`Boolean(ctx.baseSha)` gate, if it is diff-only.
 
 ## Wiring a new check
 

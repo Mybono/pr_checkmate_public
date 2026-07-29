@@ -15,7 +15,7 @@ issue.
 
 - **Preferred:** use [GitHub's private vulnerability reporting](https://github.com/Mybono/pr_checkmate_public/security/advisories/new)
   on this repository ("Security" tab → "Report a vulnerability").
-- **Alternative:** email stringmymail@gmail.com with the details.
+- **Alternative:** email <stringmymail@gmail.com> with the details.
 
 Please include:
 

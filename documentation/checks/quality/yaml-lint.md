@@ -78,6 +78,13 @@ Or remove it from the run entirely by display name:
 
 ## Notes
 
+- **Application-specific tags are not defects.** A problem the parser reports as
+  `TAG_RESOLVE_FAILED` — "Unresolved tag: `!Ref`" — means it met a tag whose schema belongs to
+  another application, and YAML is extensible there by design. CloudFormation and SAM templates
+  (`!Ref`, `!Sub`, `!GetAtt`, `!Equals`, `!If`, `!ImportValue`), Home Assistant (`!include`) and
+  Ansible (`!vault`) all rely on it, so those problems are filtered out. Before that, a single
+  valid CloudFormation template produced 557 findings and, because this check is blocking, failed
+  the run. Real defects — syntax errors, duplicate keys, tab indentation — are unaffected.
 - `yaml`'s `parseAllDocuments` never throws — it collects problems on each document instead, so one
   malformed file can never abort the whole check or hide problems in files parsed after it.
 - Findings are listed with `file:line:col` when position information is available; up to **10** are

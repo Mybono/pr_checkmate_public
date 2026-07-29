@@ -108,7 +108,12 @@
           "type": "object",
           "properties": {
             "enabled": { "type": "boolean" },
-            "version": { "type": "string" }
+            "version": { "type": "string" },
+            "depth": {
+              "description": "Caps the whole-repository history scan used when there is no diff range (a local run or --full) to the last N commits. Ignored in a PR run, which scans the diff range.",
+              "type": "integer",
+              "minimum": 1
+            }
           }
         },
         "npm-audit": {

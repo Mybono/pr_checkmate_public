@@ -37,8 +37,12 @@ resolves it inside a `try`, so a resolution error can no longer surface as a fai
 
 ## When it applies
 
-`security.gitleaks.enabled` is not `false`. It needs no diff range: with `BASE_SHA`/`HEAD_SHA` present
-it scans the changed files, and without them it scans the repository.
+`security.gitleaks.enabled` is not `false`. It needs no diff range, and the scan scope follows the
+run's: with a range the scanner runs in its `ci` mode over the changed commits, and without one
+(a local run, or `--full`) it walks the repository's commit history instead. The distinction is
+printed as `[Security Scan]: scanning the diff range` / `scanning full history`, so the log always
+says which one happened. A history scan is fast — roughly a second over 700 commits — but
+`security.gitleaks.depth` caps it for a repository with a long past.
 
 ## Configuration
 
@@ -46,6 +50,7 @@ it scans the changed files, and without them it scans the repository.
 |---|---|---|---|
 | `security.gitleaks.enabled` | boolean | `true` | Set `false` to skip the check |
 | `security.gitleaks.version` | string | `"8.30.0"` | Which gitleaks binary version to use |
+| `security.gitleaks.depth` | integer | unset (whole history) | Caps the history scan used when there is no diff range to the last N commits. Ignored in a PR run |
 
 **Your own gitleaks config wins.** If the repository contains any of these, it is used and the bundled
 ruleset is not passed at all:

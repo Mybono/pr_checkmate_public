@@ -29,8 +29,8 @@ every PR.
 - One package, any stack. Language is auto-detected from the repo.
 - Bundled tooling. ESLint, Prettier, Ruff, clang-format, and gitleaks run inside the
   package (WASM/JS), so clients install nothing for those languages.
-- Delta mode. In a PR only the changed files are checked; a full-project scan is the
-  fallback outside PR context.
+- Delta mode. A PR run checks only the changed files; outside CI the default is every tracked
+  file. `--full` forces that anywhere, and a run that cannot resolve its base falls back to it.
 - Parallel phases. Checks run concurrently within each phase: blocking, then
   informational, then format.
 - Reports in the PR. Results post as a single comment that updates in place, and
@@ -78,6 +78,24 @@ Run all checks:
 ```bash
 npx pr-checkmate all
 ```
+
+Scope depends on where the command runs. In CI it reviews the pull request diff, taking the
+base SHA from the GitHub `pull_request` event or Bitbucket's destination branch; a CI build
+with no PR attached falls back to `HEAD^`. Locally, with no CI environment detected, it
+reviews every tracked file. It used to fall back to `HEAD^` there too, so a local run saw
+only the last commit and would report a clean project with a `debugger` committed the day
+before. `--full` forces the whole-repo review anywhere, including inside a CI build, and it
+composes with any command:
+
+```bash
+npx pr-checkmate all --full
+npx pr-checkmate lint --full
+```
+
+The 16 checks that only make sense on a diff (PR Size, Diff Security, Merge Conflict, Custom
+Rules, Banned Imports, the git-diff family) drop out of the report on a full scan. The
+[per-check reference](https://github.com/Mybono/pr_checkmate_public/blob/main/documentation/checks/INDEX.md)
+spells out the rules under "Review scope".
 
 ### Running in CI without installing
 
