@@ -3,16 +3,18 @@
 [![npm](https://img.shields.io/npm/v/pr-checkmate?label=npm&color=CB3837&logo=npm&logoColor=white)](https://www.npmjs.com/package/pr-checkmate)
 [![Downloads](https://img.shields.io/npm/dm/pr-checkmate?color=blue)](https://www.npmjs.com/package/pr-checkmate)
 ![License](https://img.shields.io/badge/license-Proprietary-lightgrey)
+[![Security scan](https://img.shields.io/badge/security-SBOM_%2B_VirusTotal-2ea44f)](https://github.com/Mybono/pr_checkmate_public/releases/latest)
 ![ESLint](https://img.shields.io/badge/ESLint-10-4B32C3?logo=eslint&logoColor=white)
 ![Prettier](https://img.shields.io/badge/Prettier-3-F7B93E?logo=prettier&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white)
 ![cspell](https://img.shields.io/badge/cspell-10-4285F4)
 ![jscpd](https://img.shields.io/badge/jscpd-5-blue)
 [![API Docs](https://img.shields.io/badge/API_docs-TypeDoc-9600FF?logo=readthedocs&logoColor=white)](https://pr-checkmate-docs.pages.dev)
-[![Security scan](https://img.shields.io/badge/security-SBOM_%2B_VirusTotal-2ea44f)](https://github.com/Mybono/pr_checkmate_public/releases/latest)
 
-> PR CheckMate is a universal PR quality checker: one `npm install`, 51 checks across
-> 11 languages, running in CI on every pull request. The bundled languages need no
+> PR CheckMate is a security-first PR gate: secret scanning, dependency
+> vulnerability checks, and a signed SBOM + independent VirusTotal scan on
+> every release — plus 51 code-quality checks across 11 languages bundled in
+> for free, running in CI on every pull request. The bundled languages need no
 > per-language toolchain setup.
 
 Every release is published with a CycloneDX SBOM and an independent
@@ -22,9 +24,23 @@ of the exact npm tarball, attached to that version's
 
 ## Why PR CheckMate
 
-Most teams wire up linters and formatters separately in every repo. PR CheckMate ships
-them pre-bundled. You add one step to a GitHub Actions workflow and the checks run on
-every PR.
+Most teams wire up a different tool for each concern, in every repo, per language:
+ESLint or Ruff or SwiftLint for lint, Prettier or `gofmt` or `rustfmt` for format,
+gitleaks for secrets, `npm audit` or grype for dependency risk — each with its own
+install step, its own config file, its own version to keep pinned. PR CheckMate
+replaces that whole stack with one npm package and one `pr-checkmate.json`: lint,
+format, type-check, secret scanning, dependency risk, and SBOM/VirusTotal-verified
+releases, for all 11 supported languages, configured in one place instead of stitched
+together tool by tool, language by language. You add one step to a GitHub Actions
+workflow and everything runs on every PR.
+
+- Secret scanning on every diff. gitleaks runs on every PR, bundled, no setup.
+- Verifiable releases. Every version ships a CycloneDX SBOM and an independent
+  VirusTotal scan of the exact published tarball, attached to the GitHub release.
+- Dependency risk visibility. License compliance, `npm audit`, and osv-scanner/grype
+  vulnerability scans.
+
+Also included, bundled the same way:
 
 - One package, any stack. Language is auto-detected from the repo.
 - Bundled tooling. ESLint, Prettier, Ruff, clang-format, and gitleaks run inside the
@@ -36,6 +52,18 @@ every PR.
 - Reports in the PR. Results post as a single comment that updates in place, and
   formatter fixes are committed back to the branch.
 - Tunable. Any check can be re-scoped, downgraded, or disabled in `pr-checkmate.json`.
+
+## Security & Supply Chain
+
+- Secret scanning. gitleaks runs on every diff, bundled, no setup.
+- Verifiable releases. Every version ships a CycloneDX SBOM and an independent
+  [VirusTotal scan](https://github.com/Mybono/pr_checkmate_public/releases/latest) of
+  the exact published npm tarball, attached to that version's GitHub release notes.
+- Dependency risk. License compliance, `npm audit`, a cross-language vulnerability scan
+  (osv-scanner, opt-in), and a direct-dependency vulnerability scan (grype, on by
+  default).
+- CI/CD hardening. GitHub Actions workflow and Dockerfile security checks run as part
+  of the universal git-diff checks below.
 
 ## Language Support
 
@@ -239,4 +267,6 @@ affect it.
 
 ## License
 
-LicenseRef Proprietary © 2025
+LicenseRef Proprietary © 2025-2026 Artur Polishchuk. Free to install and run via the
+published npm package (see [LICENSE](LICENSE) for the exact grant); the source is not
+open-source and is not licensed for copying, modification, or redistribution.
