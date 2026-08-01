@@ -1,6 +1,6 @@
 # Check Reference
 
-**Checks Index** · [Dependencies](#dependencies) · [Git & Diff](#git--diff) · [Languages](#languages) · [Pull Request](#pull-request) · [Quality](#quality) · [Security](#security) · [Authoring Checks](../authoring-checks.md)
+**Checks Index** · [Dependencies](#dependencies) · [Git & Diff](#git--diff) · [Languages](#languages) · [Pull Request](#pull-request) · [Quality](#quality) · [Security](#security) · [Config Guide](../README.md) · [Authoring Checks](../authoring-checks.md)
 
 ---
 
@@ -16,7 +16,9 @@ its default, and an empty `pr-checkmate.json` (`{}`) behaves exactly like no fil
 
 ## Getting a config file
 
-How you obtain the file depends on how you run PR CheckMate.
+How you obtain the file depends on how you run PR CheckMate. For deciding what to put in it — which
+keys are worth setting, and how to tell a real finding from noise — see
+[Writing your `pr-checkmate.json`](../README.md).
 
 ### If you install the package
 
@@ -312,4 +314,4 @@ Secret scanning and diff-level security review.
 
 ---
 
-**Checks Index** · [Dependencies](#dependencies) · [Git & Diff](#git--diff) · [Languages](#languages) · [Pull Request](#pull-request) · [Quality](#quality) · [Security](#security) · [Authoring Checks](../authoring-checks.md)
+**Checks Index** · [Dependencies](#dependencies) · [Git & Diff](#git--diff) · [Languages](#languages) · [Pull Request](#pull-request) · [Quality](#quality) · [Security](#security) · [Config Guide](../README.md) · [Authoring Checks](../authoring-checks.md)
