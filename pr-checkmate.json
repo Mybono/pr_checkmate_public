@@ -55,6 +55,8 @@
     "Markdown",
     "Spellcheck",
     "YAML Lint",
+    "Broken Symlinks",
+    "ShellCheck",
     "Security Scan",
     "Diff Security",
     "Dockerfile Security",
@@ -186,6 +188,14 @@
 
   "//6-quality": "Cross-language quality gates.",
   "yamlLint": { "enabled": true, "severity": "error", "ignore": [] },
+  "symlinks": {
+    "//": "Whole-repo scan for tracked symlinks whose target does not exist.",
+    "enabled": true,
+    "//severity": "Advisory by default. Set 'error' to gate merges on a broken link.",
+    "severity": "warn",
+    "//ignore": "Globs for links intentionally left broken (e.g. a fixture testing another tool's own broken-symlink handling).",
+    "ignore": []
+  },
   "typecheck": { "enabled": true },
   "duplicate": {
     "enabled": true,
@@ -272,5 +282,12 @@
   "rust": { "enabled": true },
   "csharp": { "enabled": true },
   "ruby": { "enabled": true },
-  "php": { "enabled": true }
+  "php": { "enabled": true },
+  "shellcheck": {
+    "//": "Needs the `shellcheck` binary on the runner; skips when absent.",
+    "enabled": true,
+    "//minSeverity": "error | warning | info | style. Omit to keep ShellCheck's own default (every level).",
+    "//ignore": "ShellCheck codes to suppress, e.g. \"SC2086\".",
+    "ignore": []
+  }
 }

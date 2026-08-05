@@ -6,7 +6,7 @@
 
 ## Overview
 
-PR CheckMate ships **51 checks**. Every one of them is documented in its own file below: what it
+PR CheckMate ships **53 checks**. Every one of them is documented in its own file below: what it
 does, when it runs, every key it reads from `pr-checkmate.json`, the defaults, and how to turn it
 off.
 
@@ -271,6 +271,7 @@ the binary is missing.
 | [C# Format](languages/csharp-format.md)       | format        | `csharp-format`    | `csharp`             | Runner    |
 | [RuboCop](languages/ruby-lint.md)             | informational | `ruby-lint`        | `ruby`               | Runner    |
 | [PHP CS Fixer](languages/php-format.md)       | format        | `php-format`       | `php`                | Runner    |
+| [ShellCheck](languages/shellcheck.md)         | informational | `shellcheck`       | `shellcheck`         | Runner    |
 
 ## Pull Request
 
@@ -289,6 +290,7 @@ Cross-language quality gates.
 
 | Check                                             | Phase         | CLI command         | Config key         |
 | ------------------------------------------------- | ------------- | ------------------- | ------------------ |
+| [Broken Symlinks](quality/symlinks.md)            | informational | `symlinks`           | `symlinks`          |
 | [Case Collision](quality/case-collision.md)       | informational | `case-collision`    | `caseCollision`    |
 | [Config Validation](quality/config-validation.md) | informational | `config-validation` | `configValidation` |
 | [Coverage](quality/coverage.md)                   | informational | `coverage`          | `coverage`         |

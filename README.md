@@ -13,7 +13,7 @@
 
 > PR CheckMate is a security-first PR gate: secret scanning, dependency
 > vulnerability checks, and a signed SBOM + independent VirusTotal scan on
-> every release — plus 51 code-quality checks across 11 languages bundled in
+> every release — plus 53 code-quality checks across 12 languages bundled in
 > for free, running in CI on every pull request. The bundled languages need no
 > per-language toolchain setup.
 
@@ -82,6 +82,7 @@ tool installed; the check skips gracefully when the tool is absent.
 | C# | `dotnet format` | .NET SDK on the runner |
 | Ruby | RuboCop | `rubocop` on the runner |
 | PHP | PHP-CS-Fixer | `php-cs-fixer` on the runner |
+| Shell | ShellCheck | `shellcheck` on the runner |
 
 Secret scanning (gitleaks) and the universal git-diff checks are bundled and run for
 every language.
@@ -181,12 +182,13 @@ For a runner-dependency language, add its toolchain setup step before the run: G
 `actions/setup-go`, Rust with `dtolnay/rust-toolchain`, C# with `actions/setup-dotnet`,
 Ruby with `ruby/setup-ruby` (plus `gem install rubocop`), PHP with
 `shivammathur/setup-php` (tools: `php-cs-fixer`), Kotlin by fetching the `ktlint`
-binary. Swift's `swiftlint` is pre-installed on `macos-latest`. Anything missing is
+binary. Swift's `swiftlint` is pre-installed on `macos-latest`, and `shellcheck` is
+pre-installed on `ubuntu-latest` — neither needs a setup step. Anything missing is
 skipped, not failed.
 
 ## Checks
 
-51 checks, grouped by category and run in parallel within each phase:
+53 checks, grouped by category and run in parallel within each phase:
 
 - Universal git-diff (18) — language-agnostic and bundled: merge-conflict markers,
   secret scan, diff security (JS/TS/Python/Go/Kotlin), diff smells, GitHub Actions and
@@ -196,9 +198,10 @@ skipped, not failed.
 - Dependencies (7) — unused/missing, circular, outdated, license compliance, npm audit,
   a cross-language vuln scan (osv-scanner, opt-in), and a direct-dependency vuln scan
   (grype, on by default).
-- Quality (6) — duplicate code, dead code, multi-language spellcheck, markdown lint, YAML lint, config validation.
+- Quality (7) — duplicate code, dead code, multi-language spellcheck, markdown lint,
+  YAML lint, broken symlinks, config validation.
 - PR hygiene (4) — size, title, body, and commit-message convention.
-- Per-language (16) — lint, format, and type-check for the languages listed above.
+- Per-language (17) — lint, format, and type-check for the languages listed above.
 
 Each check has its own page in the
 [per-check reference](https://github.com/Mybono/pr_checkmate_public/blob/main/documentation/checks/INDEX.md),
