@@ -10,23 +10,42 @@ Runs [cspell](https://cspell.org/) over source, Markdown, and JSON files in scop
 [Markdown](markdown-lint.md), it's bundled — no runner dependency — and always runs regardless of
 detected languages.
 
-The bundled dictionary ships **multi-language** out of the box: English plus French, Russian,
-Ukrainian, Hebrew, and Spanish (`@cspell/dict-fr-fr`, `@cspell/dict-ru_ru`, `@cspell/dict-uk-ua`,
-`@cspell/dict-he`, `@cspell/dict-es-es`), on top of thousands of project-specific technical terms,
-brand names, and API identifiers already accumulated in the bundled word list — SDK names, exchange
-names, ffmpeg flags, and the like.
+**English is checked out of the box** and needs nothing: `@cspell/dict-en_us`,
+`@cspell/dict-en-gb-mit` and the common-misspellings list come with cspell itself, so they are
+never a separate install and cannot be dropped.
+
+The other five dictionaries — French, Russian, Ukrainian, Hebrew and Spanish — are **no longer
+installed by default**: they cost every client about 9 MB on every install, to spellcheck languages
+almost none of them write. Install the one your team writes in and it is picked up automatically,
+with no configuration change:
+
+```bash
+npm i -D @cspell/dict-ru_ru      # or dict-uk-ua, dict-he, dict-fr-fr, dict-es-es
+```
+
+Absence is handled so it costs no noise where that is possible. For languages with a script of
+their own — Russian, Ukrainian, Hebrew — a missing dictionary suppresses that script entirely,
+because cspell cannot judge those words and reporting words it cannot judge is noise rather than
+coverage. French and Spanish have no such escape: their words are indistinguishable from misspelled
+English, so on a repository that contains them the check will report until the dictionary is
+installed.
+
+Either way the bundled word list still applies: thousands of project-specific technical terms, brand
+names and API identifiers accumulated over time — SDK names, exchange names, ffmpeg flags and the
+like. That list is ours, ships with the package, and is unaffected by which language dictionaries
+are installed.
 
 **Your own cspell config wins.** If the repository has `cspell.json`, `.cspell.json`, or
 `cspell.config.json`, the check runs directly against it and ignores the bundled config and any
 `cspell` block in `pr-checkmate.json` entirely.
 
-| Property | Value |
-|---|---|
-| Display name | `Spellcheck` |
-| Phase | `informational` |
-| CLI command | `npx pr-checkmate spellcheck` |
-| Config key | `spellcheck` |
-| Source | `src/core/checks/quality/spellcheck.ts` |
+| Property     | Value                                   |
+| ------------ | --------------------------------------- |
+| Display name | `Spellcheck`                            |
+| Phase        | `informational`                         |
+| CLI command  | `npx pr-checkmate spellcheck`           |
+| Config key   | `spellcheck`                            |
+| Source       | `src/core/checks/quality/spellcheck.ts` |
 
 ## When it applies
 
@@ -39,11 +58,11 @@ through the standard ignore-directory list.
 
 ## Configuration
 
-| Key | Type | Default | Meaning |
-|---|---|---|---|
-| `cspell.words` | string[] | `[]` | Project vocabulary to accept, **appended** to the bundled word list |
-| `cspell.ignorePaths` | string[] (globs) | `[]` | Extra paths to skip, **appended** to the bundled ignore list |
-| `cspell.ignoreRegExpList` | string[] (regex sources) | `[]` | Extra content patterns to exclude from spellchecking, **appended** to the bundled list |
+| Key                       | Type                     | Default | Meaning                                                                                |
+| ------------------------- | ------------------------ | ------- | -------------------------------------------------------------------------------------- |
+| `cspell.words`            | string[]                 | `[]`    | Project vocabulary to accept, **appended** to the bundled word list                    |
+| `cspell.ignorePaths`      | string[] (globs)         | `[]`    | Extra paths to skip, **appended** to the bundled ignore list                           |
+| `cspell.ignoreRegExpList` | string[] (regex sources) | `[]`    | Extra content patterns to exclude from spellchecking, **appended** to the bundled list |
 
 ### Example
 
@@ -70,7 +89,7 @@ There is no `enabled` flag — use the universal severity override:
   actual JSON key, matching the underlying tool's own name and the `init`-generated config), not a
   `spellcheck` block — despite the check's display name and this doc's config-key column both being
   `spellcheck`. `pr-checkmate.json` also accepts a differently-shaped `spellcheck: { words,
-  ignoreWords, ignorePaths }` block (recognized by [Config Validation](config-validation.md) as a
+ignoreWords, ignorePaths }` block (recognized by [Config Validation](config-validation.md) as a
   known key, and present in the config's type definitions), but it is not consulted by this check —
   use `cspell.words` / `cspell.ignorePaths` as shown above.
 - The bundled `cspell.json` also sets `language: "en,ru,uk,he,fr,es"` and pre-imports all five

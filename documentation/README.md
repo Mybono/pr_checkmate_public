@@ -1,6 +1,7 @@
 # Writing your `pr-checkmate.json`
 
-**Config Guide** · [Check Reference](checks/INDEX.md) · [Authoring Checks](authoring-checks.md)
+**Config Guide** · [Check Reference](checks/INDEX.md) · [Authoring Checks](authoring-checks.md) ·
+[Migrating to 2.0](migrating-to-2.0.md)
 
 ---
 
@@ -41,9 +42,12 @@ Two things to know before you run it:
   GitHub Actions template (`src/config/pr-checkmate-workflow.yml`) — but your working tree changes.
   Run on a clean tree, or on a scratch clone, so `git status` afterwards tells you exactly which
   tool touched what. `npx pr-checkmate precommit` never writes, if you need a read-only look.
-- **`--full` matters.** Outside CI a full scan is already the default, but pass it anyway to be
-  explicit: you want a whole-repository picture now, not a diff. The 16 diff-only checks (PR Size,
-  Diff Security, the git-diff family) drop out of a full run — plan for those separately, see
+- **`--full` matters, and it is not the default.** Outside CI a plain run reviews what your BRANCH
+  changed — the diff against the trunk it forked from, the same set a pull request would show. That
+  is what you want while working; it is not what you want for a first audit. Pass `--full` to get
+  the whole-repository picture. Only three checks genuinely need a diff and drop out of a full run
+  (PR Size, Missing Tests, Lockfile Drift): the rest, including the whole security family, now scan the working
+  tree when there is no diff to read. Plan for those three separately, see
   [Step 4](#step-4--the-checks-a-full-run-cannot-show-you).
 
 ## Step 2 — Sort every row of the report into one of five buckets
@@ -80,6 +84,7 @@ Ignore lists are not all the same shape. This is the part that bites:
 
 | Key                                                                           | Matched against                                     | Merges with the default?                                                                                        |
 | ----------------------------------------------------------------------------- | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `excludePaths` (top level)                                                    | File path (glob) — **applies to every check**       | No default                                                                                                      |
 | `yamlLint.ignore`                                                             | File path (glob)                                    | No default                                                                                                      |
 | `symlinks.ignore`                                                             | File path (glob)                                    | No default                                                                                                      |
 | `markdownlint.ignores`                                                        | File path (glob)                                    | **Appends** — `node_modules/**`, `dist/**`, `coverage/**`, `graphify-out/**`, `.claude/**` are already excluded |
@@ -91,6 +96,18 @@ Ignore lists are not all the same shape. This is the part that bites:
 | `commitlint.ignores`                                                          | **Regex** against the subject                       | **Replaces** — you lose the `^Release\b` and `^chore\(release\):` skips                                         |
 | `diffSecurity.ignore`, `workflowSecurity.ignore`, `dockerfileSecurity.ignore` | **The finding's label**, case-insensitive substring | No default                                                                                                      |
 | `dependency.ignore`, `outdatedDeps.ignore`, `security.npm-audit.ignore`       | Package name                                        | No default                                                                                                      |
+
+**Start with `excludePaths`.** It is the only exclusion that reaches every check, applied where they
+all get their file list, so one rule covers the lot instead of hunting for the right key on each:
+
+```json
+{ "excludePaths": ["src/generated/**", "vendor/legacy.ts", "**/*.min.js"] }
+```
+
+It also answers what `ignoreDirs` cannot. `ignoreDirs` matches a directory NAME on any path segment,
+so `["generated"]` silences every `generated/` in the repository rather than the one that is
+actually generated, and it cannot address a single file at all. Note the other difference: setting
+`ignoreDirs` REPLACES the curated default list, while `excludePaths` simply adds.
 
 The last two rows are the reason the table exists: `"diffSecurity": { "ignore": ["md5"] }` mutes the
 `MD5 (weak hash)` finding everywhere and does not mean "skip files named md5" — see
@@ -266,4 +283,5 @@ left blocking on purpose.
 
 ---
 
-**Config Guide** · [Check Reference](checks/INDEX.md) · [Authoring Checks](authoring-checks.md)
+**Config Guide** · [Check Reference](checks/INDEX.md) · [Authoring Checks](authoring-checks.md) ·
+[Migrating to 2.0](migrating-to-2.0.md)

@@ -11,8 +11,8 @@ debug output, a forgotten `debugger`, and unresolved comment markers.
 
 | Finding | Matches |
 |---|---|
-| `console.*()` | `console.log`, `.error`, `.warn`, `.debug`, `.info` — not inside a `//` comment |
-| `debugger statement` | the `debugger` keyword |
+| `console.*()` | `console.log`, `.error`, `.warn`, `.debug`, `.info` — in live code, not in a comment or a string |
+| `debugger statement` | the `debugger` keyword in live code |
 | `TODO comment` | a `// TODO` line comment |
 | `FIXME comment` | a `// FIXME` line comment |
 | `HACK comment` | a `// HACK` line comment |
@@ -43,10 +43,11 @@ reasonable way to cut duplicate reporting.
 
 ## When it applies
 
-Both conditions must hold:
+`diffSmell.enabled` is not `false`.
 
-1. `diffSmell.enabled` is not `false`
-2. a diff range is available (`baseSha` is set)
+A diff range is *not* required: with none available the whole tree is reviewed instead of the check
+dropping out, on the same reasoning as the security checks — a leftover `debugger` is leftover whether
+it arrived in this PR or an earlier one.
 
 Only `*.ts`, `*.tsx`, `*.js`, and `*.jsx` files are scanned. There is no equivalent for Python, Go, or
 any other language here — use [Leftover Debug](leftover-debug.md) and [TODO/FIXME](todo-fixme.md) for
@@ -57,15 +58,23 @@ those.
 | Key | Type | Default | Meaning |
 |---|---|---|---|
 | `diffSmell.enabled` | boolean | `true` | Set `false` to skip the check |
+| `diffSmell.ignorePaths` | string[] | `[]` | Globs excluded from scanning entirely |
 
-That is the whole surface. The pattern list is fixed in the source: there is no `ignore`, no severity
-key of its own, and no way to keep some findings while dropping others.
+The pattern list itself is fixed in the source: there is no `ignore`, no severity key of its own, and
+no way to keep some findings while dropping others.
 
 ### Example
 
+`ignorePaths` exists for the files where `console.*` is the output channel rather than a leftover —
+build scripts, and config files loaded by another tool's process, where the project logger is not
+reachable:
+
 ```json
 {
-  "diffSmell": { "enabled": true }
+  "diffSmell": {
+    "enabled": true,
+    "ignorePaths": ["scripts/**", ".eslintrc.js"]
+  }
 }
 ```
 
@@ -94,16 +103,18 @@ Or promote every smell to a blocking failure:
 
 ## Notes
 
-- **`console.*` inside a comment is not reported.** The pattern requires the line to not begin with `//`
-  after the diff marker. It is a prefix guard, not a full comment parser — a trailing comment such as
-  `foo(); // console.log(x)` still matches.
-- The `TODO`/`FIXME`/`HACK`/`XXX` patterns match **only `//` line comments**, so a `# TODO` in a shell
-  script or a `/* TODO */` block comment is not reported here.
+- **`console.*` and `debugger` are matched in live code only.** Comments are stripped and string
+  literals are blanked before matching, so a `foo(); // console.log(x)` trailing comment and the
+  `'no-debugger': 'error'` line in an ESLint config are both left alone — the latter used to be
+  reported as a leftover `debugger` in every repo that configures the rule.
+- The `TODO`/`FIXME`/`HACK`/`XXX` patterns are scanned with comment handling **off**, since they live
+  in comments by definition. They match **only `//` line comments**, so a `# TODO` in a shell script or
+  a `/* TODO */` block comment is not reported here.
 - The summary is compact: `3× console.*(), 1× TODO comment`.
 - The log shows at most **3 examples per label**; matched lines are trimmed to 100 characters.
-- The `pr-checkmate-ignore` directive is honoured, since the check reads the diff through the shared
-  `diffAddedLines` helper.
-- Only added lines are scanned, so existing `console.log` calls are not reported.
+- The `pr-checkmate-ignore` directive is honoured, since the check reads its lines through the shared
+  `reviewLines` helper.
+- With a diff range only added lines are scanned; without one every tracked JS/TS file is reviewed.
 
 ---
 

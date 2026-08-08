@@ -153,8 +153,9 @@ installed version.
 
 ## GitHub Actions
 
-Every workflow follows the same shape: checkout, set up Node, install, run. The
-TypeScript setup is the baseline:
+`init` generates this workflow; it is reproduced here so nothing about it is a
+surprise. One job runs the whole registry — which checks run is decided in
+`pr-checkmate.json`, not by copying YAML.
 
 ```yaml
 name: PR CheckMate
@@ -163,20 +164,56 @@ on:
     branches: [main]
 
 permissions:
-  contents: write
+  contents: read
   pull-requests: write
 
 jobs:
-  quality:
+  pr-checkmate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with: { fetch-depth: 0 }
-      - uses: actions/setup-node@v4
-        with: { node-version: 24 }
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with: { node-version: 24, cache: 'npm' }
       - run: npm ci
-      - run: npx pr-checkmate all
+      - name: Run PR CheckMate
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx pr-checkmate all
 ```
+
+Three lines are load-bearing:
+
+- `fetch-depth: 0` — without the full history the PR base is not in the clone, no
+  diff range can be built, and every diff-based check skips itself. The run says so
+  (`Scan Scope: … set fetch-depth: 0`) rather than reporting a clean pass.
+- `GITHUB_TOKEN` — Actions does not put it in the environment on its own. Without it
+  the checks still run, but the summary comment never reaches the PR.
+- no `continue-on-error` — a gate that cannot fail the job is not a gate.
+
+### Adopting it on an existing codebase
+
+The instinct on an existing codebase is to soften the workflow. Do the opposite: keep
+the gate real and relax individual checks in `pr-checkmate.json`, so whatever you have
+already made clean stays enforced.
+
+```jsonc
+{
+  // everything advisory to begin with…
+  "severityDefaults": { "failOn": "warn" },
+  // …except the ones you are ready to enforce
+  "severity": {
+    "Security Scan": "error",
+    "Diff Security": "error",
+    "Duplicate Code": "off"
+  }
+}
+```
+
+Promote checks one at a time as the codebase catches up. `pr-checkmate init` also
+offers an advisory workflow if you would rather start there, and it writes a banner
+explaining how to leave that mode. Either way, `init` never overwrites a workflow file
+that already exists.
 
 For a runner-dependency language, add its toolchain setup step before the run: Go with
 `actions/setup-go`, Rust with `dtolnay/rust-toolchain`, C# with `actions/setup-dotnet`,
@@ -209,8 +246,21 @@ covering when it runs, the config keys it reads, and how to turn it off.
 
 ## Configuration
 
-Everything lives in `pr-checkmate.json`. Run `npx pr-checkmate init` to scaffold the
-full file for your detected languages.
+Everything lives in one file, `pr-checkmate.json`. Run `npx pr-checkmate init` to
+scaffold it for your detected languages.
+
+The generated file is short on purpose: it holds your decisions plus a few empty
+blocks for the settings people tune most. Everything else stays implicit — the
+config is merged over the built-in defaults at load time, so new defaults reach
+you on upgrade without editing anything, and `init` is a first-run step rather
+than something to repeat after every release.
+
+**[The full configuration, annotated, with every option at its default →](https://github.com/Mybono/pr_checkmate_public/blob/main/pr-checkmate.json)**
+Copy the block you need into your file. The `$schema` line in the generated
+config also gives your editor autocomplete and a description for every key.
+
+Three settings REPLACE their default rather than extending it, so copy the
+default before editing: `ignoreDirs`, `duplicate.ignore`, `deadCode.ignoreFiles`.
 
 - Severity map. The one universal control. Key any check by its display name (as it
   appears in the report) and set `"error"` to fail the run, `"warn"` for advisory, or

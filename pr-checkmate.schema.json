@@ -5,20 +5,45 @@
   "type": "object",
   "additionalProperties": true,
   "properties": {
-    "$schema": { "type": "string" },
+    "$schema": {
+      "type": "string"
+    },
     "sourcePath": {
       "description": "Directory (or directories) checks are scoped to. Defaults to '.'.",
-      "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }]
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      ],
+      "default": "."
+    },
+    "excludePaths": {
+      "description": "Files and folders no check ever looks at, as globs (\"src/generated/**\", \"vendor/legacy.ts\", \"**/*.min.js\"). Unlike ignoreDirs — which matches a directory NAME on any segment — this addresses one path or one file.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
     },
     "ignoreDirs": {
       "description": "Directory names excluded from every check.",
       "type": "array",
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
     },
     "severity": {
       "description": "Universal per-check severity override, keyed by the check's display name.",
       "type": "object",
-      "additionalProperties": { "enum": ["error", "warn", "off"] }
+      "additionalProperties": {
+        "enum": ["error", "warn", "off"]
+      }
     },
     "customRules": {
       "description": "User-defined regex rules run against the diff.",
@@ -27,13 +52,33 @@
         "type": "object",
         "required": ["name", "pattern"],
         "properties": {
-          "name": { "type": "string" },
-          "pattern": { "type": "string" },
-          "message": { "type": "string" },
-          "severity": { "enum": ["error", "warn"] },
-          "include": { "type": "array", "items": { "type": "string" } },
-          "exclude": { "type": "array", "items": { "type": "string" } },
-          "flags": { "type": "string" }
+          "name": {
+            "type": "string"
+          },
+          "pattern": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "severity": {
+            "enum": ["error", "warn"]
+          },
+          "include": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "exclude": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "flags": {
+            "type": "string"
+          }
         }
       }
     },
@@ -44,62 +89,141 @@
         "type": "object",
         "required": ["name"],
         "properties": {
-          "name": { "type": "string" },
-          "message": { "type": "string" },
-          "severity": { "enum": ["error", "warn"] }
+          "name": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "severity": {
+            "enum": ["error", "warn"]
+          }
         }
       }
     },
     "prSize": {
       "type": "object",
       "properties": {
-        "enabled": { "type": "boolean" },
-        "maxFiles": { "type": "number" },
-        "maxLines": { "type": "number" }
-      }
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "maxFiles": {
+          "type": "number",
+          "default": 50
+        },
+        "maxLines": {
+          "type": "number",
+          "default": 1000
+        }
+      },
+      "description": "PR size advisory: warns when a pull request changes more lines or files than the thresholds."
     },
     "largeFiles": {
       "type": "object",
       "properties": {
-        "enabled": { "type": "boolean" },
-        "severity": { "enum": ["error", "warn"] },
-        "maxSizeKb": { "type": "number" },
-        "allow": { "type": "array", "items": { "type": "string" } }
-      }
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "severity": {
+          "enum": ["error", "warn"],
+          "default": "warn"
+        },
+        "maxSizeKb": {
+          "type": "number",
+          "default": 500
+        },
+        "allow": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Flags large or binary files added to the diff."
     },
     "licenseHeader": {
       "type": "object",
       "properties": {
-        "enabled": { "type": "boolean" },
-        "pattern": { "type": "string" },
-        "lines": { "type": "number" }
-      }
+        "enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "pattern": {
+          "type": "string"
+        },
+        "lines": {
+          "type": "number",
+          "default": 10
+        }
+      },
+      "description": "Requires a license header on added source files. Opt-in."
     },
     "coverage": {
       "type": "object",
       "properties": {
-        "enabled": { "type": "boolean" },
-        "severity": { "enum": ["error", "warn"] },
+        "enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "severity": {
+          "enum": ["error", "warn"]
+        },
         "reportPath": {
-          "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }]
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
         }
-      }
+      },
+      "description": "Warns when the test step produced no coverage report. Opt-in; never parses percentages."
     },
     "vulnScan": {
       "type": "object",
-      "properties": { "enabled": { "type": "boolean" }, "timeoutMs": { "type": "number" } }
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "timeoutMs": {
+          "type": "number",
+          "default": 120000
+        }
+      },
+      "description": "Cross-language vulnerability scan via osv-scanner. Opt-in."
     },
     "grypeScan": {
       "type": "object",
       "properties": {
-        "enabled": { "type": "boolean" },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
         "minSeverity": {
           "type": "string",
-          "enum": ["negligible", "low", "medium", "high", "critical"]
+          "enum": ["negligible", "low", "medium", "high", "critical"],
+          "default": "medium"
         },
-        "ignore": { "type": "array", "items": { "type": "string" } },
-        "timeoutMs": { "type": "number" }
-      }
+        "ignore": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "timeoutMs": {
+          "type": "number",
+          "default": 120000
+        }
+      },
+      "description": "Direct-dependency vulnerability scan via grype."
     },
     "security": {
       "type": "object",
@@ -107,8 +231,13 @@
         "gitleaks": {
           "type": "object",
           "properties": {
-            "enabled": { "type": "boolean" },
-            "version": { "type": "string" },
+            "enabled": {
+              "type": "boolean",
+              "default": true
+            },
+            "version": {
+              "type": "string"
+            },
             "depth": {
               "description": "Caps the whole-repository history scan used when there is no diff range (a local run or --full) to the last N commits. Ignored in a PR run, which scans the diff range.",
               "type": "integer",
@@ -119,136 +248,965 @@
         "npm-audit": {
           "type": "object",
           "properties": {
-            "enabled": { "type": "boolean" },
+            "enabled": {
+              "type": "boolean",
+              "default": true
+            },
             "auditLevel": {
               "type": "string",
-              "enum": ["info", "low", "moderate", "high", "critical"]
+              "enum": ["info", "low", "moderate", "high", "critical"],
+              "default": "high"
             },
             "ignore": {
               "type": "array",
-              "items": { "type": "string" },
+              "items": {
+                "type": "string"
+              },
               "description": "Package names whose vulnerabilities never block, even when direct and at/above auditLevel. Still reported as warnings."
             }
           }
         }
+      },
+      "description": "Secret scanning (gitleaks) and npm audit."
+    },
+    "mergeConflict": {
+      "description": "Conflict markers left in a file. Blocking by default — this is breakage, not an opinion.",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "severity": {
+          "enum": ["error", "warn"],
+          "default": "error"
+        }
       }
     },
-    "mergeConflict": { "$ref": "#/$defs/toggleSeverity" },
-    "leftoverDebug": { "$ref": "#/$defs/toggleSeverity" },
-    "lockfileDrift": { "$ref": "#/$defs/toggleSeverity" },
-    "missingTests": { "$ref": "#/$defs/toggleSeverity" },
-    "diffSecurity": { "$ref": "#/$defs/toggleIgnore" },
-    "workflowSecurity": { "$ref": "#/$defs/toggleIgnore" },
-    "dockerfileSecurity": { "$ref": "#/$defs/toggleIgnore" },
-    "migrationSafety": { "$ref": "#/$defs/toggleSeverity" },
+    "leftoverDebug": {
+      "$ref": "#/$defs/toggleSeverity"
+    },
+    "lockfileDrift": {
+      "$ref": "#/$defs/toggleSeverity"
+    },
+    "missingTests": {
+      "$ref": "#/$defs/toggleSeverity"
+    },
+    "diffSecurity": {
+      "$ref": "#/$defs/patternCheck"
+    },
+    "workflowSecurity": {
+      "$ref": "#/$defs/toggleIgnorePaths"
+    },
+    "dockerfileSecurity": {
+      "$ref": "#/$defs/toggleIgnorePaths"
+    },
+    "migrationSafety": {
+      "$ref": "#/$defs/toggleSeverity"
+    },
     "todoFixme": {
       "type": "object",
       "properties": {
-        "enabled": { "type": "boolean" },
-        "severity": { "enum": ["error", "warn"] },
-        "requireTicket": { "type": "boolean" },
-        "keywords": { "type": "array", "items": { "type": "string" } }
+        "enabled": {
+          "type": "boolean"
+        },
+        "severity": {
+          "enum": ["error", "warn"]
+        },
+        "requireTicket": {
+          "type": "boolean"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Flags TODO/FIXME markers added in the diff."
+    },
+    "diffSmell": {
+      "$ref": "#/$defs/togglePaths"
+    },
+    "caseCollision": {
+      "$ref": "#/$defs/toggle"
+    },
+    "sensitiveFileGuard": {
+      "$ref": "#/$defs/toggleIgnore",
+      "type": "object",
+      "properties": {
+        "ignorePaths": {
+          "description": "Globs for files this check never looks at — the exclusion for a single false positive (a .pem fixture). Unlike \"ignore\", it does not silence a whole category.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       }
     },
-    "diffSmell": { "$ref": "#/$defs/toggle" },
-    "caseCollision": { "$ref": "#/$defs/toggle" },
-    "sensitiveFileGuard": { "$ref": "#/$defs/toggle" },
-    "configValidation": { "$ref": "#/$defs/toggle" },
+    "configValidation": {
+      "description": "Validation of pr-checkmate.json itself: unknown keys, invalid levels, and severity keys naming no check.",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Run the check.",
+          "type": "boolean"
+        },
+        "severity": {
+          "description": "Findings severity. \"warn\" (default) advises; \"error\" fails the run.",
+          "enum": ["error", "warn"]
+        },
+        "validateCheckNames": {
+          "description": "Verify that keys in \"severity\" name a real check. On by default.",
+          "type": "boolean"
+        },
+        "allowUnknownKeys": {
+          "description": "Top-level keys to accept without complaint.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "cspell": {
       "description": "Spellcheck control. 'enabled: false' turns the check off. The other fields configure the cspell config pr-checkmate generates, so they apply only when the repository has no cspell.json of its own: 'words', 'ignorePaths', 'ignoreRegExpList' and 'dictionaries' are appended to the bundled defaults, 'language' replaces it. Ignore globs are anchored to the repository root, so '**/dist/**' never matches a directory above the checkout.",
       "type": "object",
       "properties": {
-        "enabled": { "type": "boolean" },
-        "language": { "type": "string" },
-        "words": { "type": "array", "items": { "type": "string" } },
-        "dictionaries": { "type": "array", "items": { "type": "string" } },
-        "ignorePaths": { "type": "array", "items": { "type": "string" } },
-        "ignoreRegExpList": { "type": "array", "items": { "type": "string" } }
+        "enabled": {
+          "type": "boolean"
+        },
+        "language": {
+          "type": "string"
+        },
+        "words": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "dictionaries": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ignorePaths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ignoreRegExpList": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       }
     },
     "yamlLint": {
       "type": "object",
       "properties": {
-        "enabled": { "type": "boolean" },
-        "severity": { "enum": ["error", "warn"] },
-        "ignore": { "type": "array", "items": { "type": "string" } }
-      }
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "severity": {
+          "enum": ["error", "warn"]
+        },
+        "ignore": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "YAML syntax and style validation."
     },
     "symlinks": {
       "type": "object",
       "properties": {
-        "enabled": { "type": "boolean" },
-        "severity": { "enum": ["error", "warn"] },
-        "ignore": { "type": "array", "items": { "type": "string" } }
-      }
+        "enabled": {
+          "type": "boolean"
+        },
+        "severity": {
+          "enum": ["error", "warn"]
+        },
+        "ignore": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Flags tracked symlinks whose target does not exist. Whole-repo scan, not delta."
     },
     "shellcheck": {
       "type": "object",
       "properties": {
-        "enabled": { "type": "boolean" },
-        "minSeverity": { "enum": ["error", "warning", "info", "style"] },
-        "ignore": { "type": "array", "items": { "type": "string" } }
-      }
+        "enabled": {
+          "type": "boolean"
+        },
+        "minSeverity": {
+          "enum": ["error", "warning", "info", "style"]
+        },
+        "ignore": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "ShellCheck over changed shell scripts. Needs the shellcheck binary on the runner; skips when absent."
     },
     "circularDeps": {
       "type": "object",
       "properties": {
-        "enabled": { "type": "boolean" },
-        "severity": { "enum": ["error", "warn"] },
-        "ignore": { "type": "array", "items": { "type": "string" } },
-        "timeoutMs": { "type": "number" }
-      }
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "severity": {
+          "enum": ["error", "warn"],
+          "default": "warn"
+        },
+        "ignore": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "timeoutMs": {
+          "type": "number",
+          "default": 120000
+        }
+      },
+      "description": "Circular import detection across the whole module graph."
     },
-    "typecheck": { "$ref": "#/$defs/toggle" },
+    "typecheck": {
+      "$ref": "#/$defs/toggle"
+    },
     "prBody": {
       "type": "object",
       "properties": {
-        "enabled": { "type": "boolean" },
-        "minLength": { "type": "number" },
-        "requireTicket": { "type": "boolean" }
-      }
+        "enabled": {
+          "type": "boolean"
+        },
+        "minLength": {
+          "type": "number",
+          "default": 20
+        },
+        "requireTicket": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "description": "Validates the pull request description — minimum length, ticket reference."
     },
-    "cpp": { "$ref": "#/$defs/toggle" },
+    "cpp": {
+      "$ref": "#/$defs/toggle"
+    },
     "python": {
       "type": "object",
       "properties": {
-        "enabled": { "type": "boolean" },
-        "typecheck": { "type": "boolean" },
-        "typeChecker": { "enum": ["mypy", "pyright"] },
+        "enabled": {
+          "type": "boolean"
+        },
+        "typecheck": {
+          "type": "boolean"
+        },
+        "typeChecker": {
+          "enum": ["mypy", "pyright"]
+        },
         "ruff": {
           "type": "object",
           "properties": {
-            "lint": { "type": "boolean" },
-            "format": { "type": "boolean" }
+            "lint": {
+              "type": "boolean"
+            },
+            "format": {
+              "type": "boolean"
+            }
+          }
+        }
+      },
+      "description": "Python lint and format via Ruff."
+    },
+    "swift": {
+      "$ref": "#/$defs/toggle"
+    },
+    "kotlin": {
+      "$ref": "#/$defs/toggle"
+    },
+    "go": {
+      "$ref": "#/$defs/toggle"
+    },
+    "rust": {
+      "$ref": "#/$defs/toggle"
+    },
+    "csharp": {
+      "$ref": "#/$defs/toggle"
+    },
+    "ruby": {
+      "$ref": "#/$defs/toggle"
+    },
+    "php": {
+      "$ref": "#/$defs/toggle"
+    },
+    "severityDefaults": {
+      "description": "Repo-wide fallback for checks that set no failOn of their own. The single lever for staged adoption.",
+      "type": "object",
+      "properties": {
+        "failOn": {
+          "description": "What a finding rated \"error\" does to the run. Default \"error\" (blocks the merge).",
+          "enum": ["error", "warn", "never"]
+        }
+      }
+    },
+    "run": {
+      "description": "How the run itself behaves, as opposed to what any single check looks for.",
+      "type": "object",
+      "properties": {
+        "reportSkipped": {
+          "description": "Whether checks that need a diff range and did not get one appear in the report as skips.",
+          "enum": ["auto", "always", "never"]
+        },
+        "onDegradedScope": {
+          "description": "What to do when a CI run wanted a diff range, could not build one, and fell back to a full scan — which silently drops every diff-only check. Never triggers outside CI.",
+          "enum": ["warn", "error", "off"]
+        },
+        "concurrency": {
+          "description": "How many checks run at once: \"auto\" (default, leaves a core free, caps at 4), a number, or \"unlimited\".",
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "enum": ["auto", "unlimited"]
+            }
+          ]
+        },
+        "heavyConcurrency": {
+          "description": "Separate cap for whole-project analysers (knip, jscpd, dpdm, tsc, grype, cspell). Default 1.",
+          "type": "number"
+        },
+        "checkTimeoutMs": {
+          "description": "Per-check timeout in ms (default 300000). On expiry the check warns and the run continues; 0 disables.",
+          "type": "number"
+        },
+        "timings": {
+          "description": "Print how long each check took.",
+          "type": "boolean"
+        },
+        "fullScanBehaviour": {
+          "description": "What checks that can work either way do with no diff range (--full, or a local run on the default branch). \"scan\" (default) reviews every tracked file; \"skip\" reports a skip.",
+          "enum": ["scan", "skip"]
+        }
+      }
+    },
+    "reporter": {
+      "description": "Where the run summary goes and what happens if it cannot get there.",
+      "type": "object",
+      "properties": {
+        "onPostFailure": {
+          "description": "What a failed post means for the run. Default \"warn\".",
+          "enum": ["warn", "error", "off"]
+        },
+        "mode": {
+          "description": "\"update\" (default) edits the previous summary; \"append\" leaves one comment per run.",
+          "enum": ["update", "append"]
+        },
+        "timeoutMs": {
+          "description": "Per-request timeout in ms (default 10000).",
+          "type": "number"
+        },
+        "retries": {
+          "description": "Attempts per request for retryable failures — 5xx, 429, network (default 3).",
+          "type": "number"
+        },
+        "maxPages": {
+          "description": "Pages of existing comments searched for the summary marker (default 10, 100 per page).",
+          "type": "number"
+        },
+        "skipWhenClean": {
+          "description": "Post nothing when the run produced no warnings and no failures.",
+          "type": "boolean"
+        },
+        "include": {
+          "description": "Trim the comment body.",
+          "type": "object",
+          "properties": {
+            "passed": {
+              "type": "boolean"
+            },
+            "skipped": {
+              "type": "boolean"
+            },
+            "details": {
+              "type": "boolean"
+            },
+            "docsLink": {
+              "type": "boolean"
+            }
           }
         }
       }
     },
-    "swift": { "$ref": "#/$defs/toggle" },
-    "kotlin": { "$ref": "#/$defs/toggle" },
-    "go": { "$ref": "#/$defs/toggle" },
-    "rust": { "$ref": "#/$defs/toggle" },
-    "csharp": { "$ref": "#/$defs/toggle" },
-    "ruby": { "$ref": "#/$defs/toggle" },
-    "php": { "$ref": "#/$defs/toggle" }
+    "commands": {
+      "description": "Quick CLI reference written by init. Informational only — ignored at runtime.",
+      "type": "object",
+      "additionalProperties": true
+    },
+    "documentation": {
+      "description": "Documentation links written by init. Informational only — ignored at runtime.",
+      "type": "object",
+      "additionalProperties": true
+    },
+    "languages": {
+      "description": "Languages detected at init time; drives which language-specific checks run.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "detect": {
+      "description": "How languages are inferred when \"languages\" is absent.",
+      "type": "object",
+      "properties": {
+        "minFiles": {
+          "description": "Source files a language needs before it counts (default 1). A marker file such as pyproject.toml includes the language regardless.",
+          "type": "integer",
+          "minimum": 1,
+          "default": 1
+        },
+        "excludePaths": {
+          "description": "Globs excluded from the language count, added to the built-in list (**/*UnitTest*/**, **/get-pip.py, **/vendor/**, **/third_party/**).",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "disable": {
+          "description": "Languages never detected, whatever the tree looks like.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "install": {
+      "description": "Which tooling is fetched, when, and what happens when it cannot be.",
+      "type": "object",
+      "properties": {
+        "strategy": {
+          "description": "\"adaptive\" fetches what this repository needs; \"eager\" fetches everything up front (closed networks, image warm-up); \"manual\" fetches nothing.",
+          "type": "string",
+          "enum": ["adaptive", "eager", "manual"],
+          "default": "adaptive"
+        },
+        "profiles": {
+          "description": "Profiles installed on top of what detection concluded.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "excludeProfiles": {
+          "description": "Profiles never installed, even when the language is detected. Wins over \"profiles\".",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "minFilesPerLanguage": {
+          "description": "Source files a language needs before its toolchain is worth downloading (default 1).",
+          "type": "integer",
+          "minimum": 1,
+          "default": 1
+        },
+        "reuseLocal": {
+          "description": "Reuse a tool already in the client's node_modules: \"compatible\" (default), \"always\", or \"off\".",
+          "type": "string",
+          "enum": ["compatible", "always", "off"],
+          "default": "compatible"
+        },
+        "onMissingTool": {
+          "description": "\"auto\" tries and skips with a reason on failure (default); \"skip\" never tries; \"error\" fails the run.",
+          "type": "string",
+          "enum": ["auto", "skip", "error"],
+          "default": "auto"
+        },
+        "offline": {
+          "description": "Forbid every network install at run time.",
+          "type": "boolean",
+          "default": false
+        },
+        "waitTimeoutMs": {
+          "description": "How long to wait for another process installing the same profile.",
+          "type": "integer",
+          "minimum": 0,
+          "default": 120000
+        },
+        "installTimeoutMs": {
+          "description": "Cap on a single install.",
+          "type": "integer",
+          "minimum": 0,
+          "default": 300000
+        },
+        "cacheDir": {
+          "description": "Where fetched tooling is kept. The path includes the pr-checkmate version.",
+          "type": "string",
+          "default": "~/.cache/pr-checkmate"
+        },
+        "prewarm": {
+          "description": "Warm the cache in postinstall. false leaves everything to the lazy path.",
+          "type": "boolean",
+          "default": true
+        },
+        "deny": {
+          "description": "Packages never fetched, whatever profile asks for them.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "lint": {
+      "description": "ESLint settings (interface name; init writes \"eslint\").",
+      "type": "object",
+      "properties": {
+        "rules": {
+          "description": "Rule overrides merged over the bundled defaults.",
+          "type": "object",
+          "additionalProperties": true
+        },
+        "ignorePatterns": {
+          "description": "Extra ignore globs.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "eslint": {
+      "description": "ESLint settings as written by init.",
+      "type": "object",
+      "properties": {
+        "rules": {
+          "description": "Rule overrides merged over the bundled defaults.",
+          "type": "object",
+          "additionalProperties": true
+        },
+        "ignorePatterns": {
+          "description": "Extra ignore globs.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "prettier": {
+      "description": "Prettier settings.",
+      "type": "object",
+      "properties": {
+        "config": {
+          "description": "Prettier options.",
+          "type": "object",
+          "additionalProperties": true
+        },
+        "rules": {
+          "description": "Prettier options as written by init.",
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "markdownlint": {
+      "description": "markdownlint settings.",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Run the check.",
+          "type": "boolean"
+        },
+        "rules": {
+          "description": "Rule overrides.",
+          "type": "object",
+          "additionalProperties": true
+        },
+        "ignores": {
+          "description": "Ignore globs.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "spellcheck": {
+      "description": "Spellcheck settings (interface name; init writes \"cspell\").",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Run the check.",
+          "type": "boolean"
+        },
+        "words": {
+          "description": "Project words to accept.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ignoreWords": {
+          "description": "Words to ignore.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ignorePaths": {
+          "description": "Paths excluded from spellchecking.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "dependency": {
+      "description": "Unused/missing dependency check.",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Run the check.",
+          "type": "boolean"
+        },
+        "ignore": {
+          "description": "Package names never reported.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "outdatedDeps": {
+      "description": "Outdated dependency check.",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Run the check.",
+          "type": "boolean"
+        },
+        "timeoutMs": {
+          "description": "Registry lookup timeout.",
+          "type": "number"
+        },
+        "ignore": {
+          "description": "Package names never reported.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "licenseCheck": {
+      "description": "License compliance check.",
+      "type": "object",
+      "properties": {
+        "allowPackages": {
+          "description": "Package names exempt from the forbidden-license check.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "allowLicenses": {
+          "description": "Extra SPDX ids treated as allowed.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "duplicate": {
+      "description": "Duplicate-code detection (jscpd).",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Run the check.",
+          "type": "boolean"
+        },
+        "minLines": {
+          "description": "Smallest clone reported, in lines.",
+          "type": "number"
+        },
+        "minTokens": {
+          "description": "Smallest clone reported, in tokens.",
+          "type": "number"
+        },
+        "ignore": {
+          "description": "Ignore globs.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "formats": {
+          "description": "Languages scanned.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "deadCode": {
+      "description": "Unused-exports report.",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Run the check.",
+          "type": "boolean"
+        },
+        "ignoreFiles": {
+          "description": "Regex sources (not globs) matched against reported file paths.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "commitlint": {
+      "description": "Conventional-commit validation of the PR title.",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Run the check.",
+          "type": "boolean"
+        },
+        "types": {
+          "description": "Allowed commit types.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ignores": {
+          "description": "Regex sources for titles to skip, e.g. release PRs.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "log": {
+      "description": "Diagnostic output — the running commentary around the run, as opposed to the summary it produces.",
+      "type": "object",
+      "properties": {
+        "level": {
+          "description": "Threshold. \"debug\" adds per-check detail.",
+          "enum": ["error", "warn", "info", "log", "debug"]
+        },
+        "format": {
+          "description": "\"pretty\" (default outside CI), \"ci\" (timestamp + level, default in CI), or \"json\" (JSON Lines).",
+          "enum": ["pretty", "ci", "json"]
+        },
+        "color": {
+          "description": "\"auto\" (default) honours TTY plus NO_COLOR / FORCE_COLOR.",
+          "enum": ["auto", "always", "never"]
+        },
+        "timestamps": {
+          "description": "Prefix each line with an ISO timestamp. Defaults to on only in \"ci\" format.",
+          "type": "boolean"
+        },
+        "stderrLevels": {
+          "description": "Levels routed to stderr. Default [\"error\", \"warn\"].",
+          "type": "array",
+          "items": {
+            "enum": ["error", "warn", "info", "log", "debug"]
+          }
+        },
+        "sampleLimit": {
+          "description": "Sample lines printed per finding (default 3).",
+          "type": "number"
+        }
+      }
+    }
   },
   "$defs": {
     "toggle": {
       "type": "object",
-      "properties": { "enabled": { "type": "boolean" } }
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "togglePaths": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "ignorePaths": {
+          "description": "Globs excluded from scanning entirely.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
     },
     "toggleSeverity": {
       "type": "object",
       "properties": {
-        "enabled": { "type": "boolean" },
-        "severity": { "enum": ["error", "warn"] }
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "severity": {
+          "enum": ["error", "warn"],
+          "default": "warn"
+        }
       }
     },
     "toggleIgnore": {
       "type": "object",
       "properties": {
-        "enabled": { "type": "boolean" },
-        "ignore": { "type": "array", "items": { "type": "string" } }
+        "enabled": {
+          "type": "boolean"
+        },
+        "ignore": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "failOn": {
+          "description": "What a finding rated \"error\" does to the run. Default \"error\" (blocks the merge).",
+          "enum": ["error", "warn", "never"]
+        },
+        "severityOverrides": {
+          "description": "Re-level individual findings by case-insensitive label substring; \"off\" drops one entirely.",
+          "type": "object",
+          "additionalProperties": {
+            "enum": ["error", "warn", "off"]
+          }
+        }
+      }
+    },
+    "patternCheck": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "ignore": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "failOn": {
+          "description": "What a finding rated \"error\" does to the run. Default \"error\" (blocks the merge).",
+          "enum": ["error", "warn", "never"]
+        },
+        "severityOverrides": {
+          "description": "Re-level individual findings by case-insensitive label substring; \"off\" drops one entirely.",
+          "type": "object",
+          "additionalProperties": {
+            "enum": ["error", "warn", "off"]
+          }
+        },
+        "ignorePaths": {
+          "description": "Globs excluded from scanning entirely.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "disablePatterns": {
+          "description": "Built-in rules to switch off by label substring — the rule never runs.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "commentHandling": {
+          "description": "\"language\" (default) strips comments per file extension; \"legacy\" strips # and // everywhere; \"off\" scans commented-out code too.",
+          "enum": ["language", "legacy", "off"]
+        },
+        "extraPatterns": {
+          "description": "Project rules evaluated alongside the built-ins, with the same comment handling and grouping.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["label", "pattern"],
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "pattern": {
+                "description": "Regex source matched against an added diff line.",
+                "type": "string"
+              },
+              "severity": {
+                "enum": ["error", "warn"]
+              },
+              "view": {
+                "description": "\"code\" matches with string literals blanked out — use it to find a call, not text inside a string.",
+                "enum": ["raw", "code"]
+              },
+              "flags": {
+                "description": "Regex flags; g and y are stripped.",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "toggleIgnorePaths": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "ignore": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "failOn": {
+          "description": "What a finding rated \"error\" does to the run. Default \"error\" (blocks the merge).",
+          "enum": ["error", "warn", "never"]
+        },
+        "severityOverrides": {
+          "description": "Re-level individual findings by case-insensitive label substring; \"off\" drops one entirely.",
+          "type": "object",
+          "additionalProperties": {
+            "enum": ["error", "warn", "off"]
+          }
+        },
+        "ignorePaths": {
+          "description": "Globs excluded from scanning entirely.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       }
     }
   }

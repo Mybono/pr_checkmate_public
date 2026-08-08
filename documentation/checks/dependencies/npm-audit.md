@@ -40,11 +40,17 @@ Both conditions must hold:
 | Key | Type | Default | Meaning |
 |---|---|---|---|
 | `security.npm-audit.enabled` | boolean | `true` | Set `false` to skip the check entirely |
-| `security.npm-audit.auditLevel` | `info` \| `low` \| `moderate` \| `high` \| `critical` | `"moderate"` | Minimum severity that counts. Anything below it is ignored |
+| `security.npm-audit.auditLevel` | `info` \| `low` \| `moderate` \| `high` \| `critical` | `"high"` | Minimum severity that counts. Anything below it is ignored |
 | `security.npm-audit.ignore` | string[] | `[]` | Package names that never block, even when direct and at/above `auditLevel`. Still reported as warnings |
 
 Severity is ranked `info < low < moderate < high < critical`, and the comparison is inclusive — the
-default `moderate` blocks on `moderate`, `high`, and `critical`.
+default `high` blocks on `high` and `critical`.
+
+The default used to be `moderate` and was raised deliberately. A moderate advisory in a direct
+dependency frequently has no fix available, so blocking on it stops a team releasing anything at
+all, indefinitely, for a risk they have usually already accepted — and a gate that cannot be
+satisfied gets switched off, taking the `high` findings with it. Set `"moderate"` to restore the
+stricter line.
 
 ### Examples
 

@@ -13,8 +13,20 @@ duplicate map keys, tabs used as indentation, and other structural problems. Mul
 (`---`-separated) have each document parsed and reported independently.
 
 Unlike every other check in this category, **YAML Lint is `blocking`**, not `informational` — a YAML
-syntax error is cheap to detect and unambiguous, so it runs first and, by default, fails the run
-rather than merely warning.
+syntax error is cheap to detect and unambiguous, so it runs first.
+
+What blocks, though, is narrower than what is reported. The parser distinguishes two kinds of
+problem and so does this check:
+
+- **Errors** — the document cannot be parsed: a syntax error, a tab used for indentation, a
+  duplicate map key (which silently discards a value). The file is broken for whatever reads it
+  next, so these **fail the run**.
+- **Warnings** — the document parsed and the parser has a reservation about it, such as an
+  unsupported `%YAML` version directive. These are **advisory**.
+
+Both used to fail. Blocking a merge on a file that parses correctly is the kind of strictness that
+gets a whole check switched off, and a check nobody runs protects nobody. Setting
+`yamlLint.severity` still overrides both at once.
 
 | Property | Value |
 |---|---|

@@ -3,6 +3,9 @@
 
   "//": "PR CheckMate configuration template. Place this file at your repository root as 'pr-checkmate.json'. Every value below is the built-in DEFAULT — delete any block you do not want to change, because the file is deep-merged with the defaults. Keys starting with '//' are comments and are ignored. Full per-check reference: https://github.com/Mybono/pr_checkmate_public",
 
+  "//excludePaths": "FILES AND FOLDERS NO CHECK EVER LOOKS AT, as globs: \"src/generated/**\" for a whole folder, \"vendor/legacy.ts\" for one file. Applied where every check gets its file list, so the rule is written once rather than per check. Use this before reaching for a per-check ignore; use 'ignoreDirs' only when you mean a directory NAME wherever it appears.",
+  "excludePaths": [],
+
   "//1-scope": "WHERE CHECKS LOOK. 'sourcePath' may be a string or an array. 'ignoreDirs' REPLACES the default ignore list rather than extending it, so copy the defaults you still want.",
   "sourcePath": ".",
 
@@ -70,8 +73,8 @@
     "gitleaks": { "enabled": true },
     "npm-audit": {
       "enabled": true,
-      "//auditLevel": "info | low | moderate | high | critical. Only DIRECT dependencies at or above this level block.",
-      "auditLevel": "moderate",
+      "//auditLevel": "info | low | moderate | high | critical. Only DIRECT dependencies at or above this level block. Default 'high': a moderate CVE often has no fix available, and blocking on it stops releases indefinitely for a risk most teams have already accepted. Set 'moderate' for a stricter line.",
+      "auditLevel": "high",
       "//ignore": "Package names that never block, but are still reported as warnings.",
       "ignore": []
     }
@@ -79,7 +82,11 @@
   "diffSecurity": { "enabled": true, "ignore": [] },
   "workflowSecurity": { "enabled": true, "ignore": [] },
   "dockerfileSecurity": { "enabled": true, "ignore": [] },
-  "sensitiveFileGuard": { "enabled": true },
+  "//sensitiveFileGuard": "Flags .env files, private keys, CI config and lockfiles. 'ignorePaths' excuses ONE file by glob (a .pem test fixture); 'ignore' silences a whole CATEGORY and would excuse the next real key too — reach for ignorePaths first.",
+  "sensitiveFileGuard": {
+    "enabled": true,
+    "ignorePaths": []
+  },
   "migrationSafety": {
     "enabled": true,
     "severity": "warn",
@@ -264,7 +271,33 @@
     "ignores": []
   },
 
+  "//7b-install": "WHICH TOOLING IS FETCHED. The package ships ~233 MB and no repository needs all of it. \"adaptive\" (default) fetches only what this repository turns out to need; \"eager\" fetches everything up front, which is what a closed network or a prebuilt image wants and is also the exact previous behaviour; \"manual\" fetches nothing because the tools are already on the runner. A missing tool never fails silently: the affected checks skip with a reason in the report, or fail the run outright with onMissingTool: \"error\".",
+  "install": {
+    "strategy": "adaptive",
+    "//profiles": "Extra profiles beyond what detection concluded, for generated code or a monorepo layout detection cannot see through. Names: core, js, python, cpp, spellcheck, markdown, commitlint, duplicate.",
+    "profiles": [],
+    "//excludeProfiles": "Never install these, even when the language is detected. Wins over 'profiles'.",
+    "excludeProfiles": [],
+    "//minFilesPerLanguage": "Source files a language needs before its toolchain is worth downloading. Separate from detect.minFiles: running a check that then skips is free, downloading a toolchain is not.",
+    "minFilesPerLanguage": 1,
+    "//onMissingTool": "auto | skip | error. In a closed contour a silent skip is not acceptable — use 'error'.",
+    "onMissingTool": "auto",
+    "//offline": "Forbid every network install at run time. Pre-warm with: npx pr-checkmate install --all",
+    "offline": false,
+    "//cacheDir": "Where fetched tooling is kept; the path includes the pr-checkmate version. Cache it in CI or the tooling is fetched on every run.",
+    "cacheDir": "~/.cache/pr-checkmate",
+    "//deny": "Packages never fetched, whatever profile asks for them.",
+    "deny": []
+  },
+
   "//8-languages": "Language is auto-detected. A check skips when its language is absent, and runner-dependency tools skip when the binary is missing — so leaving everything enabled is safe. TypeScript and JavaScript have no block of their own: configure them through 'eslint', 'prettier' and 'typecheck' above.",
+  "//detect": "HOW that auto-detection reads the tree, when 'languages' is not set explicitly. Generated reports, vendored code and marker files are already excluded; these knobs are for the cases the built-in rules get wrong in your repo. 'minFiles' is how many source files a language needs to count (a marker file such as pyproject.toml includes it regardless). 'excludePaths' ADDS to the built-in exclusions rather than replacing them. 'disable' drops a language outright.",
+  "detect": {
+    "minFiles": 1,
+    "excludePaths": [],
+    "disable": []
+  },
+
   "python": {
     "enabled": true,
     "//typeChecker": "mypy | pyright — needs the tool on the runner.",

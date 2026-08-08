@@ -49,10 +49,14 @@ a workflow is as noteworthy as adding one.
 | Key | Type | Default | Meaning |
 |---|---|---|---|
 | `sensitiveFileGuard.enabled` | boolean | `true` | Set `false` to skip the check |
+| `sensitiveFileGuard.ignorePaths` | glob[] | `[]` | Files this check never looks at |
+| `sensitiveFileGuard.failOn` | `error` \| `warn` \| `never` | `"error"` | What a finding rated `error` does to the run |
+| `sensitiveFileGuard.severityOverrides` | map | `{}` | Re-level one category by its label |
 
-That is the whole surface. The category list and its patterns are fixed in the source, and unlike
-[Diff Security](diff-security.md) there is **no `ignore` key** — a category cannot be muted
-individually.
+Reach for `ignorePaths` when a single file is a false positive — a `.pem` used as a test fixture, a
+committed `.env.example`. Reach for `severityOverrides` when a whole category is wrong for your
+repository. The distinction matters: muting "Private keys and certificates" to excuse one fixture
+also excuses the next real key somebody commits, while a path exclusion does not.
 
 ### Example
 
