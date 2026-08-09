@@ -143,11 +143,12 @@ machine — ShellCheck among them — are inside, so they stop silently skipping
 version tag (`:2.0.0`) for a reproducible pipeline; `--user` keeps files that formatters
 rewrite owned by you rather than by root.
 
-Verify what you pulled — the image carries build provenance signed by the workflow
-that produced it:
+Verify what you pulled — the image carries SLSA provenance and an SBOM, attached to
+the image itself in the registry:
 
 ```bash
-gh attestation verify oci://ghcr.io/mybono/pr-checkmate:2 --owner Mybono
+docker buildx imagetools inspect ghcr.io/mybono/pr-checkmate:2 \
+  --format '{{ json .Provenance }}'
 ```
 
 [All tags →](https://github.com/users/Mybono/packages/container/package/pr-checkmate)
