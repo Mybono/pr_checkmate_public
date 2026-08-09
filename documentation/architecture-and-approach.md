@@ -89,8 +89,8 @@ Two real, dated measurements rather than a marketing estimate:
 
 - **Delta mode in production CI.** PR #153 ("Minor update", 6 files changed,
   +1323/−7 lines) — the `PR CheckMate (self-check)` job's "Run pr-checkmate on itself"
-  step ran in **15 seconds**, in GitHub Actions, 2026-08-01
-  (run [30697824260](https://github.com/Mybono/pr_checkmate/actions/runs/30697824260)).
+  step ran in **15 seconds**, in GitHub Actions, 2026-08-01 (run 30697824260 — the
+  development repository is private, so the number is quoted rather than linked).
   This is the tool checking only the changed files, in its own dogfooding CI.
 - **Full-project scan, locally.** The same package's own ~700-file repository,
   scanned end to end with `pr-checkmate all --full` on 2026-08-01: **~18 seconds**

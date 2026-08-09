@@ -32,13 +32,19 @@ safe to re-run — it updates the existing file rather than replacing it.
 
 ### If you only run it in CI
 
-Many projects never add PR CheckMate to their `package.json` and instead invoke it on the fly:
+Many projects never add PR CheckMate to their `package.json` and instead invoke it on the fly.
+For them the container is the better way in — `npx` with nothing installed downloads 547 MB on
+every job, and unpinned it lets a major release arrive without a line changing:
 
 ```yaml
-- run: npx pr-checkmate
+- run: |
+    docker run --rm -v "$PWD:/repo" --user "$(id -u):$(id -g)" \
+      -e GITHUB_TOKEN ghcr.io/mybono/pr-checkmate:2 all
 ```
 
-That works, but there is no `node_modules` to generate a config from, so these projects get the
+[Tags and verification →](https://github.com/users/Mybono/packages/container/package/pr-checkmate)
+
+Either way there is no `node_modules` to generate a config from, so these projects get the
 defaults and have no way to tune them. Download the template from the public repository instead:
 
 ```bash

@@ -6,7 +6,7 @@
   "//excludePaths": "FILES AND FOLDERS NO CHECK EVER LOOKS AT, as globs: \"src/generated/**\" for a whole folder, \"vendor/legacy.ts\" for one file. Applied where every check gets its file list, so the rule is written once rather than per check. Use this before reaching for a per-check ignore; use 'ignoreDirs' only when you mean a directory NAME wherever it appears.",
   "excludePaths": [],
 
-  "//1-scope": "WHERE CHECKS LOOK. 'sourcePath' may be a string or an array. 'ignoreDirs' REPLACES the default ignore list rather than extending it, so copy the defaults you still want.",
+  "//1-scope": "WHERE CHECKS LOOK. 'sourcePath' may be a string or an array. 'ignoreDirs' REPLACES the default ignore list rather than extending it, so copy the defaults you still want — the defaults cover build output, dependency and report directories, plus generated 'graphify-out'. Test directories are deliberately NOT in it: test code is still linted, type-checked and formatted, and is excluded per-check where it is noise (see 'duplicate', 'deadCode', 'diffSecurity' and the bundled cspell ignores).",
   "sourcePath": ".",
 
   "//2-severity": "UNIVERSAL ON/OFF SWITCH, keyed by a check's DISPLAY NAME (see //check-names below). 'off' removes the check before it runs; 'error' promotes a warning to a failure; 'warn' demotes a failure to a warning. This works for every check, including those with no 'enabled' flag of their own.",
@@ -79,7 +79,19 @@
       "ignore": []
     }
   },
-  "diffSecurity": { "enabled": true, "ignore": [] },
+  "//diffSecurity": "'ignorePaths' skips whole files by glob; setting it REPLACES the test-path defaults shown here, which exist because a security test's job is to contain the exact constructs this check hunts for. 'ignore' silences a finding LABEL everywhere instead.",
+  "diffSecurity": {
+    "enabled": true,
+    "ignore": [],
+    "ignorePaths": [
+      "**/__tests__/**",
+      "**/__mocks__/**",
+      "**/*.test.*",
+      "**/*.spec.*",
+      "**/test/**",
+      "**/tests/**"
+    ]
+  },
   "workflowSecurity": { "enabled": true, "ignore": [] },
   "dockerfileSecurity": { "enabled": true, "ignore": [] },
   "//sensitiveFileGuard": "Flags .env files, private keys, CI config and lockfiles. 'ignorePaths' excuses ONE file by glob (a .pem test fixture); 'ignore' silences a whole CATEGORY and would excuse the next real key too — reach for ignorePaths first.",
@@ -259,7 +271,7 @@
     "enabled": true,
     "//words": "Project vocabulary that should not be reported as misspelled. Appended to the bundled list.",
     "words": [],
-    "//ignorePaths": "Globs to skip (e.g. \"CHANGELOG.md\", \"generated/**\"). Anchored to the repository root, so a pattern never matches a directory ABOVE the checkout.",
+    "//ignorePaths": "Globs to skip, APPENDED to the bundled list — which already covers CHANGELOG.md (assembled from commit subjects, so its typos are unfixable), test and mock paths, lockfiles and minified bundles. Anchored to the repository root, so a pattern never matches a directory ABOVE the checkout.",
     "ignorePaths": [],
     "ignoreRegExpList": [],
     "//dictionaries": "Extra cspell dictionaries to enable, on top of the bundled fr, ru, uk, he, es. Unknown names are ignored.",
@@ -268,6 +280,7 @@
   },
   "markdownlint": {
     "rules": {},
+    "//ignores": "APPENDED to the built-in list: node_modules, dist, coverage, graphify-out, .claude and CHANGELOG.md.",
     "ignores": []
   },
 

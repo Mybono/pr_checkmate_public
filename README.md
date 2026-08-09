@@ -10,6 +10,7 @@
 ![cspell](https://img.shields.io/badge/cspell-10-4285F4)
 ![jscpd](https://img.shields.io/badge/jscpd-5-blue)
 [![API Docs](https://img.shields.io/badge/API_docs-TypeDoc-9600FF?logo=readthedocs&logoColor=white)](https://pr-checkmate-docs.pages.dev)
+[![Container](https://img.shields.io/badge/ghcr.io-pr--checkmate-2496ED?logo=docker&logoColor=white)](https://github.com/users/Mybono/packages/container/package/pr-checkmate)
 
 > PR CheckMate is a security-first PR gate: secret scanning, dependency
 > vulnerability checks, and a signed SBOM + independent VirusTotal scan on
@@ -121,12 +122,37 @@ npx pr-checkmate all --full
 npx pr-checkmate lint --full
 ```
 
-The 16 checks that only make sense on a diff (PR Size, Diff Security, Merge Conflict, Custom
-Rules, Banned Imports, the git-diff family) drop out of the report on a full scan. The
+Only three checks genuinely need a diff and drop out of a full scan — PR Size, Missing
+Tests and Lockfile Drift. Everything else, the whole security family included, scans the
+working tree when there is no diff to read. The
 [per-check reference](https://github.com/Mybono/pr_checkmate_public/blob/main/documentation/checks/INDEX.md)
 spells out the rules under "Review scope".
 
 ### Running in CI without installing
+
+**Use the container.** With no `node_modules` to reuse, a cold `npx` downloads 547 MB and
+takes about five minutes — on every job. The image carries the whole toolchain already:
+
+```bash
+docker run --rm -v "$PWD:/repo" --user "$(id -u):$(id -g)" \
+  ghcr.io/mybono/pr-checkmate:latest all
+```
+
+161 MB pulled once and cached by the runner, and the checks that need a binary on the
+machine — ShellCheck among them — are inside, so they stop silently skipping. Pin the
+version tag (`:2.0.0`) for a reproducible pipeline; `--user` keeps files that formatters
+rewrite owned by you rather than by root.
+
+Verify what you pulled — the image carries build provenance signed by the workflow
+that produced it:
+
+```bash
+gh attestation verify oci://ghcr.io/mybono/pr-checkmate:2 --owner Mybono
+```
+
+[All tags →](https://github.com/users/Mybono/packages/container/package/pr-checkmate)
+
+The `npx` route still works, and the rest of this section is about making it comfortable.
 
 Plenty of repos never add pr-checkmate to `package.json` and call it on the fly in CI
 instead (`npx pr-checkmate`). That works, but there is no `node_modules` to generate a

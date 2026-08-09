@@ -30,6 +30,21 @@ tell you what needs changing.
 npx pr-checkmate all --full
 ```
 
+**On CI, prefer the container.** With no `node_modules` to reuse, `npx` downloads
+547 MB and takes about five minutes on every job, and an unpinned `npx` lets a major
+release arrive without a line changing anywhere:
+
+```bash
+docker run --rm -v "$PWD:/repo" --user "$(id -u):$(id -g)" \
+  ghcr.io/mybono/pr-checkmate:2 all
+```
+
+161 MB pulled, the tag pinned to a major, and the binaries some checks need —
+ShellCheck among them — are inside instead of silently skipping for want of an
+install on the runner. `npx pr-checkmate init` scaffolds whichever workflow suits
+your repository: the container one when pr-checkmate is not a dependency, the npm
+one when it is. [Tags and verification →](https://github.com/users/Mybono/packages/container/package/pr-checkmate)
+
 You cannot tune a report you have not seen. Guessing produces configs that mute real findings and
 leave the noisy ones on.
 
