@@ -1,6 +1,6 @@
 # Leftover Debug
 
-[Checks Index](../INDEX.md) · [Custom Rules](custom-rules.md) · [Diff Smells](diff-smell.md) · [Large Files](large-files.md) · **Leftover Debug** · [Lockfile Drift](lockfile-drift.md) · [Merge Conflict](merge-conflict.md) · [Missing Tests](missing-tests.md) · [TODO/FIXME](todo-fixme.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · [Custom Rules](custom-rules.md) · [Diff Smells](diff-smell.md) · [Large Files](large-files.md) · **Leftover Debug** · [Lockfile Drift](lockfile-drift.md) · [Merge Conflict](merge-conflict.md) · [Missing Tests](missing-tests.md) · [TODO/FIXME](todo-fixme.md)
 
 ---
 
@@ -86,7 +86,3 @@ Or via the universal override:
 - Only added lines are scanned, so a `print()` call that predates the PR is not reported.
 - A crash while reading the diff (e.g. git unavailable) is reported as `skip('diff unavailable')`
   rather than a failure.
-
----
-
-[Checks Index](../INDEX.md) · [Custom Rules](custom-rules.md) · [Diff Smells](diff-smell.md) · [Large Files](large-files.md) · **Leftover Debug** · [Lockfile Drift](lockfile-drift.md) · [Merge Conflict](merge-conflict.md) · [Missing Tests](missing-tests.md) · [TODO/FIXME](todo-fixme.md)

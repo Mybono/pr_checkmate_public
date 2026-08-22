@@ -1,6 +1,6 @@
 # NPM Audit
 
-[Checks Index](../INDEX.md) · [Banned Imports](banned-imports.md) · [Circular Deps](circular-deps.md) · [Dependencies](dependencies.md) · [Grype Scan](grype-scan.md) · [License Check](license-check.md) · **NPM Audit** · [Outdated Deps](outdated-deps.md) · [Vuln Scan](vuln-scan.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · [Banned Imports](banned-imports.md) · [Circular Deps](circular-deps.md) · [Dependencies](dependencies.md) · [Grype Scan](grype-scan.md) · [License Check](license-check.md) · **NPM Audit** · [Outdated Deps](outdated-deps.md) · [Vuln Scan](vuln-scan.md)
 
 ---
 
@@ -120,7 +120,3 @@ the dependency current instead of rolling it back, and is preferable to adding t
   health from a scan that never ran.
 - For ecosystems other than npm, use [Vuln Scan](vuln-scan.md) (osv-scanner) or
   [Grype Scan](grype-scan.md).
-
----
-
-[Checks Index](../INDEX.md) · [Banned Imports](banned-imports.md) · [Circular Deps](circular-deps.md) · [Dependencies](dependencies.md) · [Grype Scan](grype-scan.md) · [License Check](license-check.md) · **NPM Audit** · [Outdated Deps](outdated-deps.md) · [Vuln Scan](vuln-scan.md)

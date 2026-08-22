@@ -1,6 +1,6 @@
 # Circular Deps
 
-[Checks Index](../INDEX.md) · [Banned Imports](banned-imports.md) · **Circular Deps** · [Dependencies](dependencies.md) · [Grype Scan](grype-scan.md) · [License Check](license-check.md) · [NPM Audit](npm-audit.md) · [Outdated Deps](outdated-deps.md) · [Vuln Scan](vuln-scan.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · [Banned Imports](banned-imports.md) · **Circular Deps** · [Dependencies](dependencies.md) · [Grype Scan](grype-scan.md) · [License Check](license-check.md) · [NPM Audit](npm-audit.md) · [Outdated Deps](outdated-deps.md) · [Vuln Scan](vuln-scan.md)
 
 ---
 
@@ -86,6 +86,9 @@ Findings are already advisory by default; to gate merges on them set
 
 ## Notes
 
+- The file graph comes from `git ls-files`. If git cannot produce it, the check reports
+  `skip — git unavailable` rather than passing on an empty graph — an empty graph has no cycles by
+  construction. See [When git cannot answer](../concepts.md#when-git-cannot-answer).
 - Cycles are read from dpdm's JSON report (`-o`), whose `circulars` array is the authoritative list —
   not from its console output. Every cycle is written to the log as `a.ts -> b.ts` so it can be
   traced; the first ten are listed, with a count of the rest.
@@ -99,7 +102,3 @@ Findings are already advisory by default; to gate merges on them set
 - Type-only cycles (`import type`) are erased at compile time and are harmless at runtime, but dpdm
   analyses the source graph and may still report them. Keep the check at its default `warn` if that
   is noisy for your codebase, or list the files in `circularDeps.ignore`.
-
----
-
-[Checks Index](../INDEX.md) · [Banned Imports](banned-imports.md) · **Circular Deps** · [Dependencies](dependencies.md) · [Grype Scan](grype-scan.md) · [License Check](license-check.md) · [NPM Audit](npm-audit.md) · [Outdated Deps](outdated-deps.md) · [Vuln Scan](vuln-scan.md)

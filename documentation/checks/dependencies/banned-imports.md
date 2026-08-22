@@ -1,6 +1,6 @@
 # Banned Imports
 
-[Checks Index](../INDEX.md) · **Banned Imports** · [Circular Deps](circular-deps.md) · [Dependencies](dependencies.md) · [Grype Scan](grype-scan.md) · [License Check](license-check.md) · [NPM Audit](npm-audit.md) · [Outdated Deps](outdated-deps.md) · [Vuln Scan](vuln-scan.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · **Banned Imports** · [Circular Deps](circular-deps.md) · [Dependencies](dependencies.md) · [Grype Scan](grype-scan.md) · [License Check](license-check.md) · [NPM Audit](npm-audit.md) · [Outdated Deps](outdated-deps.md) · [Vuln Scan](vuln-scan.md)
 
 ---
 
@@ -30,7 +30,7 @@ spreading without demanding an immediate repo-wide migration.
 
 > Despite the `informational` phase, a ban declared with `"severity": "error"` returns `fail` and
 > **does fail the run**. The phase governs execution order, not whether the check can block — see
-> [How checks are grouped](../INDEX.md#how-checks-are-grouped).
+> [How checks are grouped](../concepts.md#how-checks-are-grouped).
 
 ## When it applies
 
@@ -94,13 +94,12 @@ Or switch the check off completely:
 
 ## Notes
 
+- When git cannot list the changed files, the check reports `skip — git unavailable` rather than a
+  pass. A banned import is not absent just because the diff could not be read; see
+  [When git cannot answer](../concepts.md#when-git-cannot-answer).
 - Findings are grouped by `message`, and the log prints up to **3 example lines** per group so a
   large PR does not flood the report. The count in the summary is the full total.
 - Each matched line is truncated to 100 characters in the log.
 - When the diff cannot be read the check returns `skip('diff unavailable')` rather than failing.
 - Detection is line-based pattern matching, not import resolution. A dynamic
   `await import(pkgName)` built from a variable is not caught.
-
----
-
-[Checks Index](../INDEX.md) · **Banned Imports** · [Circular Deps](circular-deps.md) · [Dependencies](dependencies.md) · [Grype Scan](grype-scan.md) · [License Check](license-check.md) · [NPM Audit](npm-audit.md) · [Outdated Deps](outdated-deps.md) · [Vuln Scan](vuln-scan.md)

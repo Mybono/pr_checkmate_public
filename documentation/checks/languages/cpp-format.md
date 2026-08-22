@@ -1,6 +1,11 @@
 # C++ Format
 
-[Checks Index](../INDEX.md) · [ESLint](eslint.md) · [TypeScript](typecheck.md) · [Prettier](prettier.md) · [Ruff Lint](python-lint.md) · [Ruff Format](python-format.md) · [Python Types](python-typecheck.md) · **C++ Format** · [SwiftLint](swift-lint.md) · [ktlint](kotlin-lint.md) · [Go Vet](go-lint.md) · [Go Format](go-format.md) · [Clippy](rust-lint.md) · [Rustfmt](rust-format.md) · [C# Format](csharp-format.md) · [RuboCop](ruby-lint.md) · [PHP CS Fixer](php-format.md) · [ShellCheck](shellcheck.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · [ESLint](eslint.md) · [TypeScript](typecheck.md) ·
+[Prettier](prettier.md) · [Ruff Lint](python-lint.md) · [Ruff Format](python-format.md) ·
+[Python Types](python-typecheck.md) · **C++ Format** · [SwiftLint](swift-lint.md) · [ktlint](kotlin-lint.md) ·
+[Go Vet](go-lint.md) · [Go Format](go-format.md) · [Clippy](rust-lint.md) · [Rustfmt](rust-format.md) ·
+[C# Format](csharp-format.md) · [RuboCop](ruby-lint.md) · [PHP CS Fixer](php-format.md) ·
+[ShellCheck](shellcheck.md)
 
 ---
 
@@ -41,11 +46,15 @@ Both of the following must hold:
    `.c++`/`.hpp`/`.hh`/`.hxx` file (plain `.c`/`.h` files don't count toward language detection,
    but are still linted once C++ is detected some other way)
 
-File discovery is a bespoke `git diff`/`git ls-files` call built into this check rather than the
-shared target resolver every other language check uses — in a PR it diffs
-`baseSha..headSha` (added/copied/modified/renamed only) for the extensions above; outside a PR
-it lists every tracked matching file. **`sourcePath` and `ignoreDirs` are not applied** when
-picking C/C++ files, which is a real difference from every other check on this page.
+File discovery goes through the shared target resolver, like every other language check: in a PR
+it diffs `baseSha..headSha` (added/copied/modified/renamed only) for the extensions above; outside
+a PR it lists every tracked matching file. `sourcePath`, `ignoreDirs` and `excludePaths` all apply.
+
+This check used to run its own `git` call and honour none of them, which is worth knowing if you
+are upgrading: on a repository vendoring third-party C++ it scanned the vendored tree too — 403
+files instead of 56 in the case that found it — and in `write` mode clang-format was rewriting
+sources the repository does not own. If you added a `cpp.enabled: false` or a `severity` override
+to work around that, it is no longer needed.
 
 ## Configuration
 
@@ -87,7 +96,3 @@ Or:
 - In check mode (`ctx.write` false), unformatted files return
   `warn('<N> file(s) need formatting (run with write to fix)')`; the `-i` rewrite pass itself
   failing also returns `warn`, never `fail`.
-
----
-
-[Checks Index](../INDEX.md) · [ESLint](eslint.md) · [TypeScript](typecheck.md) · [Prettier](prettier.md) · [Ruff Lint](python-lint.md) · [Ruff Format](python-format.md) · [Python Types](python-typecheck.md) · **C++ Format** · [SwiftLint](swift-lint.md) · [ktlint](kotlin-lint.md) · [Go Vet](go-lint.md) · [Go Format](go-format.md) · [Clippy](rust-lint.md) · [Rustfmt](rust-format.md) · [C# Format](csharp-format.md) · [RuboCop](ruby-lint.md) · [PHP CS Fixer](php-format.md) · [ShellCheck](shellcheck.md)

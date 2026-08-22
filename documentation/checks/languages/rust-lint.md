@@ -1,6 +1,11 @@
 # Clippy
 
-[Checks Index](../INDEX.md) · [ESLint](eslint.md) · [TypeScript](typecheck.md) · [Prettier](prettier.md) · [Ruff Lint](python-lint.md) · [Ruff Format](python-format.md) · [Python Types](python-typecheck.md) · [C++ Format](cpp-format.md) · [SwiftLint](swift-lint.md) · [ktlint](kotlin-lint.md) · [Go Vet](go-lint.md) · [Go Format](go-format.md) · **Clippy** · [Rustfmt](rust-format.md) · [C# Format](csharp-format.md) · [RuboCop](ruby-lint.md) · [PHP CS Fixer](php-format.md) · [ShellCheck](shellcheck.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · [ESLint](eslint.md) · [TypeScript](typecheck.md) ·
+[Prettier](prettier.md) · [Ruff Lint](python-lint.md) · [Ruff Format](python-format.md) ·
+[Python Types](python-typecheck.md) · [C++ Format](cpp-format.md) · [SwiftLint](swift-lint.md) ·
+[ktlint](kotlin-lint.md) · [Go Vet](go-lint.md) · [Go Format](go-format.md) · **Clippy** ·
+[Rustfmt](rust-format.md) · [C# Format](csharp-format.md) · [RuboCop](ruby-lint.md) ·
+[PHP CS Fixer](php-format.md) · [ShellCheck](shellcheck.md)
 
 ---
 
@@ -21,7 +26,7 @@ it passes without invoking `cargo clippy`. This mirrors [Go Vet](go-lint.md).
 | CLI command | `npx pr-checkmate rust-lint` |
 | Config key | `rust` |
 | Toolchain | Runner — requires the Rust toolchain (`cargo` + the `clippy` component) on the runner's `PATH`; not bundled |
-| Source | `src/core/checks/languages/rust-lint.ts` |
+| Source | `src/core/checks/languages/external-checks.ts` (engine: `external-runner.ts`) |
 
 ## When it applies
 
@@ -91,7 +96,3 @@ This also disables [Rustfmt](rust-format.md). To disable only this check:
 - On findings, the log prints the first 10 matching lines, then `... and N more`; the returned summary
   is a diagnostic count, e.g. `3 clippy diagnostic(s)`, falling back to `unknown clippy diagnostic(s)`
   if no line matched the pattern despite a non-zero exit.
-
----
-
-[Checks Index](../INDEX.md) · [ESLint](eslint.md) · [TypeScript](typecheck.md) · [Prettier](prettier.md) · [Ruff Lint](python-lint.md) · [Ruff Format](python-format.md) · [Python Types](python-typecheck.md) · [C++ Format](cpp-format.md) · [SwiftLint](swift-lint.md) · [ktlint](kotlin-lint.md) · [Go Vet](go-lint.md) · [Go Format](go-format.md) · **Clippy** · [Rustfmt](rust-format.md) · [C# Format](csharp-format.md) · [RuboCop](ruby-lint.md) · [PHP CS Fixer](php-format.md) · [ShellCheck](shellcheck.md)

@@ -1,6 +1,6 @@
 # YAML Lint
 
-[Checks Index](../INDEX.md) · [Broken Symlinks](symlinks.md) · [Case Collision](case-collision.md) · [Config Validation](config-validation.md) · [Coverage](coverage.md) · [Dead Code](dead-code.md) · [Duplicate Code](duplicate-code.md) · [License Header](license-header.md) · [Markdown](markdown-lint.md) · [Spellcheck](spellcheck.md) · **YAML Lint**
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · [Broken Symlinks](symlinks.md) · [Case Collision](case-collision.md) · [Config Validation](config-validation.md) · [Coverage](coverage.md) · [Dead Code](dead-code.md) · [Duplicate Code](duplicate-code.md) · [License Header](license-header.md) · [Markdown](markdown-lint.md) · [Spellcheck](spellcheck.md) · **YAML Lint**
 
 ---
 
@@ -103,13 +103,9 @@ Or remove it from the run entirely by display name:
   logged individually, with `... and N more` appended beyond that — the same convention as
   [License Header](license-header.md) and [Config Validation](config-validation.md).
 - `yamlLint.ignore` filters by **file path** (standard glob matching), which is different from the
-  `<check>.ignore` convention described in the [Checks Index](../INDEX.md#configuring-any-check) for
+  `<check>.ignore` convention described in the [Checks Index](../concepts.md#configuring-any-check) for
   checks like `diffSecurity` and `workflowSecurity`, where `ignore` matches a *finding label* as a
   substring instead. For YAML Lint, `ignore` means "skip this file," full stop.
 - Both `yamlLint.severity` and the universal `severity: { "YAML Lint": … }` override achieve the same
   result; `yamlLint.severity` is this check's own dedicated key, in addition to the universal
   mechanism every check supports.
-
----
-
-[Checks Index](../INDEX.md) · [Broken Symlinks](symlinks.md) · [Case Collision](case-collision.md) · [Config Validation](config-validation.md) · [Coverage](coverage.md) · [Dead Code](dead-code.md) · [Duplicate Code](duplicate-code.md) · [License Header](license-header.md) · [Markdown](markdown-lint.md) · [Spellcheck](spellcheck.md) · **YAML Lint**

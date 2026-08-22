@@ -1,5 +1,10 @@
 # Authoring a new check
 
+<!-- docs-nav -->
+[Docs](README.md) · [Config guide](config-guide.md) · [Check reference](checks/INDEX.md) · [How checks work](checks/concepts.md) · [Running in CI](ci-setup.md) · [Migrating](migrating.md) · [Architecture](architecture-and-approach.md) · **Authoring a check**
+
+---
+
 Every check in PR CheckMate resolves the files it looks at through one place:
 `src/core/targets.ts`. A recent check skipped those
 helpers, called `git diff` directly, and would have scanned build and vendor
@@ -20,11 +25,17 @@ purpose:
 - `quality/` — duplicate-check, dead-code, spellcheck, markdown-lint, coverage
 - `pr/` — pr-body, pr-size-check, pr-title-lint, commitlint
 - `languages/` — lint, prettier, typecheck, python-lint, python-format,
-  python-typecheck, ruff-shared, cpp-format, swift-lint, kotlin-lint, go-lint,
-  go-format, rust-lint, rust-format, csharp-format, ruby-lint, php-format
+  python-typecheck, ruff-shared, cpp-format, go-format, plus
+  `external-checks.ts` and its engine `external-runner.ts`
 
 A new check goes in the folder that matches what it does. The shared helper
-`findings.ts` stays at the checks root, since every category imports from it.
+`findings.ts` stays at the checks root, since every category imports from it, and
+`tool-install.ts` beside it holds the install hint every skip for a missing
+runner dependency is built from.
+
+**A language check that shells out to somebody else's linter is an entry in
+`external-checks.ts`, not a new file.** See
+[Adding a language linter or formatter](#adding-a-language-linter-or-formatter).
 
 Because check files sit one level deeper than the old flat layout, their imports
 reach one more directory up. A check in a category folder imports `../../types`,
@@ -112,10 +123,14 @@ Those helpers give every check the same guarantees for free:
   back. Deletions are dropped, so every returned path exists on disk and is safe
   to read.
 - `ignoreDirs` exclusion, so build, dependency, tooling, and report directories
-  (`dist`, `build`, `vendor`, `reports`, and the rest of the curated default)
-  are never scanned, even when committed.
+  (`dist`, `build`, `node_modules`, `reports`, and the rest of the curated
+  default) are never scanned, even when committed. Vendoring directories —
+  `vendor`, `external`, `third_party` — are **not** in that default: only one
+  repository in a 28-repository sample tracks one at all, and excluding
+  third-party sources by default would also hide secrets committed inside them.
+  A repository that vendors sets `ignoreDirs` itself.
 - The client's `sourcePath`, so scanning stays inside the configured
-  subdirectory.
+  subdirectory — read as `getSourcePaths(ctx.cwd)`, never `getSourcePaths()`.
 
 This matters most in client CI repos, where PR CheckMate runs as an installed
 package against code it does not own. A client may set `sourcePath` to `"src"`,
@@ -132,19 +147,41 @@ Pick the resolver by the kind of check you are writing.
 ### File-list check
 
 Lint, format, and file-name checks that operate on whole files. Use
-`resolveTargetFiles(ctx, globs)`, or `resolveScopedTargetFiles(ctx, globs,
-sourcePaths)` when the check should honour `sourcePath`. Both return `null` when
-git is unusable (the caller should `skip`) and `[]` when nothing matches.
-
-The Ruff lint check in
-`src/core/checks/languages/python-lint.ts`
-is the model:
+`resolveTargets(ctx, globs, opts)` — it answers with **either the files or the
+outcome to report instead**, so there is one branch to write rather than three:
 
 ```typescript
-const targets = await resolveTargetFiles(ctx, PY_GLOBS);
-if (targets === null) return skip('git unavailable');
-if (targets.length === 0) return pass('no Python files changed');
+const targets = await resolveTargets(ctx, PY_GLOBS, {
+  onEmpty: { pass: 'no Python files changed' },
+});
+if (!Array.isArray(targets)) return targets;
 ```
+
+`onEmpty` is not defaulted on purpose. A language check has nothing to do when its
+language is not in the diff, so `{ pass: '…' }`; a whole-tree check that found no
+files has not reviewed the repository, so `{ skip: '…' }`. Picking one for you
+would make half the checks wrong. Add `wholeTree: true` to walk every tracked file
+instead of the diff range, `scoped: true` to honour `sourcePath` on a delta walk,
+and `keepDirs` to un-ignore specific directory segments.
+
+The lower-level `resolveTargetFiles` and `listTrackedFiles` are still there for a
+check that needs the raw list — it returns `null` when git is unusable and `[]`
+when nothing matched, and **the distinction is the whole of ticket 072, so do not
+collapse it.** `resolveTargets` exists because seventeen checks wrote that
+distinction out by hand and the copies drifted (ticket 079); if you are reaching
+past it, be sure you need to.
+
+Pass `ctx.cwd`. Every config reader takes the directory being scanned —
+`getSourcePaths`, `getIgnoredDirs`, `hasLocalConfig` — and the argument is not
+optional in spirit even though it has a default. Omitting it answers about the
+directory the *process* started in, which for the CLI happens to be the same
+place and for an SDK caller passing `cwd` is somebody else's repository. That
+was ticket 074: the scope silently came from the wrong repository, and a scoped
+check pointed at a directory that does not exist there reports `pass` over a tree
+it never opened.
+
+`src/core/checks/quality/symlinks.ts` is the whole-tree model, and
+`src/core/checks/languages/go-format.ts` the delta one.
 
 ### Diff-content check scoped to a language
 
@@ -176,7 +213,7 @@ those files. The merge-conflict check in
 is the reference:
 
 ```typescript
-const files = await resolveScopedTargetFiles(ctx, ['*'], getSourcePaths());
+const files = await resolveScopedTargetFiles(ctx, ['*'], getSourcePaths(ctx.cwd));
 if (files === null) return skip('git unavailable');
 if (files.length === 0) return pass();
 
@@ -195,10 +232,78 @@ diff the whole range directly. That is the mistake this guide exists to prevent.
 ### Whole-repo analysis
 
 Checks that need the full file graph rather than the diff, like
-circular-dependency detection. Use `listTrackedFiles(ctx, globs, sourcePaths)`,
-which lists all tracked files (never delta) and still applies `ignoreDirs` and
-`sourcePath`. Because it uses `git ls-files`, untracked directories such as
-`node_modules` are excluded by construction.
+circular-dependency detection. Use `listTrackedFiles(ctx, globs,
+getSourcePaths(ctx.cwd))`, which lists all tracked files (never delta) and still
+applies `ignoreDirs` and `sourcePath`. Because it uses `git ls-files`, untracked
+directories such as `node_modules` are excluded by construction.
+
+It takes a fourth argument, `{ keepDirs }`, for the case where a check's targets
+live under a directory the default ignore list drops. Workflow Security needs it:
+`.github` is ignored everywhere else, so on a full scan the check was blind to
+every workflow file in the repository while still reporting a pass.
+
+## Adding a language linter or formatter
+
+Nine checks — ktlint, SwiftLint, RuboCop, ShellCheck, Go Vet, Clippy, Rustfmt,
+C# Format, PHP CS Fixer — used to be nine files of the same forty lines:
+`resolveTargetFiles`, `execa`, the `ENOENT` probe, split the output, log ten
+lines and a `... and N more`. Of the ~600 lines that produced, about sixty said
+anything specific to a language, and the copies had drifted: some had lost the
+`git unavailable` skip, some counted the truncation differently.
+
+They are now a table in `../src/core/checks/languages/external-checks.ts`, over
+the engine in `external-runner.ts`. Adding one is an entry:
+
+```typescript
+export const kotlinLintCheck = defineExternalLint({
+  name: 'ktlint',
+  bin: 'ktlint',
+  tool: 'ktlint',              // key into the tool-install hint table
+  globs: ['*.kt', '*.kts'],
+  language: 'kotlin',          // omit for a check that applies anywhere
+  configKey: 'kotlin',         // the block whose `enabled: false` switches it off
+  subject: 'Kotlin files',     // "no Kotlin files changed"
+  args: (_ctx, targets) => ['--reporter=plain', ...targets],
+});
+```
+
+Four optional fields cover every difference the nine had between them: `keep`
+(which output lines are findings), `summary` (how to phrase the count),
+`stderrFirst` (for tools that diagnose on stderr), and `toolLabel` (when the
+check's name is not the binary's).
+
+`defineExternalFormat` is the same idea for formatters, with `checkArgs` and
+`writeArgs` instead of `args` — the read-only pass decides the verdict and the
+second one carries it out, so a run never touches the tree unless the caller
+said `write`.
+
+What the engine guarantees, so no entry has to remember it:
+
+- `null` targets become `skip('git unavailable')`, `[]` becomes a clean pass.
+- An absent binary becomes a skip carrying the install command, from
+  `tool-install.ts`. Never hand-write that message — a test enforces it.
+- Exit 0, or a non-zero exit with no output at all, is a pass. A warn reading
+  `0 issue(s)` is worse than the pass.
+- A non-zero exit whose output nothing recognised names the exit code rather
+  than reporting a clean pass over an objection.
+- The log sample is capped at ten with the remainder counted.
+
+**A check that does not shell out does not belong in the table.** Ruff, the
+bundled gofmt, and clang-format run in-process against a WASM module, and each
+keeps its own file: what is worth sharing there is the resolution
+(`resolvePackageBin`, which searches fetched profile directories too), not the
+control flow.
+
+### If the tool could be bundled instead
+
+Prefer bundling. `⏭️ <tool> not installed` is an honest outcome and a useless
+one — the check has no verdict, and on most runners it never will. Before adding
+a runner dependency, check whether the tool exists as a WASM build or a Node
+bundle: Ruff, clang-format, gofmt and pyright all do, and each of those was one
+skip removed. Register the package as an install profile in
+`../src/core/install/profiles.ts` so a repository only pays for the languages it
+is written in, and give the profile an `enabledBy` predicate when its check has
+an off switch of its own.
 
 ## The applies convention
 
@@ -237,7 +342,7 @@ Each check returns its own default severity: `fail()` for a real violation,
 report's outcome is `report.ok = summary.failed === 0` in
 `src/core/run-checks.ts`, so a single `fail()`
 from any check fails the run. `phase` only orders execution and decides how a
-_thrown_ error is classified (`fail` in blocking, `warn` elsewhere). A check
+*thrown* error is classified (`fail` in blocking, `warn` elsewhere). A check
 returning `fail()` from the informational phase blocks exactly as one in the
 blocking phase does.
 
@@ -301,8 +406,9 @@ final say, so a client can override it by name.
 ## Delta versus full scan
 
 When `ctx.baseSha` is set, the file helpers restrict results to the diff range.
-When it is absent, `resolveTargetFiles` and `resolveScopedTargetFiles` fall back
-to scanning all tracked files, while `listTrackedFiles` always scans everything.
+When it is absent, `resolveTargets` (and the `resolveTargetFiles` beneath it) falls
+back to scanning all tracked files; `resolveTargets({ wholeTree: true })` and
+`listTrackedFiles` always scan everything.
 
 Diff-content checks have no full-repo equivalent: `diffAddedLines` needs a base
 SHA to compute added lines, and scanning added lines across an entire repo has no
@@ -360,9 +466,8 @@ This skeleton lives in a category folder (for example `src/core/checks/git/`),
 so the imports reach the right depth:
 
 ```typescript
-import { getSourcePaths } from '../../../config';
-import { resolveScopedTargetFiles } from '../../targets';
-import { Check, CheckContext, pass, skip } from '../../types';
+import { resolveTargets } from '../../targets';
+import { Check, CheckContext, pass } from '../../types';
 import { severityEmitter } from '../findings';
 
 export const exampleCheck: Check = {
@@ -374,10 +479,13 @@ export const exampleCheck: Check = {
   },
 
   async run(ctx: CheckContext) {
-    // Resolve files the canonical way: delta-aware, honouring ignoreDirs and sourcePath.
-    const files = await resolveScopedTargetFiles(ctx, ['*'], getSourcePaths());
-    if (files === null) return skip('git unavailable');
-    if (files.length === 0) return pass();
+    // Resolve files the canonical way: delta-aware, honouring ignoreDirs and
+    // sourcePath, and answering with the outcome when there is nothing to review.
+    const files = await resolveTargets(ctx, ['*'], {
+      scoped: true,
+      onEmpty: { pass: 'no files to review' },
+    });
+    if (!Array.isArray(files)) return files;
 
     const violations = await inspect(ctx, files); // your logic here
     if (violations.length === 0) return pass();
@@ -395,3 +503,8 @@ Add `example?: { enabled?: boolean; severity?: 'error' | 'warn' }` to
 `PRCheckMateConfig`, register
 `exampleCheck` under the matching phase in the registry, and the check inherits
 the same file scoping as every other one.
+
+---
+
+<!-- docs-nav -->
+[Docs](README.md) · [Config guide](config-guide.md) · [Check reference](checks/INDEX.md) · [How checks work](checks/concepts.md) · [Running in CI](ci-setup.md) · [Migrating](migrating.md) · [Architecture](architecture-and-approach.md) · **Authoring a check**

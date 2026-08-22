@@ -1,6 +1,11 @@
 # Rustfmt
 
-[Checks Index](../INDEX.md) · [ESLint](eslint.md) · [TypeScript](typecheck.md) · [Prettier](prettier.md) · [Ruff Lint](python-lint.md) · [Ruff Format](python-format.md) · [Python Types](python-typecheck.md) · [C++ Format](cpp-format.md) · [SwiftLint](swift-lint.md) · [ktlint](kotlin-lint.md) · [Go Vet](go-lint.md) · [Go Format](go-format.md) · [Clippy](rust-lint.md) · **Rustfmt** · [C# Format](csharp-format.md) · [RuboCop](ruby-lint.md) · [PHP CS Fixer](php-format.md) · [ShellCheck](shellcheck.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · [ESLint](eslint.md) · [TypeScript](typecheck.md) ·
+[Prettier](prettier.md) · [Ruff Lint](python-lint.md) · [Ruff Format](python-format.md) ·
+[Python Types](python-typecheck.md) · [C++ Format](cpp-format.md) · [SwiftLint](swift-lint.md) ·
+[ktlint](kotlin-lint.md) · [Go Vet](go-lint.md) · [Go Format](go-format.md) · [Clippy](rust-lint.md) ·
+**Rustfmt** · [C# Format](csharp-format.md) · [RuboCop](ruby-lint.md) · [PHP CS Fixer](php-format.md) ·
+[ShellCheck](shellcheck.md)
 
 ---
 
@@ -21,7 +26,7 @@ changed-file list (`*.rs`) only gates **whether** the check runs at all.
 | CLI command | `npx pr-checkmate rust-format` |
 | Config key | `rust` |
 | Toolchain | Runner — requires the Rust toolchain (`cargo`, which bundles `rustfmt`) on the runner's `PATH`; not bundled |
-| Source | `src/core/checks/languages/rust-format.ts` |
+| Source | `src/core/checks/languages/external-checks.ts` (engine: `external-runner.ts`) |
 
 ## When it applies
 
@@ -91,7 +96,3 @@ This also disables [Clippy](rust-lint.md). To disable only this check:
   fails, the check still returns `warn`, with the rewrite's stderr logged — a formatter that can't
   write is advisory, never blocking.
 - A successful rewrite returns `pass('reformatted Rust code')`.
-
----
-
-[Checks Index](../INDEX.md) · [ESLint](eslint.md) · [TypeScript](typecheck.md) · [Prettier](prettier.md) · [Ruff Lint](python-lint.md) · [Ruff Format](python-format.md) · [Python Types](python-typecheck.md) · [C++ Format](cpp-format.md) · [SwiftLint](swift-lint.md) · [ktlint](kotlin-lint.md) · [Go Vet](go-lint.md) · [Go Format](go-format.md) · [Clippy](rust-lint.md) · **Rustfmt** · [C# Format](csharp-format.md) · [RuboCop](ruby-lint.md) · [PHP CS Fixer](php-format.md) · [ShellCheck](shellcheck.md)

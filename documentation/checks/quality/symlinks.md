@@ -1,6 +1,6 @@
 # Broken Symlinks
 
-[Checks Index](../INDEX.md) · **Broken Symlinks** · [Case Collision](case-collision.md) · [Config Validation](config-validation.md) · [Coverage](coverage.md) · [Dead Code](dead-code.md) · [Duplicate Code](duplicate-code.md) · [License Header](license-header.md) · [Markdown](markdown-lint.md) · [Spellcheck](spellcheck.md) · [YAML Lint](yaml-lint.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · **Broken Symlinks** · [Case Collision](case-collision.md) · [Config Validation](config-validation.md) · [Coverage](coverage.md) · [Dead Code](dead-code.md) · [Duplicate Code](duplicate-code.md) · [License Header](license-header.md) · [Markdown](markdown-lint.md) · [Spellcheck](spellcheck.md) · [YAML Lint](yaml-lint.md)
 
 ---
 
@@ -70,16 +70,15 @@ Or remove it from the run without touching the `symlinks` block:
 
 ## Notes
 
+- The file list comes from `git ls-files`. If git cannot produce it, the check reports
+  `skip — git unavailable` rather than reporting no symlinks in a repository it could not read. See
+  [When git cannot answer](../concepts.md#when-git-cannot-answer).
 - `symlinks.ignore` filters by **file path** (standard glob matching against the symlink's own
   repo-relative path), the same convention [YAML Lint](yaml-lint.md) uses — not the finding-label
   substring match that `diffSecurity`/`workflowSecurity`/`dockerfileSecurity` use. See the
-  [Checks Index](../INDEX.md#suppressing-a-single-line) for that distinction.
+  [Checks Index](../concepts.md#suppressing-a-single-line) for that distinction.
 - Both `symlinks.severity` and the universal `severity: { "Broken Symlinks": … }` override achieve the
   same result; `symlinks.severity` is this check's own dedicated key, in addition to the universal
   mechanism every check supports.
 - A symlink whose target exists but is itself a broken link one hop further down (a chain) is followed
   transparently by `fs.existsSync`, so only the final, unresolvable end of a chain is reported.
-
----
-
-[Checks Index](../INDEX.md) · **Broken Symlinks** · [Case Collision](case-collision.md) · [Config Validation](config-validation.md) · [Coverage](coverage.md) · [Dead Code](dead-code.md) · [Duplicate Code](duplicate-code.md) · [License Header](license-header.md) · [Markdown](markdown-lint.md) · [Spellcheck](spellcheck.md) · [YAML Lint](yaml-lint.md)

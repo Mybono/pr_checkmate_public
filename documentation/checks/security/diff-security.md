@@ -1,6 +1,6 @@
 # Diff Security
 
-[Checks Index](../INDEX.md) · **Diff Security** · [Dockerfile Security](dockerfile-security.md) · [Migration Safety](migration-safety.md) · [Security Scan](security-scan.md) · [Sensitive Files](sensitive-files.md) · [Workflow Security](workflow-security.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · **Diff Security** · [Dockerfile Security](dockerfile-security.md) · [Migration Safety](migration-safety.md) · [Security Scan](security-scan.md) · [Sensitive Files](sensitive-files.md) · [Workflow Security](workflow-security.md)
 
 ---
 
@@ -90,6 +90,60 @@ const legacy = createHash('md5'); // pr-checkmate-ignore — matches upstream ca
 { "diffSecurity": { "enabled": false } }
 ```
 
+## What this check catches, and what it cannot
+
+An honest boundary is more useful than an inflated promise, so it is written down
+here rather than left to be discovered.
+
+**The engine is a per-line regex over added lines.** That is the whole design, and
+everything below follows from it.
+
+| Shape | Caught | Why |
+|---|---|---|
+| `db.query(\`SELECT ... ${id}\`)` | yes | interpolation and sink on one line |
+| `const q = \`... ${id}\`;` then `db.query(q)` | yes, advisory | the cross-line heuristic below |
+| the same two lines 20 apart | no | outside `dataflowWindow` |
+| the value passed through a function | no | needs real dataflow analysis |
+| the value reassigned in between | no | no reassignment tracking |
+| interpolation built in another file | no | taint never crosses a file |
+| a sink named something we do not know | no | the sink list is fixed |
+
+### The cross-line heuristic
+
+One step beyond a single line, because the two-statement form is how people
+actually write an injection:
+
+```ts
+const q = `SELECT * FROM users WHERE id = ${id}`;
+db.query(q);                     // ← reported
+```
+
+A variable assigned from a template literal containing `${...}` is remembered, and
+handing that name to `query`, `execute`, `exec` or `raw` is reported. The memory
+lasts `dataflowWindow` added lines (10 by default) and is cleared at every file
+and hunk boundary.
+
+It is **advisory, never blocking** — there are no scopes, no reassignment
+tracking, and no function boundaries, and a heuristic that shallow must not fail
+anyone's build. Turn it off with `dataflowWindow: 0`:
+
+```json
+{ "diffSecurity": { "dataflowWindow": 0 } }
+```
+
+Widen it if your codebase separates the two statements further, at the cost of
+more false positives:
+
+```json
+{ "diffSecurity": { "dataflowWindow": 25 } }
+```
+
+### What to use instead, where it matters
+
+For the cases in the table above that this check cannot see, a parser-based tool
+is the right instrument — CodeQL, Semgrep with taint mode, or your language's own
+analyser. This check is a fast gate over a diff, not a replacement for one.
+
 ## Notes
 
 - **This check never fails the run.** Patterns are tagged `error` or `warn` internally, which controls
@@ -102,8 +156,10 @@ const legacy = createHash('md5'); // pr-checkmate-ignore — matches upstream ca
 - Regex heuristics produce false positives. The SQL-concatenation rule, for instance, requires a whole
   SQL keyword inside a quoted string followed by concatenation — specifically so expressions like
   `insertions + deletions` are not flagged — but the general limitation stands.
-- If the diff cannot be read the check returns `skip('diff unavailable')`.
+- If the diff cannot be read the check returns `skip('diff unavailable')`. On a whole-repository run,
+  a file list git cannot produce gives `skip('git unavailable')` for the same reason: it used to
+  return a pass, which reported a clean repository over files nothing had opened.
 
 ---
 
-[Checks Index](../INDEX.md) · **Diff Security** · [Dockerfile Security](dockerfile-security.md) · [Migration Safety](migration-safety.md) · [Security Scan](security-scan.md) · [Sensitive Files](sensitive-files.md) · [Workflow Security](workflow-security.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · **Diff Security** · [Dockerfile Security](dockerfile-security.md) · [Migration Safety](migration-safety.md) · [Security Scan](security-scan.md) · [Sensitive Files](sensitive-files.md) · [Workflow Security](workflow-security.md)

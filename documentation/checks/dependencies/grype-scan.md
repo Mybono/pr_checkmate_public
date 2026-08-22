@@ -1,6 +1,6 @@
 # Grype Scan
 
-[Checks Index](../INDEX.md) · [Banned Imports](banned-imports.md) · [Circular Deps](circular-deps.md) · [Dependencies](dependencies.md) · **Grype Scan** · [License Check](license-check.md) · [NPM Audit](npm-audit.md) · [Outdated Deps](outdated-deps.md) · [Vuln Scan](vuln-scan.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · [Banned Imports](banned-imports.md) · [Circular Deps](circular-deps.md) · [Dependencies](dependencies.md) · **Grype Scan** · [License Check](license-check.md) · [NPM Audit](npm-audit.md) · [Outdated Deps](outdated-deps.md) · [Vuln Scan](vuln-scan.md)
 
 ---
 
@@ -118,7 +118,3 @@ To make findings fail the run instead of warning:
 - Overlaps with [NPM Audit](npm-audit.md) for npm and with [Vuln Scan](vuln-scan.md) (osv-scanner)
   for everything else. Running more than one is reasonable — they use different vulnerability
   databases — but expect duplicate findings.
-
----
-
-[Checks Index](../INDEX.md) · [Banned Imports](banned-imports.md) · [Circular Deps](circular-deps.md) · [Dependencies](dependencies.md) · **Grype Scan** · [License Check](license-check.md) · [NPM Audit](npm-audit.md) · [Outdated Deps](outdated-deps.md) · [Vuln Scan](vuln-scan.md)

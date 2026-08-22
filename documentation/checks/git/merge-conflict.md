@@ -1,6 +1,6 @@
 # Merge Conflict
 
-[Checks Index](../INDEX.md) · [Custom Rules](custom-rules.md) · [Diff Smells](diff-smell.md) · [Large Files](large-files.md) · [Leftover Debug](leftover-debug.md) · [Lockfile Drift](lockfile-drift.md) · **Merge Conflict** · [Missing Tests](missing-tests.md) · [TODO/FIXME](todo-fixme.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · [Custom Rules](custom-rules.md) · [Diff Smells](diff-smell.md) · [Large Files](large-files.md) · [Leftover Debug](leftover-debug.md) · [Lockfile Drift](lockfile-drift.md) · **Merge Conflict** · [Missing Tests](missing-tests.md) · [TODO/FIXME](todo-fixme.md)
 
 ---
 
@@ -90,7 +90,3 @@ A better answer for that case is to keep the check strict and exclude the fixtur
   empty file set passes.
 - Only **added** lines are examined, so a conflict marker that already existed on the base branch is not
   reported by this check.
-
----
-
-[Checks Index](../INDEX.md) · [Custom Rules](custom-rules.md) · [Diff Smells](diff-smell.md) · [Large Files](large-files.md) · [Leftover Debug](leftover-debug.md) · [Lockfile Drift](lockfile-drift.md) · **Merge Conflict** · [Missing Tests](missing-tests.md) · [TODO/FIXME](todo-fixme.md)

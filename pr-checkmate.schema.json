@@ -727,7 +727,7 @@
           "default": 1
         },
         "reuseLocal": {
-          "description": "Reuse a tool already in the client's node_modules: \"compatible\" (default), \"always\", or \"off\".",
+          "description": "Reuse a tool already present in the repository's node_modules instead of our copy. \"compatible\" (default) reuses when the major matches ours, or when the tool reads the repository's own config (a legacy .eslintrc can only be read by the ESLint that wrote it, and a tsconfig by its own compiler). \"always\" reuses across a major gap at your own risk. \"off\" always uses our pinned copy, for reproducibility.",
           "type": "string",
           "enum": ["compatible", "always", "off"],
           "default": "compatible"
@@ -761,7 +761,7 @@
           "default": "~/.cache/pr-checkmate"
         },
         "prewarm": {
-          "description": "Warm the cache in postinstall. false leaves everything to the lazy path.",
+          "description": "NOT YET IMPLEMENTED — accepted and ignored. Warming the cache needs a postinstall hook, and there is nothing to warm while every profile's tooling ships inside the package; the hook lands with the dependency extraction (ticket 064, release 2). Documented as inert rather than quietly doing nothing.",
           "type": "boolean",
           "default": true
         },
@@ -1174,6 +1174,12 @@
               }
             }
           }
+        },
+        "dataflowWindow": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 10,
+          "description": "Added lines a value stays tainted for, connecting an interpolated string assigned on one line to a query on a later line. 0 disables the cross-line heuristic. Advisory only — it has no scopes and no reassignment tracking, so it never blocks a run."
         }
       }
     },

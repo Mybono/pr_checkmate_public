@@ -1,6 +1,6 @@
 # PR Title
 
-[Checks Index](../INDEX.md) · [Commitlint](commitlint.md) · [PR Body](pr-body.md) · [PR Size](pr-size.md) · **PR Title**
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · [Commitlint](commitlint.md) · [PR Body](pr-body.md) · [PR Size](pr-size.md) · **PR Title**
 
 ---
 
@@ -78,7 +78,3 @@ To make an unconventional title fail the run — reasonable when squash-merge fe
   [Commitlint](commitlint.md)'s job. On a squash-merge repository the title is the one that matters;
   on a merge-commit repository the individual commits are.
 - An unreadable or unparseable event payload returns `skip('event unreadable')`, never a failure.
-
----
-
-[Checks Index](../INDEX.md) · [Commitlint](commitlint.md) · [PR Body](pr-body.md) · [PR Size](pr-size.md) · **PR Title**

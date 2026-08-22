@@ -1,6 +1,11 @@
 # SwiftLint
 
-[Checks Index](../INDEX.md) · [ESLint](eslint.md) · [TypeScript](typecheck.md) · [Prettier](prettier.md) · [Ruff Lint](python-lint.md) · [Ruff Format](python-format.md) · [Python Types](python-typecheck.md) · [C++ Format](cpp-format.md) · **SwiftLint** · [ktlint](kotlin-lint.md) · [Go Vet](go-lint.md) · [Go Format](go-format.md) · [Clippy](rust-lint.md) · [Rustfmt](rust-format.md) · [C# Format](csharp-format.md) · [RuboCop](ruby-lint.md) · [PHP CS Fixer](php-format.md) · [ShellCheck](shellcheck.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · [ESLint](eslint.md) · [TypeScript](typecheck.md) ·
+[Prettier](prettier.md) · [Ruff Lint](python-lint.md) · [Ruff Format](python-format.md) ·
+[Python Types](python-typecheck.md) · [C++ Format](cpp-format.md) · **SwiftLint** · [ktlint](kotlin-lint.md) ·
+[Go Vet](go-lint.md) · [Go Format](go-format.md) · [Clippy](rust-lint.md) · [Rustfmt](rust-format.md) ·
+[C# Format](csharp-format.md) · [RuboCop](ruby-lint.md) · [PHP CS Fixer](php-format.md) ·
+[ShellCheck](shellcheck.md)
 
 ---
 
@@ -14,7 +19,7 @@ if there are no changed Swift files, the check passes immediately without invoki
 at all. When it does run, `swiftlint` is invoked with `--path <cwd>` rather than the individual
 target file list, so it always lints the **whole working directory**, not just the files that
 changed — a real difference from the delta-mode behavior described for most checks in the
-[Checks Index](../INDEX.md#delta-mode).
+[Concepts](../concepts.md#review-scope).
 
 | Property | Value |
 |---|---|
@@ -23,7 +28,7 @@ changed — a real difference from the delta-mode behavior described for most ch
 | CLI command | none — only runs as part of a full run |
 | Config key | `swift` |
 | Toolchain | Runner (`swiftlint`, pre-installed on `macos-latest`) |
-| Source | `src/core/checks/languages/swift-lint.ts` |
+| Source | `src/core/checks/languages/external-checks.ts` (engine: `external-runner.ts`) |
 
 ## When it applies
 
@@ -74,7 +79,3 @@ Or:
   empty output is trusted over the raw exit code.
 - Always reports `warn` when issues are found, never `fail` — promote it with
   `severity: { "SwiftLint": "error" }` once a team is ready to gate on it.
-
----
-
-[Checks Index](../INDEX.md) · [ESLint](eslint.md) · [TypeScript](typecheck.md) · [Prettier](prettier.md) · [Ruff Lint](python-lint.md) · [Ruff Format](python-format.md) · [Python Types](python-typecheck.md) · [C++ Format](cpp-format.md) · **SwiftLint** · [ktlint](kotlin-lint.md) · [Go Vet](go-lint.md) · [Go Format](go-format.md) · [Clippy](rust-lint.md) · [Rustfmt](rust-format.md) · [C# Format](csharp-format.md) · [RuboCop](ruby-lint.md) · [PHP CS Fixer](php-format.md) · [ShellCheck](shellcheck.md)

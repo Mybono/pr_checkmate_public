@@ -1,6 +1,11 @@
 # RuboCop
 
-[Checks Index](../INDEX.md) · [ESLint](eslint.md) · [TypeScript](typecheck.md) · [Prettier](prettier.md) · [Ruff Lint](python-lint.md) · [Ruff Format](python-format.md) · [Python Types](python-typecheck.md) · [C++ Format](cpp-format.md) · [SwiftLint](swift-lint.md) · [ktlint](kotlin-lint.md) · [Go Vet](go-lint.md) · [Go Format](go-format.md) · [Clippy](rust-lint.md) · [Rustfmt](rust-format.md) · [C# Format](csharp-format.md) · **RuboCop** · [PHP CS Fixer](php-format.md) · [ShellCheck](shellcheck.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · [ESLint](eslint.md) · [TypeScript](typecheck.md) ·
+[Prettier](prettier.md) · [Ruff Lint](python-lint.md) · [Ruff Format](python-format.md) ·
+[Python Types](python-typecheck.md) · [C++ Format](cpp-format.md) · [SwiftLint](swift-lint.md) ·
+[ktlint](kotlin-lint.md) · [Go Vet](go-lint.md) · [Go Format](go-format.md) · [Clippy](rust-lint.md) ·
+[Rustfmt](rust-format.md) · [C# Format](csharp-format.md) · **RuboCop** · [PHP CS Fixer](php-format.md) ·
+[ShellCheck](shellcheck.md)
 
 ---
 
@@ -22,7 +27,7 @@ present, the same way it would outside pr-checkmate.
 | CLI command | `npx pr-checkmate ruby-lint` |
 | Config key | `ruby` |
 | Toolchain | Runner — requires the `rubocop` gem on the runner's `PATH`; not bundled |
-| Source | `src/core/checks/languages/ruby-lint.ts` |
+| Source | `src/core/checks/languages/external-checks.ts` (engine: `external-runner.ts`) |
 
 ## When it applies
 
@@ -87,7 +92,3 @@ Or remove it from the run without touching the `ruby` block:
   `12 line(s) of output`.
 - This check never writes files — RuboCop's `--autocorrect`/`-A` mode is not invoked. Fixing findings
   is manual, or via your own `rubocop -A` outside pr-checkmate.
-
----
-
-[Checks Index](../INDEX.md) · [ESLint](eslint.md) · [TypeScript](typecheck.md) · [Prettier](prettier.md) · [Ruff Lint](python-lint.md) · [Ruff Format](python-format.md) · [Python Types](python-typecheck.md) · [C++ Format](cpp-format.md) · [SwiftLint](swift-lint.md) · [ktlint](kotlin-lint.md) · [Go Vet](go-lint.md) · [Go Format](go-format.md) · [Clippy](rust-lint.md) · [Rustfmt](rust-format.md) · [C# Format](csharp-format.md) · **RuboCop** · [PHP CS Fixer](php-format.md) · [ShellCheck](shellcheck.md)

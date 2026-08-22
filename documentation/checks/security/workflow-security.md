@@ -1,6 +1,6 @@
 # Workflow Security
 
-[Checks Index](../INDEX.md) · [Diff Security](diff-security.md) · [Dockerfile Security](dockerfile-security.md) · [Migration Safety](migration-safety.md) · [Security Scan](security-scan.md) · [Sensitive Files](sensitive-files.md) · **Workflow Security**
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · [Diff Security](diff-security.md) · [Dockerfile Security](dockerfile-security.md) · [Migration Safety](migration-safety.md) · [Security Scan](security-scan.md) · [Sensitive Files](sensitive-files.md) · **Workflow Security**
 
 ---
 
@@ -107,10 +107,14 @@ For actions, pin to a full commit SHA and keep the tag as a trailing comment:
   Local actions (`./.github/actions/…`) and Docker references do not match the pattern.
 - Unlike [Diff Security](diff-security.md), lines are matched **as-is** — YAML comments are not
   stripped, so a commented-out workflow line can still be reported.
+- **On a whole-repository run** (`--full`, or any run without a diff range) every tracked workflow
+  file is scanned, not only the ones a PR touched. `.github` is in the default `ignoreDirs`, and this
+  check un-ignores it for itself — without that it would find nothing on this path, which is exactly
+  what it used to do. If you have never run `--full` before, expect the SHA-pinning rule to report
+  every unpinned `uses:` in the repository at once rather than only the newly added ones.
+- **If git cannot produce a file list** the check returns `skip('git unavailable')` rather than a
+  pass. A directory that is not a repository, or one git refuses to read, is not a clean repository —
+  and a check that examined nothing must not look like a check that found nothing.
 - The log shows at most **3 examples per finding label**; matched lines are trimmed to 120 characters.
 - The inline `pr-checkmate-ignore` directive works here too, and is the narrowest way to accept one
   specific line.
-
----
-
-[Checks Index](../INDEX.md) · [Diff Security](diff-security.md) · [Dockerfile Security](dockerfile-security.md) · [Migration Safety](migration-safety.md) · [Security Scan](security-scan.md) · [Sensitive Files](sensitive-files.md) · **Workflow Security**

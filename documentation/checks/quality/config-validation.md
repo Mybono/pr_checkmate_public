@@ -1,18 +1,31 @@
 # Config Validation
 
-[Checks Index](../INDEX.md) · [Broken Symlinks](symlinks.md) · [Case Collision](case-collision.md) · **Config Validation** · [Coverage](coverage.md) · [Dead Code](dead-code.md) · [Duplicate Code](duplicate-code.md) · [License Header](license-header.md) · [Markdown](markdown-lint.md) · [Spellcheck](spellcheck.md) · [YAML Lint](yaml-lint.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · [Broken Symlinks](symlinks.md) · [Case Collision](case-collision.md) · **Config Validation** · [Coverage](coverage.md) · [Dead Code](dead-code.md) · [Duplicate Code](duplicate-code.md) · [License Header](license-header.md) · [Markdown](markdown-lint.md) · [Spellcheck](spellcheck.md) · [YAML Lint](yaml-lint.md)
 
 ---
 
 ## Overview
 
-Validates `pr-checkmate.json` itself, so a typo in the config file doesn't fail silently. It checks
-two things:
+Validates `pr-checkmate.json` itself, so a mistake in the config file doesn't fail silently. It checks
+three things:
 
 - **Unknown top-level keys** — a key like `mergeConfict` (missing the `l`) is never applied, and
   without this check that typo just does nothing forever with no warning.
 - **Invalid `severity` values** — every entry in the `severity` map must be `error`, `warn`, or `off`;
   anything else is flagged.
+- **A `sourcePath` that points nowhere** — reported as `sourcePath "src" does not exist — every
+  scoped check silently reviews nothing, and reports a pass`.
+
+That third one is the reason this check is worth keeping on. `sourcePath` narrows every scoped check
+to a subdirectory, and a value naming a directory that isn't there narrows them to nothing at all —
+without failing. Merge Conflict, a blocking check, prints a green tick over a repository it never
+opened. Nothing else in the run says so, because from each check's point of view there genuinely were
+no files to look at.
+
+`init` offers `.` and marks it recommended, so this is not the common case. It is what happens when
+somebody chose `src` at install time, or moved the code afterwards — which is precisely when nobody is
+looking for it. `.`, `./` and an empty string all mean "the whole repository" and are never flagged;
+an array is checked entry by entry.
 
 The check reads the **raw file from disk**, not the merged-with-defaults config every other check
 operates on. That distinction matters: it reports what you actually wrote, not what PR CheckMate
@@ -79,7 +92,6 @@ Or:
 - Because it reads the file directly rather than through the normal config loader, it is unaffected
   by how any other check merges or normalizes its own settings — it only sees what's literally on
   disk.
-
----
-
-[Checks Index](../INDEX.md) · [Broken Symlinks](symlinks.md) · [Case Collision](case-collision.md) · **Config Validation** · [Coverage](coverage.md) · [Dead Code](dead-code.md) · [Duplicate Code](duplicate-code.md) · [License Header](license-header.md) · [Markdown](markdown-lint.md) · [Spellcheck](spellcheck.md) · [YAML Lint](yaml-lint.md)
+- The `sourcePath` finding is resolved against the repository being scanned, not the directory the
+  process was started in. That distinction is invisible to the CLI, where the two are the same, and
+  matters to anything embedding the library and passing its own `cwd`.

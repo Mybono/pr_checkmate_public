@@ -1,6 +1,6 @@
 # Vuln Scan
 
-[Checks Index](../INDEX.md) · [Banned Imports](banned-imports.md) · [Circular Deps](circular-deps.md) · [Dependencies](dependencies.md) · [Grype Scan](grype-scan.md) · [License Check](license-check.md) · [NPM Audit](npm-audit.md) · [Outdated Deps](outdated-deps.md) · **Vuln Scan**
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · [Banned Imports](banned-imports.md) · [Circular Deps](circular-deps.md) · [Dependencies](dependencies.md) · [Grype Scan](grype-scan.md) · [License Check](license-check.md) · [NPM Audit](npm-audit.md) · [Outdated Deps](outdated-deps.md) · **Vuln Scan**
 
 ---
 
@@ -85,7 +85,3 @@ To make findings fail the run rather than warn:
   direct dependencies — it reports whatever osv-scanner finds, including transitive packages you
   cannot fix directly. Expect more noise, and correspondingly broader coverage.
 - The count in the summary is a count of matching output *lines*, not of distinct vulnerabilities.
-
----
-
-[Checks Index](../INDEX.md) · [Banned Imports](banned-imports.md) · [Circular Deps](circular-deps.md) · [Dependencies](dependencies.md) · [Grype Scan](grype-scan.md) · [License Check](license-check.md) · [NPM Audit](npm-audit.md) · [Outdated Deps](outdated-deps.md) · **Vuln Scan**

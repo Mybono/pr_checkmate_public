@@ -1,6 +1,6 @@
 # Commitlint
 
-[Checks Index](../INDEX.md) · **Commitlint** · [PR Body](pr-body.md) · [PR Size](pr-size.md) · [PR Title](pr-title.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · **Commitlint** · [PR Body](pr-body.md) · [PR Size](pr-size.md) · [PR Title](pr-title.md)
 
 ---
 
@@ -86,6 +86,9 @@ Or promote violations to a failure:
 
 ## Notes
 
+- Without a usable git history — a shallow clone, or no repository at all — the check reports
+  `skip` rather than passing on an empty commit list. See
+  [When git cannot answer](../concepts.md#when-git-cannot-answer).
 - The generated temporary config is a **CJS module**, not JSON, because commitlint requires `ignores`
   to hold predicate *functions* — something JSON cannot express. It is written to the OS temp
   directory, named with the current process id, and deleted in a `finally` block so a crash cannot
@@ -96,7 +99,3 @@ Or promote violations to a failure:
   check's own summary is the short `commit message violations found`.
 - The bundled `@commitlint/cli` binary is executed with the current Node binary rather than through
   `npx`, which would fail when commitlint is not on `PATH`.
-
----
-
-[Checks Index](../INDEX.md) · **Commitlint** · [PR Body](pr-body.md) · [PR Size](pr-size.md) · [PR Title](pr-title.md)

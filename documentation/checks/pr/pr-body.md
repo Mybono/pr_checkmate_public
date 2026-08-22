@@ -1,6 +1,6 @@
 # PR Body
 
-[Checks Index](../INDEX.md) · [Commitlint](commitlint.md) · **PR Body** · [PR Size](pr-size.md) · [PR Title](pr-title.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · [Commitlint](commitlint.md) · **PR Body** · [PR Size](pr-size.md) · [PR Title](pr-title.md)
 
 ---
 
@@ -88,7 +88,3 @@ Or promote it to a hard gate:
   by a semicolon in the summary.
 - `minLength` counts characters, not words — a 20-character description satisfies the default while
   saying very little. Raise it if you want the check to have real force.
-
----
-
-[Checks Index](../INDEX.md) · [Commitlint](commitlint.md) · **PR Body** · [PR Size](pr-size.md) · [PR Title](pr-title.md)

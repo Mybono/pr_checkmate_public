@@ -1,5 +1,10 @@
 # Why PR CheckMate is built the way it is
 
+<!-- docs-nav -->
+[Docs](README.md) · [Config guide](config-guide.md) · [Check reference](checks/INDEX.md) · [How checks work](checks/concepts.md) · [Running in CI](ci-setup.md) · [Migrating](migrating.md) · **Architecture** · [Authoring a check](authoring-checks.md)
+
+---
+
 **Published:** 2026-08-01. This document is dated and additive: later updates are
 appended as new dated sections, not rewrites of what's here.
 

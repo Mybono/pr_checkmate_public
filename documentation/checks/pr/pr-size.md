@@ -1,6 +1,6 @@
 # PR Size
 
-[Checks Index](../INDEX.md) · [Commitlint](commitlint.md) · [PR Body](pr-body.md) · **PR Size** · [PR Title](pr-title.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · [Commitlint](commitlint.md) · [PR Body](pr-body.md) · **PR Size** · [PR Title](pr-title.md)
 
 ---
 
@@ -81,7 +81,3 @@ Or make an oversized PR fail the run rather than warn:
 - If the diff cannot be read the check returns `skip('diff unavailable')` rather than failing.
 - Not affected by `sourcePath` or `ignoreDirs`: it measures the whole diff, since PR size is about
   reviewer load rather than which files are product code.
-
----
-
-[Checks Index](../INDEX.md) · [Commitlint](commitlint.md) · [PR Body](pr-body.md) · **PR Size** · [PR Title](pr-title.md)

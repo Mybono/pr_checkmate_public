@@ -1,9 +1,37 @@
-# Migrating to 2.0
+# Migrating
 
-[Config Guide](README.md) · [Check Reference](checks/INDEX.md) · [Authoring Checks](authoring-checks.md) ·
-**Migrating to 2.0**
+<!-- docs-nav -->
+[Docs](README.md) · [Config guide](config-guide.md) · [Check reference](checks/INDEX.md) · [How checks work](checks/concepts.md) · [Running in CI](ci-setup.md) · **Migrating** · [Architecture](architecture-and-approach.md) · [Authoring a check](authoring-checks.md)
 
 ---
+
+Two upgrades changed what a green build means. Read the section for the version you are coming from;
+if you are on 1.x, read both, bottom one first.
+
+## To 3.0
+
+**No API or config keys changed.** Every key you have keeps working, and `runChecks`, `defineCheck`
+and the outcome helpers are untouched. What changed is that two checks report where they used to be
+silent, so a build can turn red on code you did not touch.
+
+| What | Why | What to do |
+|---|---|---|
+| **Workflow Security fires on `--full`** | It was blind on the whole-tree path — `.github` is on the default ignore list, so it reviewed nothing and reported a pass. Measured on 28 repositories: five gained findings, 8 to 54 each, almost all "action not pinned to a full commit SHA" | Nothing, unless you promoted it to `error`. Findings are real; pin the actions or demote with `severity` |
+| **Python Types runs** | It needed mypy or pyright on the runner and skipped almost everywhere. pyright is bundled now | Nothing, unless you promoted it. Where your project's dependencies are not installed it skips and says so |
+| **Security Scan names a number** | The row read `potential secrets detected` for one secret and for thirty-nine | Only if you match that string in CI: it is now `39 potential secret(s)` |
+| **First run on a Python repo downloads 19 MB** | pyright ships as the `pytypes` install profile rather than in the tarball | Nothing. Air-gapped: pre-warm with `npx pr-checkmate install --all`, or it skips with a reason |
+
+Two changes only ever produce **fewer** findings, and need no action: `.env.template` and its
+siblings are no longer treated as secrets, and `excludePaths` now reaches the three checks that
+built their own file list (Sensitive Files, License Header, Lockfile Drift).
+
+The rollback is the same one line as below:
+
+```json
+{ "severityDefaults": { "failOn": "warn" } }
+```
+
+## To 2.0
 
 A finding rated `error` now fails the run. That is the whole release as far as your pipeline is
 concerned; everything else in it is a lever for controlling that one sentence. Until now
@@ -19,7 +47,7 @@ Worth knowing before you start: all six are diff-only checks, so `pr-checkmate a
 show you what is about to block. A full run now lists them as skips instead. The honest preview is
 one pull request against a branch nobody merges.
 
-## The one-line rollback
+### The one-line rollback
 
 ```json
 { "severityDefaults": { "failOn": "warn" } }
@@ -36,7 +64,7 @@ Two things about it:
 - `failOn: "never"` also exists and is the wrong tool here. It passes the check outright; `warn`
   keeps the row visible, and that row is what tells you when the check is ready to be promoted back.
 
-## Recommended migration
+### Recommended migration
 
 Staged, in the order that keeps the queue moving:
 
@@ -79,7 +107,7 @@ there, that is a decision worth writing down rather than a config line to leave 
 }
 ```
 
-## If your CI turns red
+### If your CI turns red
 
 | Symptom                                                                           | Cause                                                                                                                                                                                  | Fix                                                                                                                                                      |
 | --------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -100,7 +128,7 @@ keep not appearing. And `init` now asks whether a failed check should block the 
 advisory answer writes a `continue-on-error` into the generated workflow, which is a blunter
 instrument than `severityDefaults` and disarms the gate for secrets too.
 
-## Reference: what each knob does
+### Reference: what each knob does
 
 | Key                            | Reads it                                                                       | Values                                         | Effect                                                                                       |
 | ------------------------------ | ------------------------------------------------------------------------------ | ---------------------------------------------- | -------------------------------------------------------------------------------------------- |
@@ -133,4 +161,4 @@ it; use `ignore`, which matches the category label.
 ---
 
 [Config Guide](README.md) · [Check Reference](checks/INDEX.md) · [Authoring Checks](authoring-checks.md) ·
-**Migrating to 2.0**
+**Migrating**

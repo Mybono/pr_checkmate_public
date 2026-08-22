@@ -1,17 +1,12 @@
 {
   "$schema": "https://raw.githubusercontent.com/Mybono/pr_checkmate_public/main/pr-checkmate.schema.json",
-
   "//": "PR CheckMate configuration template. Place this file at your repository root as 'pr-checkmate.json'. Every value below is the built-in DEFAULT — delete any block you do not want to change, because the file is deep-merged with the defaults. Keys starting with '//' are comments and are ignored. Full per-check reference: https://github.com/Mybono/pr_checkmate_public",
-
   "//excludePaths": "FILES AND FOLDERS NO CHECK EVER LOOKS AT, as globs: \"src/generated/**\" for a whole folder, \"vendor/legacy.ts\" for one file. Applied where every check gets its file list, so the rule is written once rather than per check. Use this before reaching for a per-check ignore; use 'ignoreDirs' only when you mean a directory NAME wherever it appears.",
   "excludePaths": [],
-
   "//1-scope": "WHERE CHECKS LOOK. 'sourcePath' may be a string or an array. 'ignoreDirs' REPLACES the default ignore list rather than extending it, so copy the defaults you still want — the defaults cover build output, dependency and report directories, plus generated 'graphify-out'. Test directories are deliberately NOT in it: test code is still linted, type-checked and formatted, and is excluded per-check where it is noise (see 'duplicate', 'deadCode', 'diffSecurity' and the bundled cspell ignores).",
   "sourcePath": ".",
-
   "//2-severity": "UNIVERSAL ON/OFF SWITCH, keyed by a check's DISPLAY NAME (see //check-names below). 'off' removes the check before it runs; 'error' promotes a warning to a failure; 'warn' demotes a failure to a warning. This works for every check, including those with no 'enabled' flag of their own.",
   "severity": {},
-
   "//check-names": [
     "Banned Imports",
     "Circular Deps",
@@ -67,10 +62,11 @@
     "Sensitive Files",
     "Workflow Security"
   ],
-
   "//3-security": "Secret scanning and dependency vulnerabilities.",
   "security": {
-    "gitleaks": { "enabled": true },
+    "gitleaks": {
+      "enabled": true
+    },
     "npm-audit": {
       "enabled": true,
       "//auditLevel": "info | low | moderate | high | critical. Only DIRECT dependencies at or above this level block. Default 'high': a moderate CVE often has no fix available, and blocking on it stops releases indefinitely for a risk most teams have already accepted. Set 'moderate' for a stricter line.",
@@ -79,10 +75,11 @@
       "ignore": []
     }
   },
-  "//diffSecurity": "'ignorePaths' skips whole files by glob; setting it REPLACES the test-path defaults shown here, which exist because a security test's job is to contain the exact constructs this check hunts for. 'ignore' silences a finding LABEL everywhere instead.",
+  "//diffSecurity": "'ignorePaths' skips whole files by glob; setting it REPLACES the test-path defaults shown here, which exist because a security test's job is to contain the exact constructs this check hunts for. 'ignore' silences a finding LABEL everywhere instead. 'dataflowWindow' is how many added lines a value stays tainted for, so `const q = `...${x}`` on one line and `db.query(q)` on the next are still connected — a heuristic with no scopes and no reassignment tracking, so it only ever advises; 0 switches it off.",
   "diffSecurity": {
     "enabled": true,
     "ignore": [],
+    "dataflowWindow": 10,
     "ignorePaths": [
       "**/__tests__/**",
       "**/__mocks__/**",
@@ -92,8 +89,14 @@
       "**/tests/**"
     ]
   },
-  "workflowSecurity": { "enabled": true, "ignore": [] },
-  "dockerfileSecurity": { "enabled": true, "ignore": [] },
+  "workflowSecurity": {
+    "enabled": true,
+    "ignore": []
+  },
+  "dockerfileSecurity": {
+    "enabled": true,
+    "ignore": []
+  },
   "//sensitiveFileGuard": "Flags .env files, private keys, CI config and lockfiles. 'ignorePaths' excuses ONE file by glob (a .pem test fixture); 'ignore' silences a whole CATEGORY and would excuse the next real key too — reach for ignorePaths first.",
   "sensitiveFileGuard": {
     "enabled": true,
@@ -105,7 +108,6 @@
     "//paths": "Globs treated as migrations. Setting this REPLACES the defaults listed here.",
     "paths": ["**/migrations/**", "**/migrate/**", "**/db/migrate/**", "**/versions/**", "**/*.sql"]
   },
-
   "//4-dependencies": "Manifest, licence, and vulnerability checks.",
   "dependency": {
     "enabled": true,
@@ -148,11 +150,18 @@
   },
   "//bannedImports": "Packages that must not be ADDED. Empty means the check is inert. severity defaults to 'warn'; use 'error' to fail the run.",
   "bannedImports": [],
-
   "//5-git-and-pr": "Checks on the diff and on pull-request metadata.",
-  "mergeConflict": { "enabled": true, "severity": "error" },
-  "diffSmell": { "enabled": true },
-  "leftoverDebug": { "enabled": true, "severity": "warn" },
+  "mergeConflict": {
+    "enabled": true,
+    "severity": "error"
+  },
+  "diffSmell": {
+    "enabled": true
+  },
+  "leftoverDebug": {
+    "enabled": true,
+    "severity": "warn"
+  },
   "todoFixme": {
     "enabled": true,
     "severity": "warn",
@@ -160,7 +169,10 @@
     "requireTicket": false,
     "keywords": ["TODO", "FIXME", "XXX", "HACK"]
   },
-  "lockfileDrift": { "enabled": true, "severity": "warn" },
+  "lockfileDrift": {
+    "enabled": true,
+    "severity": "warn"
+  },
   "largeFiles": {
     "enabled": true,
     "severity": "warn",
@@ -181,11 +193,21 @@
       "**/*.config.*"
     ]
   },
-  "caseCollision": { "enabled": true },
+  "caseCollision": {
+    "enabled": true
+  },
   "//customRules": "Your own regex rules run against added diff lines. Each needs 'name' and 'pattern'; optional 'message', 'severity' (error|warn), 'include', 'exclude', 'flags'.",
   "customRules": [],
-  "prBody": { "enabled": true, "minLength": 20, "requireTicket": true },
-  "prSize": { "enabled": true, "maxFiles": 50, "maxLines": 1000 },
+  "prBody": {
+    "enabled": true,
+    "minLength": 20,
+    "requireTicket": true
+  },
+  "prSize": {
+    "enabled": true,
+    "maxFiles": 50,
+    "maxLines": 1000
+  },
   "commitlint": {
     "enabled": true,
     "types": [
@@ -204,9 +226,12 @@
     "//ignores": "Regex sources for titles to skip, e.g. release PRs.",
     "ignores": ["^Release\\b", "^chore\\(release\\):"]
   },
-
   "//6-quality": "Cross-language quality gates.",
-  "yamlLint": { "enabled": true, "severity": "error", "ignore": [] },
+  "yamlLint": {
+    "enabled": true,
+    "severity": "error",
+    "ignore": []
+  },
   "symlinks": {
     "//": "Whole-repo scan for tracked symlinks whose target does not exist.",
     "enabled": true,
@@ -215,7 +240,9 @@
     "//ignore": "Globs for links intentionally left broken (e.g. a fixture testing another tool's own broken-symlink handling).",
     "ignore": []
   },
-  "typecheck": { "enabled": true },
+  "typecheck": {
+    "enabled": true
+  },
   "duplicate": {
     "enabled": true,
     "minLines": 5,
@@ -255,8 +282,9 @@
     "pattern": "",
     "lines": 10
   },
-  "configValidation": { "enabled": true },
-
+  "configValidation": {
+    "enabled": true
+  },
   "//7-linters": "ESLint, Prettier, cspell and markdownlint. 'rules' blocks are MERGED with the defaults; 'ignorePatterns' and 'ignorePaths' are APPENDED.",
   "eslint": {
     "rules": {},
@@ -283,7 +311,6 @@
     "//ignores": "APPENDED to the built-in list: node_modules, dist, coverage, graphify-out, .claude and CHANGELOG.md.",
     "ignores": []
   },
-
   "//7b-install": "WHICH TOOLING IS FETCHED. The package ships ~233 MB and no repository needs all of it. \"adaptive\" (default) fetches only what this repository turns out to need; \"eager\" fetches everything up front, which is what a closed network or a prebuilt image wants and is also the exact previous behaviour; \"manual\" fetches nothing because the tools are already on the runner. A missing tool never fails silently: the affected checks skip with a reason in the report, or fail the run outright with onMissingTool: \"error\".",
   "install": {
     "strategy": "adaptive",
@@ -293,6 +320,8 @@
     "excludeProfiles": [],
     "//minFilesPerLanguage": "Source files a language needs before its toolchain is worth downloading. Separate from detect.minFiles: running a check that then skips is free, downloading a toolchain is not.",
     "minFilesPerLanguage": 1,
+    "//reuseLocal": "compatible | always | off. Run the tool the REPOSITORY already has instead of our copy. \"compatible\" (default) does so when the major matches ours, or when the tool reads the repository's own config — a legacy .eslintrc can only be read by the ESLint it was written for, and a tsconfig.json by its own compiler. \"always\" reuses across a major gap at your own risk: our generated flat config does not load in ESLint 8. \"off\" always uses our pinned copy, for reproducibility.",
+    "reuseLocal": "compatible",
     "//onMissingTool": "auto | skip | error. In a closed contour a silent skip is not acceptable — use 'error'.",
     "onMissingTool": "auto",
     "//offline": "Forbid every network install at run time. Pre-warm with: npx pr-checkmate install --all",
@@ -300,9 +329,10 @@
     "//cacheDir": "Where fetched tooling is kept; the path includes the pr-checkmate version. Cache it in CI or the tooling is fetched on every run.",
     "cacheDir": "~/.cache/pr-checkmate",
     "//deny": "Packages never fetched, whatever profile asks for them.",
-    "deny": []
+    "deny": [],
+    "//prewarm": "NOT YET IMPLEMENTED — accepted and ignored. Warming the cache needs a postinstall hook, and there is nothing to warm while every profile's tooling ships inside the package. Documented as inert rather than quietly doing nothing.",
+    "prewarm": true
   },
-
   "//8-languages": "Language is auto-detected. A check skips when its language is absent, and runner-dependency tools skip when the binary is missing — so leaving everything enabled is safe. TypeScript and JavaScript have no block of their own: configure them through 'eslint', 'prettier' and 'typecheck' above.",
   "//detect": "HOW that auto-detection reads the tree, when 'languages' is not set explicitly. Generated reports, vendored code and marker files are already excluded; these knobs are for the cases the built-in rules get wrong in your repo. 'minFiles' is how many source files a language needs to count (a marker file such as pyproject.toml includes it regardless). 'excludePaths' ADDS to the built-in exclusions rather than replacing them. 'disable' drops a language outright.",
   "detect": {
@@ -310,25 +340,42 @@
     "excludePaths": [],
     "disable": []
   },
-
   "python": {
     "enabled": true,
-    "//typeChecker": "mypy | pyright — needs the tool on the runner.",
+    "//typeChecker": "mypy | pyright — pins one checker. Leave unset: the runner's own mypy is used when it has one, our bundled pyright otherwise.",
     "typecheck": true,
-    "typeChecker": "mypy",
-    "ruff": { "lint": true, "format": true }
+    "ruff": {
+      "lint": true,
+      "format": true
+    }
   },
   "cpp": {
     "enabled": true,
-    "clangFormat": { "style": "LLVM" }
+    "clangFormat": {
+      "style": "LLVM"
+    }
   },
-  "swift": { "enabled": true },
-  "kotlin": { "enabled": true },
-  "go": { "enabled": true },
-  "rust": { "enabled": true },
-  "csharp": { "enabled": true },
-  "ruby": { "enabled": true },
-  "php": { "enabled": true },
+  "swift": {
+    "enabled": true
+  },
+  "kotlin": {
+    "enabled": true
+  },
+  "go": {
+    "enabled": true
+  },
+  "rust": {
+    "enabled": true
+  },
+  "csharp": {
+    "enabled": true
+  },
+  "ruby": {
+    "enabled": true
+  },
+  "php": {
+    "enabled": true
+  },
   "shellcheck": {
     "//": "Needs the `shellcheck` binary on the runner; skips when absent.",
     "enabled": true,

@@ -1,6 +1,11 @@
 # ShellCheck
 
-[Checks Index](../INDEX.md) · [ESLint](eslint.md) · [TypeScript](typecheck.md) · [Prettier](prettier.md) · [Ruff Lint](python-lint.md) · [Ruff Format](python-format.md) · [Python Types](python-typecheck.md) · [C++ Format](cpp-format.md) · [SwiftLint](swift-lint.md) · [ktlint](kotlin-lint.md) · [Go Vet](go-lint.md) · [Go Format](go-format.md) · [Clippy](rust-lint.md) · [Rustfmt](rust-format.md) · [C# Format](csharp-format.md) · [RuboCop](ruby-lint.md) · [PHP CS Fixer](php-format.md) · **ShellCheck**
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · [ESLint](eslint.md) · [TypeScript](typecheck.md) ·
+[Prettier](prettier.md) · [Ruff Lint](python-lint.md) · [Ruff Format](python-format.md) ·
+[Python Types](python-typecheck.md) · [C++ Format](cpp-format.md) · [SwiftLint](swift-lint.md) ·
+[ktlint](kotlin-lint.md) · [Go Vet](go-lint.md) · [Go Format](go-format.md) · [Clippy](rust-lint.md) ·
+[Rustfmt](rust-format.md) · [C# Format](csharp-format.md) · [RuboCop](ruby-lint.md) ·
+[PHP CS Fixer](php-format.md) · **ShellCheck**
 
 ---
 
@@ -23,7 +28,7 @@ in a `[SCxxxx]` code, which both the log and the reported count read directly.
 | CLI command | `npx pr-checkmate shellcheck` |
 | Config key | `shellcheck` |
 | Toolchain | Runner — requires the `shellcheck` binary on the runner's `PATH`; not bundled |
-| Source | `src/core/checks/languages/shellcheck.ts` |
+| Source | `src/core/checks/languages/external-checks.ts` (engine: `external-runner.ts`) |
 
 ## When it applies
 
@@ -87,7 +92,3 @@ Or remove it from the run without touching the `shellcheck` block:
   since `-f gcc` gives one line per finding rather than a parseable summary line.
 - This check never writes files — ShellCheck's own `--format=diff` autofix suggestions are not
   applied. Fixing findings is manual, or via `shellcheck -f diff` outside pr-checkmate.
-
----
-
-[Checks Index](../INDEX.md) · [ESLint](eslint.md) · [TypeScript](typecheck.md) · [Prettier](prettier.md) · [Ruff Lint](python-lint.md) · [Ruff Format](python-format.md) · [Python Types](python-typecheck.md) · [C++ Format](cpp-format.md) · [SwiftLint](swift-lint.md) · [ktlint](kotlin-lint.md) · [Go Vet](go-lint.md) · [Go Format](go-format.md) · [Clippy](rust-lint.md) · [Rustfmt](rust-format.md) · [C# Format](csharp-format.md) · [RuboCop](ruby-lint.md) · [PHP CS Fixer](php-format.md) · **ShellCheck**

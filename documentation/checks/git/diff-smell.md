@@ -1,6 +1,6 @@
 # Diff Smells
 
-[Checks Index](../INDEX.md) · [Custom Rules](custom-rules.md) · **Diff Smells** · [Large Files](large-files.md) · [Leftover Debug](leftover-debug.md) · [Lockfile Drift](lockfile-drift.md) · [Merge Conflict](merge-conflict.md) · [Missing Tests](missing-tests.md) · [TODO/FIXME](todo-fixme.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · [Custom Rules](custom-rules.md) · **Diff Smells** · [Large Files](large-files.md) · [Leftover Debug](leftover-debug.md) · [Lockfile Drift](lockfile-drift.md) · [Merge Conflict](merge-conflict.md) · [Missing Tests](missing-tests.md) · [TODO/FIXME](todo-fixme.md)
 
 ---
 
@@ -103,6 +103,9 @@ Or promote every smell to a blocking failure:
 
 ## Notes
 
+- If git cannot produce the diff, the check reports `skip — git unavailable` rather than a pass, and
+  one unreadable language set is enough to skip the whole check. See
+  [When git cannot answer](../concepts.md#when-git-cannot-answer).
 - **`console.*` and `debugger` are matched in live code only.** Comments are stripped and string
   literals are blanked before matching, so a `foo(); // console.log(x)` trailing comment and the
   `'no-debugger': 'error'` line in an ESLint config are both left alone — the latter used to be
@@ -115,7 +118,3 @@ Or promote every smell to a blocking failure:
 - The `pr-checkmate-ignore` directive is honoured, since the check reads its lines through the shared
   `reviewLines` helper.
 - With a diff range only added lines are scanned; without one every tracked JS/TS file is reviewed.
-
----
-
-[Checks Index](../INDEX.md) · [Custom Rules](custom-rules.md) · **Diff Smells** · [Large Files](large-files.md) · [Leftover Debug](leftover-debug.md) · [Lockfile Drift](lockfile-drift.md) · [Merge Conflict](merge-conflict.md) · [Missing Tests](missing-tests.md) · [TODO/FIXME](todo-fixme.md)

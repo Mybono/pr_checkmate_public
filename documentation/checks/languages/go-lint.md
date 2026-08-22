@@ -1,6 +1,11 @@
 # Go Vet
 
-[Checks Index](../INDEX.md) · [ESLint](eslint.md) · [TypeScript](typecheck.md) · [Prettier](prettier.md) · [Ruff Lint](python-lint.md) · [Ruff Format](python-format.md) · [Python Types](python-typecheck.md) · [C++ Format](cpp-format.md) · [SwiftLint](swift-lint.md) · [ktlint](kotlin-lint.md) · **Go Vet** · [Go Format](go-format.md) · [Clippy](rust-lint.md) · [Rustfmt](rust-format.md) · [C# Format](csharp-format.md) · [RuboCop](ruby-lint.md) · [PHP CS Fixer](php-format.md) · [ShellCheck](shellcheck.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · [ESLint](eslint.md) · [TypeScript](typecheck.md) ·
+[Prettier](prettier.md) · [Ruff Lint](python-lint.md) · [Ruff Format](python-format.md) ·
+[Python Types](python-typecheck.md) · [C++ Format](cpp-format.md) · [SwiftLint](swift-lint.md) ·
+[ktlint](kotlin-lint.md) · **Go Vet** · [Go Format](go-format.md) · [Clippy](rust-lint.md) ·
+[Rustfmt](rust-format.md) · [C# Format](csharp-format.md) · [RuboCop](ruby-lint.md) ·
+[PHP CS Fixer](php-format.md) · [ShellCheck](shellcheck.md)
 
 ---
 
@@ -21,7 +26,7 @@ which does act only on the changed files.
 | CLI command | `npx pr-checkmate go-lint` |
 | Config key | `go` |
 | Toolchain | Runner — requires the Go toolchain (`go`) on the runner's `PATH`; not bundled |
-| Source | `src/core/checks/languages/go-lint.ts` |
+| Source | `src/core/checks/languages/external-checks.ts` (engine: `external-runner.ts`) |
 
 ## When it applies
 
@@ -91,7 +96,3 @@ This also disables [Go Format](go-format.md). To disable only this check:
   summary is a bare line count, e.g. `4 diagnostic line(s)`.
 - Because `go vet` runs `./...`, a build failure anywhere in the module — not just in files touched by
   the PR — surfaces here as a diagnostic.
-
----
-
-[Checks Index](../INDEX.md) · [ESLint](eslint.md) · [TypeScript](typecheck.md) · [Prettier](prettier.md) · [Ruff Lint](python-lint.md) · [Ruff Format](python-format.md) · [Python Types](python-typecheck.md) · [C++ Format](cpp-format.md) · [SwiftLint](swift-lint.md) · [ktlint](kotlin-lint.md) · **Go Vet** · [Go Format](go-format.md) · [Clippy](rust-lint.md) · [Rustfmt](rust-format.md) · [C# Format](csharp-format.md) · [RuboCop](ruby-lint.md) · [PHP CS Fixer](php-format.md) · [ShellCheck](shellcheck.md)

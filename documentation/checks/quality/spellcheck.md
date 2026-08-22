@@ -1,6 +1,6 @@
 # Spellcheck
 
-[Checks Index](../INDEX.md) · [Broken Symlinks](symlinks.md) · [Case Collision](case-collision.md) · [Config Validation](config-validation.md) · [Coverage](coverage.md) · [Dead Code](dead-code.md) · [Duplicate Code](duplicate-code.md) · [License Header](license-header.md) · [Markdown](markdown-lint.md) · **Spellcheck** · [YAML Lint](yaml-lint.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · [Broken Symlinks](symlinks.md) · [Case Collision](case-collision.md) · [Config Validation](config-validation.md) · [Coverage](coverage.md) · [Dead Code](dead-code.md) · [Duplicate Code](duplicate-code.md) · [License Header](license-header.md) · [Markdown](markdown-lint.md) · **Spellcheck** · [YAML Lint](yaml-lint.md)
 
 ---
 
@@ -22,6 +22,10 @@ with no configuration change:
 ```bash
 npm i -D @cspell/dict-ru_ru      # or dict-uk-ua, dict-he, dict-fr-fr, dict-es-es
 ```
+
+Installed in **your** repository, and that is where it is looked for — whether you run us as a
+dependency, through `npx`, or from the container. Which dictionaries were found is printed on every
+run, so if installing one changes nothing the log says which ones are still missing.
 
 Absence is handled so it costs no noise where that is possible. For languages with a script of
 their own — Russian, Ukrainian, Hebrew — a missing dictionary suppresses that script entirely,
@@ -85,6 +89,14 @@ There is no `enabled` flag — use the universal severity override:
 
 ## Notes
 
+- **Your `cspell.json` is not itself spellchecked**, nor any of the other names cspell recognises
+  (`.cspell.json`, `cspell.config.*`, `cspell.yaml`, `.cspell/`). A dictionary is a word list, not
+  prose, and reading one as text produces findings about its own syntax rather than about your
+  writing. A single non-ASCII entry is enough: written as a JSON escape, `"an\u00e1lisis"` tokenises
+  as `an` + `lisis`, and `lisis` gets reported as an unknown word in the very file that exists to
+  declare known words. Adding such fragments to the dictionary would be the wrong fix — `Activ`, one
+  of the fragments this produced in our own config, is also a plausible misspelling of `Active`, so
+  whitelisting it would have silenced a real typo everywhere else.
 - **Config-key naming.** The check reads a top-level **`cspell`** block from `pr-checkmate.json` (the
   actual JSON key, matching the underlying tool's own name and the `init`-generated config), not a
   `spellcheck` block — despite the check's display name and this doc's config-key column both being
@@ -105,7 +117,3 @@ ignoreWords, ignorePaths }` block (recognized by [Config Validation](config-vali
   check's own summary.
 - A temporary merged config (when no local cspell config exists) is written to
   `<cwd>/.cspell.temp.json` and removed in a `finally` block regardless of outcome.
-
----
-
-[Checks Index](../INDEX.md) · [Broken Symlinks](symlinks.md) · [Case Collision](case-collision.md) · [Config Validation](config-validation.md) · [Coverage](coverage.md) · [Dead Code](dead-code.md) · [Duplicate Code](duplicate-code.md) · [License Header](license-header.md) · [Markdown](markdown-lint.md) · **Spellcheck** · [YAML Lint](yaml-lint.md)

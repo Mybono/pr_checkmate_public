@@ -1,6 +1,6 @@
 # Dockerfile Security
 
-[Checks Index](../INDEX.md) · [Diff Security](diff-security.md) · **Dockerfile Security** · [Migration Safety](migration-safety.md) · [Security Scan](security-scan.md) · [Sensitive Files](sensitive-files.md) · [Workflow Security](workflow-security.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · [Diff Security](diff-security.md) · **Dockerfile Security** · [Migration Safety](migration-safety.md) · [Security Scan](security-scan.md) · [Sensitive Files](sensitive-files.md) · [Workflow Security](workflow-security.md)
 
 ---
 
@@ -29,6 +29,11 @@ Matched files:
 | `sudo` inside `RUN` | Unnecessary in a container build, and usually a sign that `USER` was switched too early |
 
 All seven are tagged `warn`; none is tagged `error`.
+
+**A name ending in `_FILE` or `_PATH` is not a secret.** `ENV DB_PASSWORD_FILE=/run/secrets/db` names
+a location, holds no value, and is exactly how Docker and Kubernetes tell you to pass a secret — so it
+is not reported. Flagging the recommended practice alongside the mistake teaches people to obscure the
+variable name, which makes the next real secret harder to spot rather than easier.
 
 | Property | Value |
 |---|---|
@@ -107,7 +112,3 @@ Or promote the findings to blocking:
   diff produces `skip('diff unavailable')`. Neither fails the PR.
 - This is a heuristic linter, not [hadolint](https://github.com/hadolint/hadolint). It covers the
   frequent security mistakes, not Dockerfile best practice in general.
-
----
-
-[Checks Index](../INDEX.md) · [Diff Security](diff-security.md) · **Dockerfile Security** · [Migration Safety](migration-safety.md) · [Security Scan](security-scan.md) · [Sensitive Files](sensitive-files.md) · [Workflow Security](workflow-security.md)

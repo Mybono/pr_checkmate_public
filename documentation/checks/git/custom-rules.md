@@ -1,6 +1,6 @@
 # Custom Rules
 
-[Checks Index](../INDEX.md) · **Custom Rules** · [Diff Smells](diff-smell.md) · [Large Files](large-files.md) · [Leftover Debug](leftover-debug.md) · [Lockfile Drift](lockfile-drift.md) · [Merge Conflict](merge-conflict.md) · [Missing Tests](missing-tests.md) · [TODO/FIXME](todo-fixme.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · **Custom Rules** · [Diff Smells](diff-smell.md) · [Large Files](large-files.md) · [Leftover Debug](leftover-debug.md) · [Lockfile Drift](lockfile-drift.md) · [Merge Conflict](merge-conflict.md) · [Missing Tests](missing-tests.md) · [TODO/FIXME](todo-fixme.md)
 
 ---
 
@@ -111,6 +111,9 @@ To switch the check off while leaving the rules in the file:
 
 ## Notes
 
+- If git cannot produce the diff, the check reports `skip — git unavailable` rather than a pass.
+  Your own rules matching nothing and your own rules never being run are different outcomes; see
+  [When git cannot answer](../concepts.md#when-git-cannot-answer).
 - **`g` and `y` flags are stripped deliberately.** `RegExp.test()` on a global or sticky regex advances
   `lastIndex` between calls, so the same rule would match on one line and silently skip the next. They
   are removed so a rule behaves per-line regardless of what you pass.
@@ -123,7 +126,3 @@ To switch the check off while leaving the rules in the file:
 - The `pr-checkmate-ignore` directive is honoured, so a single deliberate line can opt out.
 - Matching is line-by-line. A pattern cannot span multiple lines, and there is no AST awareness: a
   match inside a string literal or a comment counts.
-
----
-
-[Checks Index](../INDEX.md) · **Custom Rules** · [Diff Smells](diff-smell.md) · [Large Files](large-files.md) · [Leftover Debug](leftover-debug.md) · [Lockfile Drift](lockfile-drift.md) · [Merge Conflict](merge-conflict.md) · [Missing Tests](missing-tests.md) · [TODO/FIXME](todo-fixme.md)

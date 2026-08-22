@@ -1,6 +1,6 @@
 # Security Scan
 
-[Checks Index](../INDEX.md) · [Diff Security](diff-security.md) · [Dockerfile Security](dockerfile-security.md) · [Migration Safety](migration-safety.md) · **Security Scan** · [Sensitive Files](sensitive-files.md) · [Workflow Security](workflow-security.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · [Diff Security](diff-security.md) · [Dockerfile Security](dockerfile-security.md) · [Migration Safety](migration-safety.md) · **Security Scan** · [Sensitive Files](sensitive-files.md) · [Workflow Security](workflow-security.md)
 
 ---
 
@@ -11,8 +11,16 @@ one check in the security category that **fails** the run: a committed credentia
 matter, and unlike a style issue it cannot be fixed after the fact — once pushed, the secret must be
 rotated.
 
-Language-agnostic, so it runs on every repository regardless of stack. Results are written to
-`gitleaks-report.html`.
+Language-agnostic, so it runs on every repository regardless of stack. Findings are printed to the
+run log as the scanner produces them, and the outcome names how many there were:
+
+```text
+❌ Security Scan: 3 potential secret(s)
+```
+
+No report file is written into your repository. (Earlier versions said results went to
+`gitleaks-report.html`; the check never wrote one — that flag belongs to a separate npm script — so
+the line has been corrected rather than the file added.)
 
 The outcome depends on gitleaks' exit code, and the distinction matters:
 
@@ -26,6 +34,19 @@ A crashing scanner produces a warning rather than a failure, so tooling trouble 
 unrelated PR — while a real finding always does. A scanner that cannot even be located (the bundled
 binary unresolvable under an unusual install layout) is a `skip` for the same reason: the check
 resolves it inside a `try`, so a resolution error can no longer surface as a failed blocking check.
+
+Exit code `1` alone is not enough to call something a finding, because the **wrapper** exits `1` when
+it fails to start the scanner at all — and that used to be reported as a leaked secret. The two are
+now told apart by what was written to stderr: a wrapper failure names itself there, a real finding
+does not. So a container where gitleaks cannot run reports `warn` naming the cause, instead of a
+blocking `fail` naming a secret that does not exist.
+
+The most common cause of that was a read-only `HOME`. Running the image as
+`--user $(id -u):$(id -g)` — which is the documented way to keep file ownership sane — leaves `HOME`
+pointing at a directory the container user cannot write, and the scanner needs somewhere to put its
+own state. The check now redirects `HOME` to a writable directory for the duration of the scan when
+the real one cannot be written to, so the recommended invocation and the scanner no longer contradict
+each other.
 
 | Property | Value |
 |---|---|
@@ -107,7 +128,3 @@ Or demote a real finding to a warning — rarely a good idea for secrets:
 - The bundled binary is executed with the current Node binary rather than through `npx`.
 - A finding means the secret is in the git history, not merely in the working tree. Removing the line
   in a follow-up commit does not remove the secret — rotate it.
-
----
-
-[Checks Index](../INDEX.md) · [Diff Security](diff-security.md) · [Dockerfile Security](dockerfile-security.md) · [Migration Safety](migration-safety.md) · **Security Scan** · [Sensitive Files](sensitive-files.md) · [Workflow Security](workflow-security.md)

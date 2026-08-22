@@ -1,14 +1,27 @@
 # ESLint
 
-[Checks Index](../INDEX.md) · **ESLint** · [TypeScript](typecheck.md) · [Prettier](prettier.md) · [Ruff Lint](python-lint.md) · [Ruff Format](python-format.md) · [Python Types](python-typecheck.md) · [C++ Format](cpp-format.md) · [SwiftLint](swift-lint.md) · [ktlint](kotlin-lint.md) · [Go Vet](go-lint.md) · [Go Format](go-format.md) · [Clippy](rust-lint.md) · [Rustfmt](rust-format.md) · [C# Format](csharp-format.md) · [RuboCop](ruby-lint.md) · [PHP CS Fixer](php-format.md) · [ShellCheck](shellcheck.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · **ESLint** · [TypeScript](typecheck.md) ·
+[Prettier](prettier.md) · [Ruff Lint](python-lint.md) · [Ruff Format](python-format.md) ·
+[Python Types](python-typecheck.md) · [C++ Format](cpp-format.md) · [SwiftLint](swift-lint.md) ·
+[ktlint](kotlin-lint.md) · [Go Vet](go-lint.md) · [Go Format](go-format.md) · [Clippy](rust-lint.md) ·
+[Rustfmt](rust-format.md) · [C# Format](csharp-format.md) · [RuboCop](ruby-lint.md) ·
+[PHP CS Fixer](php-format.md) · [ShellCheck](shellcheck.md)
 
 ---
 
 ## Overview
 
-Lints changed TypeScript/JavaScript files with ESLint. The binary is resolved from the
-project's own `node_modules` first (so a repo pinned to ESLint 8 with a legacy `.eslintrc.*`
-keeps working), falling back to the ESLint bundled with pr-checkmate.
+Lints changed TypeScript/JavaScript files with ESLint. Which ESLint runs follows the
+`install.reuseLocal` policy, and it is deliberately asymmetric:
+
+- **Your config, your ESLint.** With a legacy `.eslintrc.*` or your own flat config in the
+  repository, your copy runs whatever its major version — ours cannot read eslintrc, so the
+  version is not asked about.
+- **Our config, our ESLint.** With no config of yours, the flat one we generate is used, and
+  ESLint 8 cannot read it. Reusing your copy there produced failures about *our* configuration
+  rather than about your code, so the major has to match.
+
+`install.reuseLocal: "off"` always uses our pinned copy, for reproducibility.
 
 The resolved binary's major version decides how it is invoked: ESLint 9+ uses flat config and
 ignores `--ext` (extensions come from the config's `files` glob); ESLint 8 and earlier is
@@ -124,7 +137,3 @@ To keep it visible but non-blocking:
   is reported as `eslint failed to run (exit 2)` at `warn`, noting whether the config in play was
   the client's or pr-checkmate's. An incompatibility between our bundled config and a client's
   toolchain is not a defect in their code and must not gate their PR.
-
----
-
-[Checks Index](../INDEX.md) · **ESLint** · [TypeScript](typecheck.md) · [Prettier](prettier.md) · [Ruff Lint](python-lint.md) · [Ruff Format](python-format.md) · [Python Types](python-typecheck.md) · [C++ Format](cpp-format.md) · [SwiftLint](swift-lint.md) · [ktlint](kotlin-lint.md) · [Go Vet](go-lint.md) · [Go Format](go-format.md) · [Clippy](rust-lint.md) · [Rustfmt](rust-format.md) · [C# Format](csharp-format.md) · [RuboCop](ruby-lint.md) · [PHP CS Fixer](php-format.md) · [ShellCheck](shellcheck.md)

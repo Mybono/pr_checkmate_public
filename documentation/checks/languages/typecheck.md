@@ -1,14 +1,21 @@
 # TypeScript
 
-[Checks Index](../INDEX.md) · [ESLint](eslint.md) · **TypeScript** · [Prettier](prettier.md) · [Ruff Lint](python-lint.md) · [Ruff Format](python-format.md) · [Python Types](python-typecheck.md) · [C++ Format](cpp-format.md) · [SwiftLint](swift-lint.md) · [ktlint](kotlin-lint.md) · [Go Vet](go-lint.md) · [Go Format](go-format.md) · [Clippy](rust-lint.md) · [Rustfmt](rust-format.md) · [C# Format](csharp-format.md) · [RuboCop](ruby-lint.md) · [PHP CS Fixer](php-format.md) · [ShellCheck](shellcheck.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · [ESLint](eslint.md) · **TypeScript** ·
+[Prettier](prettier.md) · [Ruff Lint](python-lint.md) · [Ruff Format](python-format.md) ·
+[Python Types](python-typecheck.md) · [C++ Format](cpp-format.md) · [SwiftLint](swift-lint.md) ·
+[ktlint](kotlin-lint.md) · [Go Vet](go-lint.md) · [Go Format](go-format.md) · [Clippy](rust-lint.md) ·
+[Rustfmt](rust-format.md) · [C# Format](csharp-format.md) · [RuboCop](ruby-lint.md) ·
+[PHP CS Fixer](php-format.md) · [ShellCheck](shellcheck.md)
 
 ---
 
 ## Overview
 
-Type-checks the project with `tsc --noEmit`. The compiler is resolved from the project's own
-`node_modules` first, so a `tsconfig.json` is compiled by the TypeScript version it was written
-for, falling back to the version bundled with pr-checkmate.
+Type-checks the project with `tsc --noEmit`. Your own compiler is preferred, so a
+`tsconfig.json` is compiled by the TypeScript version it was written for — unconditionally, since
+this check does not run without a `tsconfig.json` and that config is always yours. Falls back to
+the version bundled with pr-checkmate; `install.reuseLocal: "off"` forces ours, for
+reproducibility.
 
 Unlike every other check in this category, TypeScript is never scoped to the diff. `tsc` needs
 the whole program graph to resolve types correctly — a change to one file's exported type can
@@ -72,7 +79,3 @@ Or:
   not a type error — `tsc` was killed (an out-of-memory on a large project), crashed, or never
   started — so it is reported as `tsc failed to run (exit N)` at `warn`, not as a failure. Blocking a
   PR with `0 type error(s)` named nothing the author could fix.
-
----
-
-[Checks Index](../INDEX.md) · [ESLint](eslint.md) · **TypeScript** · [Prettier](prettier.md) · [Ruff Lint](python-lint.md) · [Ruff Format](python-format.md) · [Python Types](python-typecheck.md) · [C++ Format](cpp-format.md) · [SwiftLint](swift-lint.md) · [ktlint](kotlin-lint.md) · [Go Vet](go-lint.md) · [Go Format](go-format.md) · [Clippy](rust-lint.md) · [Rustfmt](rust-format.md) · [C# Format](csharp-format.md) · [RuboCop](ruby-lint.md) · [PHP CS Fixer](php-format.md) · [ShellCheck](shellcheck.md)

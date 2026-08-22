@@ -1,6 +1,6 @@
 # Missing Tests
 
-[Checks Index](../INDEX.md) · [Custom Rules](custom-rules.md) · [Diff Smells](diff-smell.md) · [Large Files](large-files.md) · [Leftover Debug](leftover-debug.md) · [Lockfile Drift](lockfile-drift.md) · [Merge Conflict](merge-conflict.md) · **Missing Tests** · [TODO/FIXME](todo-fixme.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · [Custom Rules](custom-rules.md) · [Diff Smells](diff-smell.md) · [Large Files](large-files.md) · [Leftover Debug](leftover-debug.md) · [Lockfile Drift](lockfile-drift.md) · [Merge Conflict](merge-conflict.md) · **Missing Tests** · [TODO/FIXME](todo-fixme.md)
 
 ---
 
@@ -101,7 +101,3 @@ Or via the universal override:
 - The summary is `${N} new source file(s) added without any test changes`.
 - A crash while reading the diff (e.g. git unavailable) is reported as `skip('diff unavailable')`
   rather than a failure.
-
----
-
-[Checks Index](../INDEX.md) · [Custom Rules](custom-rules.md) · [Diff Smells](diff-smell.md) · [Large Files](large-files.md) · [Leftover Debug](leftover-debug.md) · [Lockfile Drift](lockfile-drift.md) · [Merge Conflict](merge-conflict.md) · **Missing Tests** · [TODO/FIXME](todo-fixme.md)

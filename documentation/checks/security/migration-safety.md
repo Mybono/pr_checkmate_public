@@ -1,6 +1,6 @@
 # Migration Safety
 
-[Checks Index](../INDEX.md) · [Diff Security](diff-security.md) · [Dockerfile Security](dockerfile-security.md) · **Migration Safety** · [Security Scan](security-scan.md) · [Sensitive Files](sensitive-files.md) · [Workflow Security](workflow-security.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · [Diff Security](diff-security.md) · [Dockerfile Security](dockerfile-security.md) · **Migration Safety** · [Security Scan](security-scan.md) · [Sensitive Files](sensitive-files.md) · [Workflow Security](workflow-security.md)
 
 ---
 
@@ -116,11 +116,9 @@ ALTER TABLE users DROP COLUMN legacy_flag; -- pr-checkmate-ignore — column add
 - The summary is compact — `2× DROP COLUMN, 1× SET NOT NULL` — built by truncating each label at its
   ` — ` explanation.
 - The log shows at most **2 examples per finding label**; matched lines are trimmed to 120 characters.
-- SQL comments are **not** stripped before matching, so a commented-out `DROP TABLE` can still be
-  reported. Use the inline directive if that happens.
+- Comments are stripped before matching, so a statement you have deliberately disabled is not
+  reported: `-- DROP TABLE users;` in SQL and `# op.drop_table("t")` in an Alembic migration are both
+  clean. A comment *after* a live statement changes nothing — `DROP TABLE users; -- cleaning up` is
+  still a finding, because the code before the comment is still code.
 - Only added lines are scanned. Deleting a migration file is not reported here — that shows up in
   [Sensitive Files](sensitive-files.md) only if the path matches one of its categories.
-
----
-
-[Checks Index](../INDEX.md) · [Diff Security](diff-security.md) · [Dockerfile Security](dockerfile-security.md) · **Migration Safety** · [Security Scan](security-scan.md) · [Sensitive Files](sensitive-files.md) · [Workflow Security](workflow-security.md)

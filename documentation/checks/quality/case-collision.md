@@ -1,6 +1,6 @@
 # Case Collision
 
-[Checks Index](../INDEX.md) · [Broken Symlinks](symlinks.md) · **Case Collision** · [Config Validation](config-validation.md) · [Coverage](coverage.md) · [Dead Code](dead-code.md) · [Duplicate Code](duplicate-code.md) · [License Header](license-header.md) · [Markdown](markdown-lint.md) · [Spellcheck](spellcheck.md) · [YAML Lint](yaml-lint.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · [Broken Symlinks](symlinks.md) · **Case Collision** · [Config Validation](config-validation.md) · [Coverage](coverage.md) · [Dead Code](dead-code.md) · [Duplicate Code](duplicate-code.md) · [License Header](license-header.md) · [Markdown](markdown-lint.md) · [Spellcheck](spellcheck.md) · [YAML Lint](yaml-lint.md)
 
 ---
 
@@ -60,6 +60,9 @@ Or remove it from the run entirely by display name:
 
 ## Notes
 
+- The file list comes from `git ls-files`. If git cannot produce it, the check reports
+  `skip — git unavailable`: two files cannot be seen to collide in a list that was never read. See
+  [When git cannot answer](../concepts.md#when-git-cannot-answer).
 - Files are grouped by lower-cased path. Any group with more than one distinct original path is a
   collision, and every member of that group is reported, joined with `↔`.
 - This always finds a **pass/warn**, never a **fail** — there is no `severity` key promoting a
@@ -69,7 +72,3 @@ Or remove it from the run entirely by display name:
   detection that need the full picture rather than just the PR's changed files.
 - The check only compares paths that are still tracked by git — an untracked file on disk cannot
   collide with anything from the check's point of view.
-
----
-
-[Checks Index](../INDEX.md) · [Broken Symlinks](symlinks.md) · **Case Collision** · [Config Validation](config-validation.md) · [Coverage](coverage.md) · [Dead Code](dead-code.md) · [Duplicate Code](duplicate-code.md) · [License Header](license-header.md) · [Markdown](markdown-lint.md) · [Spellcheck](spellcheck.md) · [YAML Lint](yaml-lint.md)

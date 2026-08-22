@@ -1,6 +1,6 @@
 # Outdated Deps
 
-[Checks Index](../INDEX.md) · [Banned Imports](banned-imports.md) · [Circular Deps](circular-deps.md) · [Dependencies](dependencies.md) · [Grype Scan](grype-scan.md) · [License Check](license-check.md) · [NPM Audit](npm-audit.md) · **Outdated Deps** · [Vuln Scan](vuln-scan.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · [Banned Imports](banned-imports.md) · [Circular Deps](circular-deps.md) · [Dependencies](dependencies.md) · [Grype Scan](grype-scan.md) · [License Check](license-check.md) · [NPM Audit](npm-audit.md) · **Outdated Deps** · [Vuln Scan](vuln-scan.md)
 
 ---
 
@@ -90,7 +90,3 @@ Or promote it to a blocking gate, if being current is a hard requirement:
 - The log lists every major-behind package as `name: baseline → latest`.
 - Unparseable JSON is treated as `pass`, not as a failure — this check is advisory and must not break
   a PR because of a registry hiccup.
-
----
-
-[Checks Index](../INDEX.md) · [Banned Imports](banned-imports.md) · [Circular Deps](circular-deps.md) · [Dependencies](dependencies.md) · [Grype Scan](grype-scan.md) · [License Check](license-check.md) · [NPM Audit](npm-audit.md) · **Outdated Deps** · [Vuln Scan](vuln-scan.md)
