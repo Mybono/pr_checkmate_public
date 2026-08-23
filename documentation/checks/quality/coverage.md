@@ -1,6 +1,6 @@
 # Coverage
 
-[Docs](../../README.md) · [Checks Index](../INDEX.md) · [Broken Symlinks](symlinks.md) · [Case Collision](case-collision.md) · [Config Validation](config-validation.md) · **Coverage** · [Dead Code](dead-code.md) · [Duplicate Code](duplicate-code.md) · [License Header](license-header.md) · [Markdown](markdown-lint.md) · [Spellcheck](spellcheck.md) · [YAML Lint](yaml-lint.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · [Broken Symlinks](symlinks.md) · [Case Collision](case-collision.md) · [Config Validation](config-validation.md) · **Coverage** · [Dead Code](dead-code.md) · [Duplicate Code](duplicate-code.md) · [License Header](license-header.md) · [Markdown](markdown-lint.md) · [Package Size](package-size.md) · [Spellcheck](spellcheck.md) · [YAML Lint](yaml-lint.md)
 
 ---
 
@@ -12,7 +12,9 @@ produced a report, so a broken `--coverage` flag or a test step that silently st
 coverage doesn't go unnoticed.
 
 Because coverage reports are almost always git-ignored, the check probes the working tree with `fs`,
-not `git` — it looks for a file at a known path and confirms it has non-zero size.
+not `git` — it looks for a **regular file** at a known path and confirms it is not empty. Both halves
+matter: a zero-byte report is what a test run that died halfway leaves behind, and a directory
+carrying the report's name reports a non-zero size of its own.
 
 | Property | Value |
 |---|---|

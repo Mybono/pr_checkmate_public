@@ -291,7 +291,7 @@ What the engine guarantees, so no entry has to remember it:
 **A check that does not shell out does not belong in the table.** Ruff, the
 bundled gofmt, and clang-format run in-process against a WASM module, and each
 keeps its own file: what is worth sharing there is the resolution
-(`resolvePackageBin`, which searches fetched profile directories too), not the
+(`resolvePackageBin`, which searches the fetched tooling directory too), not the
 control flow.
 
 ### If the tool could be bundled instead

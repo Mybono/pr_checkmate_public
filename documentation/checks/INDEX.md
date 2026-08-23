@@ -1,13 +1,14 @@
 # Check Reference
 
 <!-- docs-nav -->
+
 [Docs](../README.md) · [Config guide](../config-guide.md) · **Check reference** · [How checks work](../checks/concepts.md) · [Running in CI](../ci-setup.md) · [Migrating](../migrating.md) · [Architecture](../architecture-and-approach.md) · [Authoring a check](../authoring-checks.md)
 
 ---
 
 ## Overview
 
-PR CheckMate ships **53 checks**. Every one of them is documented in its own file below: what it
+PR CheckMate ships **54 checks**. Every one of them is documented in its own file below: what it
 does, when it runs, every key it reads from `pr-checkmate.json`, the defaults, and how to turn it
 off.
 
@@ -94,7 +95,7 @@ Cross-language quality gates.
 
 | Check                                             | Phase         | CLI command         | Config key         |
 | ------------------------------------------------- | ------------- | ------------------- | ------------------ |
-| [Broken Symlinks](quality/symlinks.md)            | informational | `symlinks`           | `symlinks`          |
+| [Broken Symlinks](quality/symlinks.md)            | informational | `symlinks`          | `symlinks`         |
 | [Case Collision](quality/case-collision.md)       | informational | `case-collision`    | `caseCollision`    |
 | [Config Validation](quality/config-validation.md) | informational | `config-validation` | `configValidation` |
 | [Coverage](quality/coverage.md)                   | informational | `coverage`          | `coverage`         |
@@ -102,6 +103,7 @@ Cross-language quality gates.
 | [Duplicate Code](quality/duplicate-code.md)       | informational | `duplicate`         | `duplicate`        |
 | [License Header](quality/license-header.md)       | informational | `license-header`    | `licenseHeader`    |
 | [Markdown](quality/markdown-lint.md)              | informational | `markdown`          | `markdownlint`     |
+| [Package Size](quality/package-size.md)           | informational | `package-size`      | `packageSize`      |
 | [Spellcheck](quality/spellcheck.md)               | informational | `spellcheck`        | `spellcheck`       |
 | [YAML Lint](quality/yaml-lint.md)                 | **blocking**  | `yaml-lint`         | `yamlLint`         |
 

@@ -5,8 +5,28 @@
 
 ---
 
-Two upgrades changed what a green build means. Read the section for the version you are coming from;
-if you are on 1.x, read both, bottom one first.
+Upgrades that changed what a green build means. Read the section for the version you are coming
+from; if you are on 1.x, read all of them, bottom one first.
+
+## To 3.1
+
+**Nothing you have to do.** No API, no config keys, no check changed its verdict on code you already
+have. One new row appears in the report and one existing check learned to admit when it could not
+read its own tool.
+
+| What | Why | What to do |
+|---|---|---|
+| **A `Package Size` row** | New check: it compares your package against your last published version and names the files behind any growth. Only for a `package.json` that is not `private`; measured on 28 repositories, 3 got a row and 4 correctly reported that nothing was published to compare with | Nothing. It is advisory and quiet below +20% growth. Tune with `packageSize.maxGrowthPercent`, or switch it off with `packageSize.enabled: false` |
+| **Dead Code can warn where it passed** | Only when `ts-unused-exports` runs, says something, and none of it parses as a report — a changed output format or a `tsconfig.json` it could not load. That used to read as "no unused exports" | Nothing, unless it fires. If it does, the tool is failing and the message says so |
+
+**Ruff's rule set is now ours.** Ruff 0.16 added the isort rules to its own defaults, which would
+have handed seventeen Python repositories five to forty-eight times more findings — all of them
+`I001`, "import block is un-sorted". We pin the set explicitly instead (`E4`, `E7`, `E9`, `F`), so
+your Python findings are unchanged by this upgrade and will not change under you on the next one.
+If you *want* import sorting, run `ruff` yourself with your own configuration; it is a matter of
+taste, and this check does not have one.
+
+The rollback is the same one line as below.
 
 ## To 3.0
 

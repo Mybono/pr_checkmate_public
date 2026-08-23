@@ -24,7 +24,7 @@
       "default": "."
     },
     "excludePaths": {
-      "description": "Files and folders no check ever looks at, as globs (\"src/generated/**\", \"vendor/legacy.ts\", \"**/*.min.js\"). Unlike ignoreDirs — which matches a directory NAME on any segment — this addresses one path or one file.",
+      "description": "Files and folders no check ever looks at, as globs (\"src/generated/**\", \"vendor/legacy.ts\", \"**/*.min.js\"). Unlike ignoreDirs \u2014 which matches a directory NAME on any segment \u2014 this addresses one path or one file.",
       "type": "array",
       "items": {
         "type": "string"
@@ -270,7 +270,7 @@
       "description": "Secret scanning (gitleaks) and npm audit."
     },
     "mergeConflict": {
-      "description": "Conflict markers left in a file. Blocking by default — this is breakage, not an opinion.",
+      "description": "Conflict markers left in a file. Blocking by default \u2014 this is breakage, not an opinion.",
       "type": "object",
       "properties": {
         "enabled": {
@@ -336,7 +336,7 @@
       "type": "object",
       "properties": {
         "ignorePaths": {
-          "description": "Globs for files this check never looks at — the exclusion for a single false positive (a .pem fixture). Unlike \"ignore\", it does not silence a whole category.",
+          "description": "Globs for files this check never looks at \u2014 the exclusion for a single false positive (a .pem fixture). Unlike \"ignore\", it does not silence a whole category.",
           "type": "array",
           "items": {
             "type": "string"
@@ -502,7 +502,7 @@
           "default": true
         }
       },
-      "description": "Validates the pull request description — minimum length, ticket reference."
+      "description": "Validates the pull request description \u2014 minimum length, ticket reference."
     },
     "cpp": {
       "$ref": "#/$defs/toggle"
@@ -573,7 +573,7 @@
           "enum": ["auto", "always", "never"]
         },
         "onDegradedScope": {
-          "description": "What to do when a CI run wanted a diff range, could not build one, and fell back to a full scan — which silently drops every diff-only check. Never triggers outside CI.",
+          "description": "What to do when a CI run wanted a diff range, could not build one, and fell back to a full scan \u2014 which silently drops every diff-only check. Never triggers outside CI.",
           "enum": ["warn", "error", "off"]
         },
         "concurrency": {
@@ -622,7 +622,7 @@
           "type": "number"
         },
         "retries": {
-          "description": "Attempts per request for retryable failures — 5xx, 429, network (default 3).",
+          "description": "Attempts per request for retryable failures \u2014 5xx, 429, network (default 3).",
           "type": "number"
         },
         "maxPages": {
@@ -654,12 +654,12 @@
       }
     },
     "commands": {
-      "description": "Quick CLI reference written by init. Informational only — ignored at runtime.",
+      "description": "Quick CLI reference written by init. Informational only \u2014 ignored at runtime.",
       "type": "object",
       "additionalProperties": true
     },
     "documentation": {
-      "description": "Documentation links written by init. Informational only — ignored at runtime.",
+      "description": "Documentation links written by init. Informational only \u2014 ignored at runtime.",
       "type": "object",
       "additionalProperties": true
     },
@@ -761,7 +761,7 @@
           "default": "~/.cache/pr-checkmate"
         },
         "prewarm": {
-          "description": "NOT YET IMPLEMENTED — accepted and ignored. Warming the cache needs a postinstall hook, and there is nothing to warm while every profile's tooling ships inside the package; the hook lands with the dependency extraction (ticket 064, release 2). Documented as inert rather than quietly doing nothing.",
+          "description": "NOT IMPLEMENTED \u2014 accepted and ignored. Warming the cache would need a postinstall hook, which would run npm inside npm on every install of this package; for a supply-chain tool that is not a trade worth making. Pre-warm with \"npx pr-checkmate install --all\" instead. Documented as inert rather than quietly doing nothing.",
           "type": "boolean",
           "default": true
         },
@@ -1011,7 +1011,7 @@
       }
     },
     "log": {
-      "description": "Diagnostic output — the running commentary around the run, as opposed to the summary it produces.",
+      "description": "Diagnostic output \u2014 the running commentary around the run, as opposed to the summary it produces.",
       "type": "object",
       "properties": {
         "level": {
@@ -1040,6 +1040,28 @@
         "sampleLimit": {
           "description": "Sample lines printed per finding (default 3).",
           "type": "number"
+        }
+      }
+    },
+    "packageSize": {
+      "description": "Growth of the published npm package since the last release. Advisory by default.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "maxGrowthPercent": {
+          "description": "Growth above this, in percent of the previous release's unpacked size, is reported.",
+          "type": "number",
+          "minimum": 0,
+          "default": 20
+        },
+        "compareWith": {
+          "description": "dist-tag or version to compare against. Default \"latest\".",
+          "type": "string",
+          "default": "latest"
         }
       }
     }
@@ -1137,7 +1159,7 @@
           }
         },
         "disablePatterns": {
-          "description": "Built-in rules to switch off by label substring — the rule never runs.",
+          "description": "Built-in rules to switch off by label substring \u2014 the rule never runs.",
           "type": "array",
           "items": {
             "type": "string"
@@ -1165,7 +1187,7 @@
                 "enum": ["error", "warn"]
               },
               "view": {
-                "description": "\"code\" matches with string literals blanked out — use it to find a call, not text inside a string.",
+                "description": "\"code\" matches with string literals blanked out \u2014 use it to find a call, not text inside a string.",
                 "enum": ["raw", "code"]
               },
               "flags": {
@@ -1179,7 +1201,7 @@
           "type": "integer",
           "minimum": 0,
           "default": 10,
-          "description": "Added lines a value stays tainted for, connecting an interpolated string assigned on one line to a query on a later line. 0 disables the cross-line heuristic. Advisory only — it has no scopes and no reassignment tracking, so it never blocks a run."
+          "description": "Added lines a value stays tainted for, connecting an interpolated string assigned on one line to a query on a later line. 0 disables the cross-line heuristic. Advisory only \u2014 it has no scopes and no reassignment tracking, so it never blocks a run."
         }
       }
     },

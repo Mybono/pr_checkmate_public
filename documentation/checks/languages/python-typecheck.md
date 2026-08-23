@@ -46,7 +46,7 @@ deliberately — and a skip would override the one client who said what they wan
 | Phase | `informational` |
 | CLI command | `npx pr-checkmate python-typecheck` |
 | Config key | `python.typecheck` |
-| Toolchain | Bundled `pyright` (fetched as the `pytypes` profile), with the runner's own `mypy` preferred when present |
+| Toolchain | `pyright`, **downloaded on first use** — 34 MB only Python repositories need. The runner's own `mypy` is preferred when present. Offline, cached or air-gapped runners: [Running in CI](../../ci-setup.md#air-gapped-and-cached-runners) |
 | Source | `src/core/checks/languages/python-typecheck.ts` |
 
 ## When it applies

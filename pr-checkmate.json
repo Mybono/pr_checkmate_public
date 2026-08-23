@@ -155,6 +155,12 @@
     "enabled": true,
     "severity": "error"
   },
+  "//packageSize": "Growth of the published npm package vs the last release. Advisory — a bigger tarball is usually earned. Only runs where package.json names a non-private package.",
+  "packageSize": {
+    "enabled": true,
+    "maxGrowthPercent": 20,
+    "compareWith": "latest"
+  },
   "diffSmell": {
     "enabled": true
   },

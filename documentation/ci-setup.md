@@ -25,14 +25,14 @@ binaries some checks would otherwise skip for — ShellCheck among them.
 
 ```bash
 docker run --rm -v "$PWD:/repo" --user "$(id -u):$(id -g)" \
-  ghcr.io/mybono/pr-checkmate:2 all
+  ghcr.io/mybono/pr-checkmate:3 all
 ```
 
 `--user` keeps files the formatters rewrite owned by you rather than by root. The image
 carries SLSA provenance and an SBOM in the registry:
 
 ```bash
-docker buildx imagetools inspect ghcr.io/mybono/pr-checkmate:2 \
+docker buildx imagetools inspect ghcr.io/mybono/pr-checkmate:3 \
   --format '{{ json .Provenance }}'
 ```
 
@@ -77,6 +77,47 @@ Three lines are load-bearing:
 - `GITHUB_TOKEN` — Actions does not put it in the environment on its own. Without it
   the checks still run, but the summary comment never reaches the PR.
 - no `continue-on-error` — a gate that cannot fail the job is not a gate.
+
+## Air-gapped and cached runners
+
+Only one tool is fetched at run time — pyright, for Python Types. Everything else ships in the
+package. The keys below are described in the [config guide](config-guide.md#tooling-that-is-fetched-not-shipped);
+this is where to put them.
+
+**The container needs none of this.** It carries pyright already and runs with fetching disabled.
+
+Running through `npx` instead, persist `~/.cache/pr-checkmate` or the download repeats every job.
+The generated GitHub workflow already does. Elsewhere:
+
+```yaml
+# .gitlab-ci.yml
+cache:
+  key: "pr-checkmate-$CI_JOB_IMAGE"
+  paths: [.cache/pr-checkmate]
+variables:
+  PR_CHECKMATE_CACHE_DIR: $CI_PROJECT_DIR/.cache/pr-checkmate
+```
+
+```yaml
+# bitbucket-pipelines.yml
+definitions:
+  caches:
+    pr-checkmate: ~/.cache/pr-checkmate
+```
+
+**Closed network.** Bake the cache while you still have one, then forbid every fetch:
+
+```bash
+npx pr-checkmate install --all      # into ~/.cache/pr-checkmate, or PR_CHECKMATE_CACHE_DIR
+```
+
+```jsonc
+{ "install": { "offline": true } }
+```
+
+A read-only cache baked into an image is fine — it is read, never written. If something is
+missing anyway, the affected check skips and says which setting stopped it; add
+`"onMissingTool": "error"` when a check that cannot run should redden the build instead.
 
 ## Adopting it on an existing codebase
 

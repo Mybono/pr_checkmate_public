@@ -210,6 +210,34 @@ A good reason states the measurement (`2026 of 2565 unknown words came from grap
 the blast radius (`a --fix run rewrote 653 lines of a generated changelog`), and the way back
 (`re-enable after bumping prettier to ^3 and reformatting once`).
 
+## Tooling that is fetched, not shipped
+
+Almost every tool travels inside the package. One does not: **pyright**, behind Python Types.
+It is 34 MB that only Python repositories need, so it is downloaded on the first run that needs
+it, into `~/.cache/pr-checkmate/<version>/`, against the same lockfile we test with. Later runs
+reuse it.
+
+If it cannot be downloaded the check **skips and names the reason**. It never reports a pass it
+did not earn.
+
+| Key | Default | When to touch it |
+| --- | --- | --- |
+| `install.cacheDir` | `~/.cache/pr-checkmate` | A runner with no writable `HOME`, or a path your CI already persists. `PR_CHECKMATE_CACHE_DIR` overrides it |
+| `install.onMissingTool` | `auto` | `error` — a check that cannot run should redden the build rather than skip. `skip` — never fetch, accept the gap |
+| `install.offline` | `false` | Closed network: forbid every fetch. Warm the cache first — [Running in CI](ci-setup.md#air-gapped-and-cached-runners) |
+| `install.strategy` | `adaptive` | `manual` — the tools are already on the runner. `eager` — fetch everything regardless of what this repository contains |
+| `install.reuseLocal` | `compatible` | `off` for reproducibility: always our pinned copy, never the one in your `node_modules` |
+| `install.deny` | — | Packages that must never be downloaded, by name |
+| `install.profiles` / `excludeProfiles` | — | Decide a toolchain by hand instead of by file counts. Exclusion wins |
+| `install.waitTimeoutMs` / `installTimeoutMs` | `120000` / `300000` | Slow mirror, or a matrix build where jobs queue behind one install |
+
+`install.prewarm` is accepted and ignored. It would mean warming the cache during `npm install`,
+which needs a postinstall hook — npm inside npm on every install of a supply-chain tool. Use the
+command instead: `npx pr-checkmate install --all`.
+
+**Running the container? Skip this section.** The image carries every tool and runs with fetching
+disabled.
+
 ## Gotchas worth knowing before you start
 
 - **ESLint uses your setup; Prettier does not.** The ESLint check prefers your repository's own

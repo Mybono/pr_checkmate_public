@@ -1,6 +1,6 @@
 # Dead Code
 
-[Docs](../../README.md) · [Checks Index](../INDEX.md) · [Broken Symlinks](symlinks.md) · [Case Collision](case-collision.md) · [Config Validation](config-validation.md) · [Coverage](coverage.md) · **Dead Code** · [Duplicate Code](duplicate-code.md) · [License Header](license-header.md) · [Markdown](markdown-lint.md) · [Spellcheck](spellcheck.md) · [YAML Lint](yaml-lint.md)
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · [Broken Symlinks](symlinks.md) · [Case Collision](case-collision.md) · [Config Validation](config-validation.md) · [Coverage](coverage.md) · **Dead Code** · [Duplicate Code](duplicate-code.md) · [License Header](license-header.md) · [Markdown](markdown-lint.md) · [Package Size](package-size.md) · [Spellcheck](spellcheck.md) · [YAML Lint](yaml-lint.md)
 
 ---
 
@@ -87,7 +87,10 @@ Or:
 - Defaults exempt test and mock files, since their exports are typically consumed only by the test
   runner (`jest.mock`, dynamic imports) — usage `ts-unused-exports` has no way to see.
 - An invalid regex in `ignoreFiles` is skipped with a warning rather than aborting the whole check.
-- If `ts-unused-exports` itself is unavailable or exits abnormally with no usable output, the check
-  returns `skip('ts-unused-exports unavailable')` rather than failing the run.
+- If `ts-unused-exports` cannot be run at all, the check returns
+  `skip('ts-unused-exports unavailable')` rather than failing the run.
+- If it runs, says something, and none of it parses as a report, the check **warns** — it does not
+  pass. A changed output format or a `tsconfig.json` it could not load would otherwise read as "no
+  unused exports", which is how a check goes blind without anyone noticing.
 - The tool prints one summary line (`N modules with unused exports`) followed by one line per file in
   `path: sym1, sym2` form; the check parses that format directly rather than using a JSON reporter.

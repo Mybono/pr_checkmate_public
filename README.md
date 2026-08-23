@@ -88,7 +88,7 @@ every language.
 
 ## Checks
 
-53 checks, run in parallel within each phase:
+54 checks, run in parallel within each phase:
 
 | Group | Count | What it covers |
 |---|---|---|
