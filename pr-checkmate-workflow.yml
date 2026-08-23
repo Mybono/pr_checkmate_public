@@ -1,0 +1,79 @@
+name: PR CheckMate
+
+# The container variant, scaffolded because this repository does not carry
+# pr-checkmate as a dependency.
+#
+# The alternative would be `npx pr-checkmate`, and with no node_modules to reuse
+# that resolves to whatever is newest on the registry and downloads it again on
+# every job: 547 MB and about five minutes, measured. Worse, a major release
+# would land on you without a line changing here — and a major release of a gate
+# can start failing builds that passed yesterday.
+#
+# The image is pulled once and cached by the runner, and the tag below pins the
+# major so nothing moves under you.
+
+on:
+  pull_request:
+    branches: [main, master, develop]
+    types: [opened, synchronize, reopened]
+
+# Least privilege. `pull-requests: write` is what lets the run upsert its summary
+# comment on the PR; drop it and the checks still run, they just report to the log.
+permissions:
+  contents: read
+  pull-requests: write
+
+# Push three times in a minute and the first two runs become answers to questions
+# nobody is asking any more — they still hold a runner, and they still race to
+# upsert the summary comment, so a stale verdict can land on top of a fresh one.
+# Keyed per PR, so runs on different pull requests never cancel each other.
+concurrency:
+  group: pr-checkmate-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pr-checkmate:
+    name: PR CheckMate
+    runs-on: ubuntu-latest
+    # A hung step otherwise runs to GitHub's six-hour default before anyone hears
+    # about it. Every check has its own internal timeout; this is the backstop.
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          # Required, not optional. Without the full history the PR base commit is
+          # not in the clone, no diff range can be built, and every diff-based
+          # check skips itself. The run then says `Scan Scope: … set
+          # fetch-depth: 0`, which is this line.
+          fetch-depth: 0
+
+      # One job runs the whole registry. Which checks run is decided in
+      # pr-checkmate.json (`severity`), not by splitting this into jobs.
+      #
+      # `--user` is not a detail: without it every file a formatter rewrites comes
+      # back owned by root, and the next step in your pipeline fails on
+      # permissions long after this one reported success.
+      #
+      # The environment variables are passed through by name rather than by value:
+      # the run reads them to find the PR, and interpolating them into the command
+      # line would put their contents into a shell.
+      - name: Run PR CheckMate
+        env:
+          # Not injected automatically: without this the run cannot authenticate,
+          # and the summary comment silently never reaches the PR.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          docker run --rm \
+            -v "$PWD:/repo" \
+            --user "$(id -u):$(id -g)" \
+            -e GITHUB_TOKEN \
+            -e GITHUB_REPOSITORY \
+            -e GITHUB_EVENT_NAME \
+            -e GITHUB_EVENT_PATH \
+            -e GITHUB_REF \
+            -e GITHUB_SHA \
+            -e CI \
+            -v "$GITHUB_EVENT_PATH:$GITHUB_EVENT_PATH:ro" \
+            ghcr.io/mybono/pr-checkmate:3 all
