@@ -34,9 +34,45 @@ too: a percentage on its own is a finding you cannot act on.
 is not `private`. A private package is never published, so there is nothing to
 compare against and no consumer paying for the size.
 
-`skip` — never `pass` — when the registry cannot answer or nothing has been
-published under that name yet. A green row for a comparison that did not happen
-would say the opposite of the truth.
+**Where it looks.** At `publishConfig.registry` when your manifest names one, and
+at the default registry otherwise. npm reads that field for `publish` but not for
+a fetch, so a package on GitHub Packages or a company mirror has to be asked for
+explicitly — otherwise the answer is a 404 about the wrong host.
+
+`skip` — never `pass` — when there is nothing to compare against. The reason says
+which of three things happened, because they are not the same problem:
+
+| Reason | What it means | What to do |
+|---|---|---|
+| `nothing published under this name yet` | 404. Nobody has published it | Nothing. The row starts comparing after your first release |
+| `no credentials for <host>` | 401 or 403 — the registry has the package and will not show it to a stranger; an unpublished name answers 404, not 401 | See below, or `packageSize.enabled: false` |
+| `could not read the published version` | Anything else — a proxy, a timeout, wording we do not recognise | Usually transient |
+
+### Reading a private registry
+
+The row says only what happened; the fix does not fit in a report line. For
+GitHub Packages in Actions it is three things, and all three are needed — npm
+reads the token through a reference in `.npmrc`, so the variable alone does
+nothing:
+
+```yaml
+- uses: actions/setup-node@v4
+  with:
+    node-version: 24
+    registry-url: https://npm.pkg.github.com   # writes the .npmrc
+    scope: '@your-org'
+- run: npx pr-checkmate all
+  env:
+    NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+For any other private registry, an `.npmrc` with `//host/:_authToken=…` does the
+same job. If you would rather not wire credentials for an advisory check, switch
+it off — the row is not worth a token you did not want to issue.
+
+A green row for a comparison that did not happen would say the opposite of the
+truth, and one sentence covering all three would send half the readers looking
+for the wrong thing.
 
 ## Configuration
 
