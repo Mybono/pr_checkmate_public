@@ -146,7 +146,8 @@
     "//ignore": "Suppress by CVE/GHSA id or by package name.",
     "ignore": [],
     "//timeoutMs": "Cap on the grype scan. On timeout the check skips rather than fails. The scan never walks 'ignoreDirs' (node_modules, dist, …), which is what keeps it quick.",
-    "timeoutMs": 120000
+    "timeoutMs": 120000,
+    "//ci": "Optional per-environment overrides (enabled, minSeverity, ignore, timeoutMs): 'ci' applies on CI builds, 'local' elsewhere. Example: \"local\": { \"enabled\": false }"
   },
   "//bannedImports": "Packages that must not be ADDED. Empty means the check is inert. severity defaults to 'warn'; use 'error' to fail the run.",
   "bannedImports": [],

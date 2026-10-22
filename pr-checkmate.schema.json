@@ -221,6 +221,14 @@
         "timeoutMs": {
           "type": "number",
           "default": 120000
+        },
+        "ci": {
+          "$ref": "#/$defs/grypeScanEnvOverrides",
+          "description": "Overrides applied only on a CI build."
+        },
+        "local": {
+          "$ref": "#/$defs/grypeScanEnvOverrides",
+          "description": "Overrides applied only outside CI (developer machine, local commits)."
         }
       },
       "description": "Direct-dependency vulnerability scan via grype."
@@ -1067,6 +1075,18 @@
     }
   },
   "$defs": {
+    "grypeScanEnvOverrides": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "minSeverity": {
+          "type": "string",
+          "enum": ["negligible", "low", "medium", "high", "critical"]
+        },
+        "ignore": { "type": "array", "items": { "type": "string" } },
+        "timeoutMs": { "type": "number" }
+      }
+    },
     "toggle": {
       "type": "object",
       "properties": {

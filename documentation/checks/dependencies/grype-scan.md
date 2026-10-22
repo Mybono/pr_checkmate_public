@@ -17,30 +17,30 @@ Everything dropped is **counted and logged**, so the suppression is visible rath
 Ecosystems whose manifests can be parsed for direct dependencies:
 
 | grype artifact type | Ecosystem |
-|---|---|
-| `npm` | npm |
-| `python` | Python |
-| `go-module` | Go |
-| `rust-crate` | Rust |
-| `gem` | Ruby |
-| `php-composer` | PHP |
+| ------------------- | --------- |
+| `npm`               | npm       |
+| `python`            | Python    |
+| `go-module`         | Go        |
+| `rust-crate`        | Rust      |
+| `gem`               | Ruby      |
+| `php-composer`      | PHP       |
 
 A finding in any other ecosystem is suppressed, because there is no manifest to establish whether it
 is direct.
 
-| Property | Value |
-|---|---|
-| Display name | `Grype Scan` |
-| Phase | `informational` |
-| CLI command | none — runs only as part of a full run |
-| Config key | `grypeScan` |
-| Source | `src/core/checks/dependencies/grype-scan.ts` |
+| Property     | Value                                        |
+| ------------ | -------------------------------------------- |
+| Display name | `Grype Scan`                                 |
+| Phase        | `informational`                              |
+| CLI command  | none — runs only as part of a full run       |
+| Config key   | `grypeScan`                                  |
+| Source       | `src/core/checks/dependencies/grype-scan.ts` |
 
 ## When it applies
 
 `grypeScan.enabled` is not `false` — the check is **on by default**.
 
-`grype` is a *runner dependency*: it must be installed on the machine. When the binary is absent the
+`grype` is a _runner dependency_: it must be installed on the machine. When the binary is absent the
 check returns `skip('grype not installed')`, so leaving it enabled on a runner without grype costs
 nothing.
 
@@ -53,12 +53,19 @@ Install it on a GitHub Actions runner with:
 
 ## Configuration
 
-| Key | Type | Default | Meaning |
-|---|---|---|---|
-| `grypeScan.enabled` | boolean | `true` | Set `false` to skip the check |
-| `grypeScan.minSeverity` | `negligible` \| `low` \| `medium` \| `high` \| `critical` | `"medium"` | Minimum severity that is reported. Inclusive |
-| `grypeScan.ignore` | string[] | `[]` | Suppress by **CVE/GHSA id** or by **package name**. Case-insensitive |
-| `grypeScan.timeoutMs` | number | `120000` | Cap on the scan. On timeout the check skips rather than fails |
+| Key                     | Type                                                      | Default    | Meaning                                                              |
+| ----------------------- | --------------------------------------------------------- | ---------- | -------------------------------------------------------------------- |
+| `grypeScan.enabled`     | boolean                                                   | `true`     | Set `false` to skip the check                                        |
+| `grypeScan.minSeverity` | `negligible` \| `low` \| `medium` \| `high` \| `critical` | `"medium"` | Minimum severity that is reported. Inclusive                         |
+| `grypeScan.ignore`      | string[]                                                  | `[]`       | Suppress by **CVE/GHSA id** or by **package name**. Case-insensitive |
+| `grypeScan.timeoutMs`   | number                                                    | `120000`   | Cap on the scan. On timeout the check skips rather than fails        |
+
+| `grypeScan.ci` | object | none | Overrides applied only on a CI build. Accepts `enabled`, `minSeverity`, `ignore`, `timeoutMs` |
+| `grypeScan.local` | object | none | Same keys, applied only outside CI (developer machine, local commit tooling) |
+
+Whether a run is CI is decided by the same detection as the review scope (`CI`, `GITHUB_ACTIONS`,
+`BITBUCKET_BUILD_NUMBER`, …). A key set in `ci` or `local` replaces the top-level value in that
+environment only; keys it leaves out fall back to the top level.
 
 `ignore` accepts either kind of entry in the same array — each value is matched against both the
 vulnerability id and the artifact name.
@@ -80,6 +87,19 @@ Suppress one advisory by id and one package wholesale:
   "grypeScan": {
     "minSeverity": "medium",
     "ignore": ["CVE-2025-1234", "GHSA-xxxx-yyyy-zzzz", "some-package"]
+  }
+}
+```
+
+### Different settings locally and in CI
+
+Keep the scan in CI with a long timeout, and skip it on developer machines where it tends to time out:
+
+```json
+{
+  "grypeScan": {
+    "ci": { "enabled": true, "timeoutMs": 600000 },
+    "local": { "enabled": false }
   }
 }
 ```
@@ -108,7 +128,7 @@ To make findings fail the run instead of warning:
   (`node_modules`, `dist`, `build`, `coverage`, …) passed as `--exclude`. This is not a cosmetic
   filter: cataloguing an installed `node_modules` took **355s** on this repository versus **0.8s**
   without it, for the same findings. grype reads dependency versions from lockfiles, so nothing
-  reportable is lost — and every package found *inside* `node_modules` would have been suppressed
+  reportable is lost — and every package found _inside_ `node_modules` would have been suppressed
   anyway as third-party (see above).
 - `timeoutMs` backstops the run. An advisory check must never be able to look like a hung commit,
   which is what an uncapped directory scan does on a repository with dependencies installed.
