@@ -117,7 +117,7 @@ To keep it visible but non-blocking:
   breaking TypeScript linting.
 - **Formatting never gates.** In the bundled rule set `error` is reserved for defects a human has
   to resolve (`no-debugger`, `eqeqeq`, `prefer-const`, `no-unused-vars`, `no-floating-promises`,
-  `import/no-duplicates`); every purely cosmetic rule — `prettier/prettier`, `semi`, `quotes`,
+  `no-duplicate-imports`); every purely cosmetic rule — `prettier/prettier`, `semi`, `quotes`,
   `object-curly-spacing`, `space-infix-ops`, `keyword-spacing`,
   `padding-line-between-statements`, `max-len` — is `warn`. ESLint exits `1` on errors only, so an
   `error`-level whitespace rule would turn a `prettier --write` away fix into a red gate, while

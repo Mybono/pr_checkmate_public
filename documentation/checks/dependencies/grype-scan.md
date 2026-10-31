@@ -132,6 +132,10 @@ To make findings fail the run instead of warning:
   anyway as third-party (see above).
 - `timeoutMs` backstops the run. An advisory check must never be able to look like a hung commit,
   which is what an uncapped directory scan does on a repository with dependencies installed.
+- The vulnerability database is refreshed in its own step before the scan (up to 240s), and the scan
+  runs with grype's auto-update off. grype refuses a database older than 5 days; refreshing it
+  inside the scan's `timeoutMs` meant the download was killed on every run and never completed. If
+  the refresh fails or times out, the check skips and says to run `grype db update` once.
 - The log lists at most **10** findings, then `... and N more`. The summary count is the full total.
 - Because grype scans the directory rather than a diff, this check is not delta-aware: it reports the
   current state of your dependencies regardless of what the PR changed.

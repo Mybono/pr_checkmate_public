@@ -318,7 +318,7 @@
     "//ignores": "APPENDED to the built-in list: node_modules, dist, coverage, graphify-out, .claude and CHANGELOG.md.",
     "ignores": []
   },
-  "//7b-install": "WHICH TOOLING IS FETCHED. The package ships ~233 MB and no repository needs all of it. \"adaptive\" (default) fetches only what this repository turns out to need; \"eager\" fetches everything up front, which is what a closed network or a prebuilt image wants and is also the exact previous behaviour; \"manual\" fetches nothing because the tools are already on the runner. A missing tool never fails silently: the affected checks skip with a reason in the report, or fail the run outright with onMissingTool: \"error\".",
+  "//7b-install": "WHICH TOOLING IS FETCHED. The tooling totals ~233 MB and no repository needs all of it. \"adaptive\" (default) fetches only what this repository turns out to need; \"eager\" fetches everything up front, which is what a closed network or a prebuilt image wants and is also the exact previous behaviour; \"manual\" fetches nothing because the tools are already on the runner. A missing tool never fails silently: the affected checks skip with a reason in the report, or fail the run outright with onMissingTool: \"error\".",
   "install": {
     "strategy": "adaptive",
     "//profiles": "Extra profiles beyond what detection concluded, for generated code or a monorepo layout detection cannot see through. Names: core, js, python, cpp, spellcheck, markdown, commitlint, duplicate.",

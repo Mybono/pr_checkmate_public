@@ -80,11 +80,16 @@ Three lines are load-bearing:
 
 ## Air-gapped and cached runners
 
-Only one tool is fetched at run time — pyright, for Python Types. Everything else ships in the
-package. The keys below are described in the [config guide](config-guide.md#tooling-that-is-fetched-not-shipped);
-this is where to put them.
+The package itself is small (about 13 MB installed). The tooling for each language — the
+JavaScript toolchain, Ruff, pyright, clang-format, gofmt, cspell, markdownlint, commitlint, jscpd —
+is fetched at run time, and only for what the repository actually contains: a Python service never
+downloads ESLint or TypeScript. The keys below are described in the
+[config guide](config-guide.md#tooling-that-is-fetched-not-shipped); this is where to put them.
 
-**The container needs none of this.** It carries pyright already and runs with fetching disabled.
+A clean runner pays for the fetch once. Persist the cache directory (below) and later jobs reuse it.
+A runner with no network must warm the cache first — see **Closed network**.
+
+**The container needs none of this.** It carries every tool already and runs with fetching disabled.
 
 Running through `npx` instead, persist `~/.cache/pr-checkmate` or the download repeats every job.
 The generated GitHub workflow already does. Elsewhere:

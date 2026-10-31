@@ -212,13 +212,22 @@ the blast radius (`a --fix run rewrote 653 lines of a generated changelog`), and
 
 ## Tooling that is fetched, not shipped
 
-Almost every tool travels inside the package. One does not: **pyright**, behind Python Types.
-It is 34 MB that only Python repositories need, so it is downloaded on the first run that needs
-it, into `~/.cache/pr-checkmate/<version>/`, against the same lockfile we test with. Later runs
-reuse it.
+Only the core travels inside the package (secret scan, the CLI itself). The tooling behind each
+language and each heavy check is fetched on the first run that needs it, into
+`~/.cache/pr-checkmate/<version>/`, against the same lockfile we test with. Later runs reuse it.
 
-If it cannot be downloaded the check **skips and names the reason**. It never reports a pass it
-did not earn.
+Which tooling a repository needs is decided by its files and its config, not by a marker:
+
+| Profile | Fetched when | Size matters because |
+| --- | --- | --- |
+| `js` | the repository has TypeScript or JavaScript files | ESLint, TypeScript, Prettier, knip — the largest by far |
+| `python`, `pytypes` | Python files; `pytypes` only unless `python.typecheck: false` | Ruff, pyright |
+| `go`, `cpp` | Go / C++ files | gofmt, clang-format |
+| `spellcheck`, `markdown`, `commitlint`, `duplicate` | the check is not switched off | cspell, markdownlint, commitlint, jscpd |
+
+A Python service therefore never downloads ESLint or TypeScript, and installing the package takes
+seconds instead of over a minute. If tooling cannot be downloaded the check **skips and names the
+reason**. It never reports a pass it did not earn.
 
 | Key | Default | When to touch it |
 | --- | --- | --- |
@@ -238,6 +247,10 @@ command instead: `npx pr-checkmate install --all`.
 **Running the container? Skip this section.** The image carries every tool and runs with fetching
 disabled.
 
+**Running in CI?** Persist the cache directory between jobs, or run `npx pr-checkmate install --all`
+once into an image. On a runner with no network, set `install.offline: true` and
+`install.onMissingTool: "error"` so a missing tool fails the build instead of skipping.
+
 ## Gotchas worth knowing before you start
 
 - **ESLint uses your setup; Prettier does not.** The ESLint check prefers your repository's own
@@ -254,7 +267,7 @@ disabled.
   `go vet`, and the Rust and .NET toolchains are runner dependencies, and the skip names the command
   that installs each. You do not need to disable them for a runner that lacks them — set the key
   only to keep them off deliberately once the tool arrives. Go **formatting** and Python **types**
-  are not on that list any more: gofmt and pyright are bundled, so those run anywhere. Python Types
+  are not on that list any more: gofmt and pyright are fetched for you, so those run anywhere with network access. Python Types
   skips only when your project's own dependencies are not installed, and says so.
 - **A language you do not have needs no config**, but a single stray file can conscript one: one
   tracked `.rs` file makes the repo "Rust" and registers Clippy and Rustfmt. Prefer dropping the

@@ -72,7 +72,7 @@ tool installed; the check skips gracefully when the tool is absent.
 | Language | Checks | Toolchain |
 |---|---|---|
 | TypeScript / JavaScript | ESLint, Prettier, `tsc --noEmit` | Bundled |
-| Python | Ruff (lint + format), mypy/pyright (types) | Bundled — Ruff, and pyright for types; the runner's own mypy is preferred when it has one |
+| Python | Ruff (lint + format), mypy/pyright (types) | Fetched on first use — Ruff, and pyright for types; the runner's own mypy is preferred when it has one |
 | C++ | clang-format | Bundled |
 | Swift | SwiftLint | `swiftlint` on the runner |
 | Kotlin / Java | ktlint | `ktlint` on the runner |
