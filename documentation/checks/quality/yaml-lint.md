@@ -19,8 +19,9 @@ What blocks, though, is narrower than what is reported. The parser distinguishes
 problem and so does this check:
 
 - **Errors** — the document cannot be parsed: a syntax error, a tab used for indentation, a
-  duplicate map key (which silently discards a value). The file is broken for whatever reads it
-  next, so these **fail the run**.
+  duplicate map key (which silently discards a value), an alias (`*name`) with no anchor declared
+  before it (the parser reports that only on conversion, so the check walks aliases itself). The
+  file is broken for whatever reads it next, so these **fail the run**.
 - **Warnings** — the document parsed and the parser has a reservation about it, such as an
   unsupported `%YAML` version directive. These are **advisory**.
 
