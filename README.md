@@ -78,6 +78,12 @@ claude mcp add --scope user pr-checkmate -- pr-checkmate mcp   # once, for every
 npx pr-checkmate agent-setup                                   # per repository, below
 ```
 
+Then check it: `claude mcp list` shows `pr-checkmate ✔ Connected`; sessions that were already open
+need a restart. `claude` comes from the Claude Code CLI (an editor extension keeps its own copy off
+your `PATH`). To stop Claude Code asking before every call, allow `mcp__pr-checkmate` in
+`permissions.allow`
+([details](https://github.com/Mybono/pr_checkmate_public/blob/main/documentation/ai-agents.md#after-installing)).
+
 | Tool | The agent calls it |
 |---|---|
 | `get_rules` | before writing — what blocks a PR, what only warns, your custom rules and banned imports |

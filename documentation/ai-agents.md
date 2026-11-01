@@ -15,7 +15,7 @@ coding agent the same gate CI applies, in two moments:
   the agent has changed so far, and `verify` runs the full gate once at the end, so it fixes
   findings in its own loop instead of in a review.
 
-Everything is read-only. Nothing is written, staged, committed or posted.
+Two tools write files, `apply_fixes` and `write_config`; every other tool only reads. Nothing is staged, committed or posted.
 
 ## Install once, use everywhere
 
@@ -27,6 +27,27 @@ claude mcp add --scope user pr-checkmate -- pr-checkmate mcp
 The server is `pr-checkmate mcp`, a standard stdio MCP server, so any MCP client can run it
 the same way. It reviews the repository the client was started in; a tool call can also
 pass `cwd` to name another one.
+
+### After installing
+
+1. **Check the connection.** `claude mcp list` shows `pr-checkmate ✔ Connected`. Sessions that were
+   already open do not pick the server up; start a new one.
+2. **`claude: command not found`.** `claude` is the Claude Code CLI. The editor extension ships a
+   copy that is not on your `PATH`; either install the CLI or run the extension's binary by its
+   full path (it sits under `~/.vscode/extensions/anthropic.claude-code-*/resources/native-binary/`,
+   and the path changes with the extension version).
+3. **Permission prompts.** Claude Code asks before each MCP call unless the server is allowed.
+   Add it to `permissions.allow` in `~/.claude/settings.json`:
+
+   ```json
+   "permissions": { "allow": ["mcp__pr-checkmate"] }
+   ```
+
+   That allows every tool, including the two that write files. To keep the agent read-only set
+   `"mcp": { "readOnly": true }` in the project's `pr-checkmate.json`, or allow the tools one by
+   one (`mcp__pr-checkmate__check_changes`, and so on).
+4. **No guarantee.** The agent is told when to call each tool, and it can still skip them. For a
+   gate it cannot skip, keep the CI check, or a Claude Code Stop hook that runs `pr-checkmate all`.
 
 ## Make a repository use it by default
 
@@ -135,9 +156,12 @@ command name or by the name the report shows.
 ## What the agent hears, and when
 
 Findings carry a file and a line wherever the check knows one — `a.js:2  debugger statement` —
-so the agent fixes the line instead of hunting for it. Secrets are located but never quoted.
-`pr-checkmate <check> --sarif` writes the same findings as SARIF 2.1.0 for GitHub code scanning
-and editors.
+so the agent fixes the line instead of hunting for it. That covers the pattern checks, secrets
+(located but never quoted), ESLint (file, line and rule), TypeScript (file, line and `TS` code)
+and Prettier (the unformatted files). Other checks report a count or a short reason.
+`pr-checkmate <check> --sarif` writes the same findings as SARIF 2.1.0. A check without locations
+still gets one result with no location; GitHub code scanning shows only results that have one, so
+those appear in editors and other viewers but not as alerts.
 
 With the hooks installed the agent also hears about a file the moment it writes it: a quick,
 pattern-only security review of that one file (SQL built by concatenation, `eval`, a conflict
