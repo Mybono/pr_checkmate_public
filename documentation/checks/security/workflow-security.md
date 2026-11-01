@@ -1,6 +1,6 @@
 # Workflow Security
 
-[Docs](../../README.md) · [Checks Index](../INDEX.md) · [Diff Security](diff-security.md) · [Dockerfile Security](dockerfile-security.md) · [Migration Safety](migration-safety.md) · [Security Scan](security-scan.md) · [Sensitive Files](sensitive-files.md) · **Workflow Security**
+[Docs](../../README.md) · [Checks Index](../INDEX.md) · [Diff Security](diff-security.md) · [Dockerfile Security](dockerfile-security.md) · [Migration Safety](migration-safety.md) · [Security Scan](security-scan.md) · [Sensitive Files](sensitive-files.md) · **Workflow Security** · [Agent Instructions](agent-instructions.md)
 
 ---
 
@@ -14,20 +14,26 @@ runs with repository secrets and write tokens on CI infrastructure.
 
 ### What it looks for
 
-| Finding | Severity | Why |
-|---|---|---|
-| Untrusted `github.event.*` input interpolated into an expression | error | A PR title, body, or branch name is attacker-controlled. Reaching a `run:` shell, `${{ }}` interpolation becomes **script injection** |
-| `${{ github.head_ref }}` interpolation | warn | Same vector via the branch name — pass it through an `env:` var instead of interpolating into a script |
-| Action not pinned to a full 40-character commit SHA | warn | A mutable tag can be moved to malicious code after review |
-| `pull_request_target` trigger | warn | Runs with repository secrets in the context of an untrusted PR |
+| Finding                                                                                   | Severity | Why                                                                                                                                                                                         |
+| ----------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Untrusted `github.event.*` input interpolated into an expression                          | error    | A PR title, body, or branch name is attacker-controlled. Reaching a `run:` shell, `${{ }}` interpolation becomes **script injection**                                                       |
+| `${{ github.head_ref }}` interpolation                                                    | warn     | Same vector via the branch name — pass it through an `env:` var instead of interpolating into a script                                                                                      |
+| Action not pinned to a full 40-character commit SHA                                       | warn     | A mutable tag can be moved to malicious code after review                                                                                                                                   |
+| `pull_request_target` trigger                                                             | warn     | Runs with repository secrets in the context of an untrusted PR                                                                                                                              |
+| `ref:` / `repository:` set to the PR head (`head.sha`, `head.ref`, `head.repo.full_name`) | warn     | Under `pull_request_target`, checking out the PR's own code gives the attacker a privileged runner. One line cannot see the trigger, so review it next to the `pull_request_target` finding |
+| `permissions: write-all`                                                                  | error    | The token can change anything in the repository; grant only the scopes the job needs                                                                                                        |
+| `secrets: inherit`                                                                        | warn     | Passes every repository secret to the called workflow                                                                                                                                       |
+| `ACTIONS_ALLOW_UNSECURE_COMMANDS: true`                                                   | error    | Re-enables the deprecated `set-env` / `add-path` commands, which any logged output can drive                                                                                                |
+| `curl` / `wget` piped into `sh` or `bash`                                                 | warn     | Runs whatever the server returns, unverified                                                                                                                                                |
+| `runs-on: self-hosted`                                                                    | warn     | On a public repository a fork PR can run code on your own machines                                                                                                                          |
 
-| Property | Value |
-|---|---|
-| Display name | `Workflow Security` |
-| Phase | `informational` |
-| CLI command | `npx pr-checkmate workflow-security` |
-| Config key | `workflowSecurity` |
-| Source | `src/core/checks/security/workflow-security.ts` |
+| Property     | Value                                           |
+| ------------ | ----------------------------------------------- |
+| Display name | `Workflow Security`                             |
+| Phase        | `informational`                                 |
+| CLI command  | `npx pr-checkmate workflow-security`            |
+| Config key   | `workflowSecurity`                              |
+| Source       | `src/core/checks/security/workflow-security.ts` |
 
 ## When it applies
 
@@ -42,10 +48,10 @@ inspecting their contents.
 
 ## Configuration
 
-| Key | Type | Default | Meaning |
-|---|---|---|---|
-| `workflowSecurity.enabled` | boolean | `true` | Set `false` to skip the check |
-| `workflowSecurity.ignore` | string[] | `[]` | Finding **labels** to mute, matched as case-insensitive substrings |
+| Key                        | Type     | Default | Meaning                                                            |
+| -------------------------- | -------- | ------- | ------------------------------------------------------------------ |
+| `workflowSecurity.enabled` | boolean  | `true`  | Set `false` to skip the check                                      |
+| `workflowSecurity.ignore`  | string[] | `[]`    | Finding **labels** to mute, matched as case-insensitive substrings |
 
 ### Examples
 

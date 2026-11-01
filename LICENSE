@@ -1,4 +1,5 @@
 PROPRIETARY SOFTWARE LICENSE
+SPDX-License-Identifier: LicenseRef-PR-Checkmate-Proprietary
 All Rights Reserved
 
 Copyright (c) 2025-2026 Artur Polishchuk. All Rights Reserved.
@@ -62,9 +63,13 @@ This grant does not include, and RESTRICTIONS 1 and 3 through 7 above
 continue to apply in full to, any right to: copy or redistribute the
 Distributed Package outside of standard package-manager installation; modify,
 decompile, or reverse engineer it; or access, copy, or create derivative
-works from any source code not included in the published npm tarball. This
-grant may be revoked by the Owner for future versions at any time; it does
-not affect versions already installed.
+works from any source code not included in the published npm tarball.
+
+The grant above is perpetual and irrevocable for every version of the
+Distributed Package published under these terms, including after the Owner
+stops publishing. The Owner may release future versions under different
+terms, including paid terms; such terms apply only to those future versions
+and never to a version already published.
 
 ================================================================================
 PUBLIC MIRROR EXCEPTION

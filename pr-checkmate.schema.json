@@ -309,6 +309,41 @@
     "dockerfileSecurity": {
       "$ref": "#/$defs/toggleIgnorePaths"
     },
+    "agentInstructions": {
+      "$ref": "#/$defs/toggleIgnorePaths"
+    },
+    "mcp": {
+      "type": "object",
+      "description": "What the pr-checkmate MCP server offers an AI agent working in this project. Changes apply to the agent's next request.",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "false turns the server off for this project: it still connects, but offers no tools, resources or prompts. Default true."
+        },
+        "disabledTools": {
+          "type": "array",
+          "description": "Tools to hide from the agent.",
+          "items": {
+            "enum": [
+              "get_rules",
+              "check_changes",
+              "apply_fixes",
+              "scan_secrets",
+              "check_dependency",
+              "suggest_config",
+              "write_config",
+              "explain_config",
+              "verify"
+            ]
+          }
+        },
+        "readOnly": {
+          "type": "boolean",
+          "description": "Hide the tools that write files (apply_fixes, write_config), so the agent can only read and report. Default false."
+        }
+      }
+    },
     "migrationSafety": {
       "$ref": "#/$defs/toggleSeverity"
     },

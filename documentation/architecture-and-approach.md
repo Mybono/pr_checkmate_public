@@ -1,7 +1,7 @@
 # Why PR CheckMate is built the way it is
 
 <!-- docs-nav -->
-[Docs](README.md) · [Config guide](config-guide.md) · [Check reference](checks/INDEX.md) · [How checks work](checks/concepts.md) · [Running in CI](ci-setup.md) · [Migrating](migrating.md) · **Architecture** · [Authoring a check](authoring-checks.md)
+[Docs](README.md) · [Config guide](config-guide.md) · [Check reference](checks/INDEX.md) · [How checks work](checks/concepts.md) · [Running in CI](ci-setup.md) · [Migrating](migrating.md) · **Architecture** · [Authoring a check](authoring-checks.md) · [AI agents](ai-agents.md)
 
 ---
 

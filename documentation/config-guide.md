@@ -1,7 +1,7 @@
 # Writing your `pr-checkmate.json`
 
 <!-- docs-nav -->
-[Docs](README.md) · **Config guide** · [Check reference](checks/INDEX.md) · [How checks work](checks/concepts.md) · [Running in CI](ci-setup.md) · [Migrating](migrating.md) · [Architecture](architecture-and-approach.md) · [Authoring a check](authoring-checks.md)
+[Docs](README.md) · **Config guide** · [Check reference](checks/INDEX.md) · [How checks work](checks/concepts.md) · [Running in CI](ci-setup.md) · [Migrating](migrating.md) · [Architecture](architecture-and-approach.md) · [Authoring a check](authoring-checks.md) · [AI agents](ai-agents.md)
 
 ---
 

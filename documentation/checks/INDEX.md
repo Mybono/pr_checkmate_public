@@ -1,14 +1,14 @@
 # Check Reference
 
 <!-- docs-nav -->
-
+ · [AI agents](../ai-agents.md)
 [Docs](../README.md) · [Config guide](../config-guide.md) · **Check reference** · [How checks work](../checks/concepts.md) · [Running in CI](../ci-setup.md) · [Migrating](../migrating.md) · [Architecture](../architecture-and-approach.md) · [Authoring a check](../authoring-checks.md)
 
 ---
 
 ## Overview
 
-PR CheckMate ships **54 checks**. Every one of them is documented in its own file below: what it
+PR CheckMate ships **55 checks**. Every one of them is documented in its own file below: what it
 does, when it runs, every key it reads from `pr-checkmate.json`, the defaults, and how to turn it
 off.
 
@@ -119,6 +119,7 @@ Secret scanning and diff-level security review.
 | [Migration Safety](security/migration-safety.md)       | informational | `migration-safety`    | `migrationSafety`    |
 | [Sensitive Files](security/sensitive-files.md)         | informational | `sensitive-files`     | `sensitiveFileGuard` |
 | [Workflow Security](security/workflow-security.md)     | informational | `workflow-security`   | `workflowSecurity`   |
+| [Agent Instructions](security/agent-instructions.md)   | informational | `agent-instructions`  | `agentInstructions`  |
 
 ---
 

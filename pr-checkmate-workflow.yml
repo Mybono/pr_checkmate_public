@@ -76,4 +76,4 @@ jobs:
             -e GITHUB_SHA \
             -e CI \
             -v "$GITHUB_EVENT_PATH:$GITHUB_EVENT_PATH:ro" \
-            ghcr.io/mybono/pr-checkmate:3 all
+            ghcr.io/mybono/pr-checkmate:4 all

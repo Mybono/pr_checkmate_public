@@ -15,9 +15,10 @@
 > A security-first PR gate for CI: secret scanning, dependency vulnerability checks, and
 > a CycloneDX SBOM plus an independent
 > [VirusTotal scan](https://github.com/Mybono/pr_checkmate_public/releases/latest) of the
-> exact published tarball on every release — plus 53 code-quality checks across 11
+> exact published tarball on every release — plus 54 code-quality checks across 11
 > languages, bundled. One npm package, one `pr-checkmate.json`, no per-language toolchain
-> setup for the bundled ones.
+> setup for the bundled ones. Also an [MCP server](#ai-agents-mcp): your AI coding agent runs the
+> same gate while it writes code.
 
 Language is auto-detected. Checks run in parallel phases, results post as one PR comment
 that updates in place, and formatter fixes are committed back to the branch.
@@ -64,6 +65,53 @@ Commit both and it runs on the next pull request. Both are regenerated on every 
 line, which three lines are load-bearing, adopting it on a codebase that is not clean
 yet, and the setup step each runner-dependency language needs.
 
+## AI agents (MCP)
+
+PR CheckMate is also an [MCP](https://modelcontextprotocol.io) server, so Claude Code, Cursor or any
+other MCP client can run the gate **while it writes code**, not after the pull request is open. The
+agent reads the repository's rules first, checks its own changes as it goes — uncommitted files
+included, nothing has to be staged — and runs the full gate once before it says it is done.
+
+```bash
+npm install -g pr-checkmate
+claude mcp add --scope user pr-checkmate -- pr-checkmate mcp   # once, for every project
+npx pr-checkmate agent-setup                                   # per repository, below
+```
+
+| Tool | The agent calls it |
+|---|---|
+| `get_rules` | before writing — what blocks a PR, what only warns, your custom rules and banned imports |
+| `check_changes` | while working — fast checks on what it has changed so far |
+| `scan_secrets` | before committing config, environment or credential files |
+| `apply_fixes` | instead of fixing style by hand — formats and autofixes only the files it changed |
+| `check_dependency` | before adding a package — does it exist, advisories (malware included), look-alike names |
+| `verify` | once, when it believes the work is done — every check, the slow ones included |
+| `suggest_config` / `write_config` | set pr-checkmate up for *this* repository: propose, then write once you agree |
+
+`agent-setup` registers the server in `.mcp.json`, adds a short instructions block to `AGENTS.md` /
+`CLAUDE.md` telling the agent *when* to call each tool, and — in Claude Code — installs a hook that
+checks staged changes on `git commit` and blocks the commit with the findings. It only adds, and is
+safe to re-run. While a project has no `pr-checkmate` entry in `.mcp.json`, the summary printed by
+`npx pr-checkmate all` ends with an `AI AGENT:` line pointing at the command (not shown in CI), and
+`init` adds it to the `commands` block of an existing `pr-checkmate.json`.
+
+**Limits.** An agent can ignore a tool, so nothing here guarantees that `npx pr-checkmate all` finds
+nothing: the CI gate stays the authority. Two tools write files, `apply_fixes` and `write_config`;
+the rest only read. The protocol is implemented in this package, with no MCP SDK or HTTP framework
+behind it.
+
+**Turn it off or narrow it.** The `mcp` block of `pr-checkmate.json` controls what the agent sees,
+from its next request and without a restart:
+
+```json
+"mcp": { "enabled": true, "disabledTools": ["check_dependency"], "readOnly": false }
+```
+
+`enabled: false` leaves the server connected with nothing to offer, `disabledTools` hides tools by
+name, and `readOnly: true` hides the two that write files.
+
+[AI agents guide →](https://github.com/Mybono/pr_checkmate_public/blob/main/documentation/ai-agents.md)
+
 ## Language Support
 
 Bundled languages need nothing on the runner. Runner-dependency languages need their
@@ -88,7 +136,7 @@ every language.
 
 ## Checks
 
-54 checks, run in parallel within each phase:
+55 checks, run in parallel within each phase:
 
 | Group | Count | What it covers |
 |---|---|---|
@@ -143,5 +191,6 @@ affect it.
 ## License
 
 LicenseRef Proprietary © 2025-2026 Artur Polishchuk. Free to install and run via the
-published npm package (see [LICENSE](LICENSE) for the exact grant); the source is not
+published npm package, and that right is irrevocable for every published version (see
+[LICENSE](LICENSE) for the exact grant); the source is not
 open-source and is not licensed for copying, modification, or redistribution.

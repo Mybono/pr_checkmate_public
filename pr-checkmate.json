@@ -97,6 +97,16 @@
     "enabled": true,
     "ignore": []
   },
+  "agentInstructions": {
+    "enabled": true,
+    "ignore": []
+  },
+  "//mcp": "What the MCP server offers an AI agent here. 'enabled': false turns it off; 'disabledTools' hides tools by name; 'readOnly' hides the ones that write files. Applies from the agent's next request.",
+  "mcp": {
+    "enabled": true,
+    "disabledTools": [],
+    "readOnly": false
+  },
   "//sensitiveFileGuard": "Flags .env files, private keys, CI config and lockfiles. 'ignorePaths' excuses ONE file by glob (a .pem test fixture); 'ignore' silences a whole CATEGORY and would excuse the next real key too — reach for ignorePaths first.",
   "sensitiveFileGuard": {
     "enabled": true,
