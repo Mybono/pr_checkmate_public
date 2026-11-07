@@ -1,7 +1,7 @@
 # Check Reference
 
 <!-- docs-nav -->
- · [AI agents](../ai-agents.md)
+ · [AI agents](../ai-agents.md) · [Claude Code plugin](../claude-code-plugin.md)
 [Docs](../README.md) · [Config guide](../config-guide.md) · **Check reference** · [How checks work](../checks/concepts.md) · [Running in CI](../ci-setup.md) · [Migrating](../migrating.md) · [Architecture](../architecture-and-approach.md) · [Authoring a check](../authoring-checks.md)
 
 ---

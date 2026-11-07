@@ -1,7 +1,7 @@
 # Documentation
 
 <!-- docs-nav -->
-**Docs** · [Config guide](config-guide.md) · [Check reference](checks/INDEX.md) · [How checks work](checks/concepts.md) · [Running in CI](ci-setup.md) · [Migrating](migrating.md) · [Architecture](architecture-and-approach.md) · [Authoring a check](authoring-checks.md) · [AI agents](ai-agents.md)
+**Docs** · [Config guide](config-guide.md) · [Check reference](checks/INDEX.md) · [How checks work](checks/concepts.md) · [Running in CI](ci-setup.md) · [Migrating](migrating.md) · [Architecture](architecture-and-approach.md) · [Authoring a check](authoring-checks.md) · [AI agents](ai-agents.md) · [Claude Code plugin](claude-code-plugin.md)
 
 ---
 
@@ -17,6 +17,7 @@ Everything about PR CheckMate that does not fit on the [npm page](../README.md).
 | **[Architecture](architecture-and-approach.md)** | You want to know why it is built this way before trusting it |
 | **[Authoring a check](authoring-checks.md)** | You are writing one |
 | **[AI agents](ai-agents.md)** | You want Claude Code, Cursor or another agent to run the gate while it writes code, not after |
+| **[Claude Code plugin](claude-code-plugin.md)** | You use Claude Code and want the gate and a skill that uses it, from one install command |
 
 The [API reference](https://pr-checkmate-docs.pages.dev) is generated separately, for
 embedding the checks in your own tooling.

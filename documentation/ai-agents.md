@@ -1,7 +1,7 @@
 # Using PR CheckMate from an AI agent
 
 <!-- docs-nav -->
-[Docs](README.md) · [Config guide](config-guide.md) · [Check reference](checks/INDEX.md) · [How checks work](checks/concepts.md) · [Running in CI](ci-setup.md) · [Migrating](migrating.md) · [Architecture](architecture-and-approach.md) · [Authoring a check](authoring-checks.md) · **AI agents**
+[Docs](README.md) · [Config guide](config-guide.md) · [Check reference](checks/INDEX.md) · [How checks work](checks/concepts.md) · [Running in CI](ci-setup.md) · [Migrating](migrating.md) · [Architecture](architecture-and-approach.md) · [Authoring a check](authoring-checks.md) · [AI agents](ai-agents.md) · [Claude Code plugin](claude-code-plugin.md)
 
 ---
 
@@ -59,6 +59,11 @@ If the CLI is not on `PATH`, the server is registered through `npx -y pr-checkma
 (pinned to the version that wrote it, so a later publish does not run on every contributor's machine) instead, so the entry works either way, and the commit gate is skipped with a note: through
 `npx` the hook would resolve the package on every command the agent runs. Install globally
 and run `agent-setup` again to add it.
+
+On Claude Code, the [plugin](claude-code-plugin.md) does the work of the first two commands with one
+install. To set up the gate and the agent wiring in one step, run `pr-checkmate init --with-agent`. It runs
+`init`, then `agent-setup`; add `--no-hook` to skip the commit gate. Nothing runs `agent-setup`
+unless you pass the flag: installing the package never changes your agent configuration.
 
 Until a project registers the server, the summary printed by `all` ends with an `AI AGENT:` line
 naming the command. It is not printed in CI and goes away with `reporter.include.docsLink: false`.

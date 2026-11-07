@@ -1,7 +1,7 @@
 # How checks work
 
 <!-- docs-nav -->
-[Docs](../README.md) · [Config guide](../config-guide.md) · [Check reference](../checks/INDEX.md) · **How checks work** · [Running in CI](../ci-setup.md) · [Migrating](../migrating.md) · [Architecture](../architecture-and-approach.md) · [Authoring a check](../authoring-checks.md) · [AI agents](../ai-agents.md)
+[Docs](../README.md) · [Config guide](../config-guide.md) · [Check reference](../checks/INDEX.md) · **How checks work** · [Running in CI](../ci-setup.md) · [Migrating](../migrating.md) · [Architecture](../architecture-and-approach.md) · [Authoring a check](../authoring-checks.md) · [AI agents](../ai-agents.md) · [Claude Code plugin](../claude-code-plugin.md)
 
 ---
 

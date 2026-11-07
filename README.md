@@ -17,11 +17,20 @@
 > [VirusTotal scan](https://github.com/Mybono/pr_checkmate_public/releases/latest) of the
 > exact published tarball on every release — plus 54 code-quality checks across 11
 > languages, bundled. One npm package, one `pr-checkmate.json`, no per-language toolchain
-> setup for the bundled ones. Also an [MCP server](#ai-agents-mcp): your AI coding agent runs the
-> same gate while it writes code.
+> setup for the bundled ones. Also an [MCP server](#ai-agents-mcp) and a
+> [Claude Code plugin](#ai-agents-mcp): your AI coding agent runs the same gate while it writes code.
 
 Language is auto-detected. Checks run in parallel phases, results post as one PR comment
 that updates in place, and formatter fixes are committed back to the branch.
+
+**Using Claude Code?** Install it as a plugin, one command, no `npm install` needed to start:
+
+```text
+/plugin install pr-checkmate --marketplace Mybono/pr_checkmate_public
+```
+
+It connects the MCP server and adds a skill that sets the package up in your repository when you
+agree. [Details below](#ai-agents-mcp).
 
 ## Quickstart
 
@@ -83,6 +92,12 @@ need a restart. `claude` comes from the Claude Code CLI (an editor extension kee
 your `PATH`). To stop Claude Code asking before every call, allow `mcp__pr-checkmate` in
 `permissions.allow`
 ([details](https://github.com/Mybono/pr_checkmate_public/blob/main/documentation/ai-agents.md#after-installing)).
+
+**Claude Code plugin.** The one-command install at the top of this page replaces the two commands
+above. It runs the MCP server with `npx`, pinned to the released version, and adds a skill that
+offers to install the npm package if it is missing. The tools are named
+`mcp__plugin_pr-checkmate_mcp__*`, so allow that prefix instead of `mcp__pr-checkmate`. Claude
+Code still asks before the first call of each tool.
 
 | Tool | The agent calls it |
 |---|---|

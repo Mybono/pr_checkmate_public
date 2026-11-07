@@ -1,7 +1,7 @@
 # Authoring a new check
 
 <!-- docs-nav -->
-[Docs](README.md) · [Config guide](config-guide.md) · [Check reference](checks/INDEX.md) · [How checks work](checks/concepts.md) · [Running in CI](ci-setup.md) · [Migrating](migrating.md) · [Architecture](architecture-and-approach.md) · **Authoring a check** · [AI agents](ai-agents.md)
+[Docs](README.md) · [Config guide](config-guide.md) · [Check reference](checks/INDEX.md) · [How checks work](checks/concepts.md) · [Running in CI](ci-setup.md) · [Migrating](migrating.md) · [Architecture](architecture-and-approach.md) · **Authoring a check** · [AI agents](ai-agents.md) · [Claude Code plugin](claude-code-plugin.md)
 
 ---
 
