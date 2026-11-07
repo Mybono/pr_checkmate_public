@@ -1,0 +1,14 @@
+{
+  "name": "pr-checkmate",
+  "description": "Runs the pr-checkmate quality and security gate while your agent writes code. Bundles the pr-checkmate MCP server, started with npx at a pinned version, and a skill that offers to install the npm package if it is missing.",
+  "author": { "name": "Artur Polishchuk" },
+  "homepage": "https://github.com/Mybono/pr_checkmate_public#readme",
+  "icon": "./assets/logo1.png",
+  "keywords": ["quality", "security", "ci", "lint", "mcp"],
+  "mcpServers": {
+    "mcp": {
+      "command": "npx",
+      "args": ["-y", "pr-checkmate@4.2.0", "mcp"]
+    }
+  }
+}

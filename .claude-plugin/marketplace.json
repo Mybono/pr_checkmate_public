@@ -1,0 +1,12 @@
+{
+  "name": "pr-checkmate-marketplace",
+  "description": "The pr-checkmate quality and security gate for AI coding agents.",
+  "owner": { "name": "Artur Polishchuk" },
+  "plugins": [
+    {
+      "name": "pr-checkmate",
+      "source": "./",
+      "description": "Runs the pr-checkmate quality and security gate while your agent writes code."
+    }
+  ]
+}
